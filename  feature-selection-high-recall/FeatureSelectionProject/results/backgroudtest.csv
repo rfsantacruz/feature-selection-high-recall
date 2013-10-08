@@ -1,5 +1,0 @@
-anneal,LogisticRegression,0.934,0.753,0.620,0.651
-arrhythmia,LogisticRegression,0.544,0.332,0.248,0.251
-autos,LogisticRegression,0.423,0.312,0.255,0.238
-crx,LogisticRegression,0.866,0.868,0.862,0.864
-iris,LogisticRegression,0.958,0.966,0.932,0.946
