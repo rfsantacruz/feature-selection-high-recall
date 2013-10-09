@@ -78,6 +78,10 @@ public class ClassificationProblem {
 	public Instances getData() {
 		return data;
 	}
+	
+	public void setData(Instances newData) {
+		this.data = newData;
+	}
 
 	public String getFilePath() {
 		return filePath;
