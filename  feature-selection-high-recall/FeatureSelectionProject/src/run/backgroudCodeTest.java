@@ -10,6 +10,7 @@ import java.util.Random;
 import problems.ClassificationProblem;
 import utils.Util;
 import weka.attributeSelection.ASEvaluation;
+import weka.attributeSelection.GreedyStepwise;
 import weka.filters.supervised.attribute.AttributeSelection;
 import weka.attributeSelection.Ranker;
 import weka.core.Instances;
@@ -25,6 +26,7 @@ import experiment.ExperimentExecutor;
 import experiment.ExperimentReport;
 import experiment.IExperimentCommand;
 import featureSelection.DummyAttributeSelectionAlgorithm;
+import featureSelection.DummySubsetAttributeSelection;
 
 public class backgroudCodeTest implements IExperimentCommand {
 
@@ -89,12 +91,16 @@ public class backgroudCodeTest implements IExperimentCommand {
 			AttributeSelection attributeSelection = new AttributeSelection();
 			//obect to evaluate the attribute and guide the search
 			ASEvaluation myfeatureSelection = new DummyAttributeSelectionAlgorithm();
+			//ASEvaluation myfeatureSelection = new DummySubsetAttributeSelection(); //in case of subset selection
+			
 			//choose based on a rank of the attibutes evaluated
-			Ranker ranker = new Ranker();
-			ranker.setNumToSelect(n);
+			Ranker search = new Ranker();
+			search.setNumToSelect(n);
+			//GreedyStepwise search = new GreedyStepwise(); // in case of subset selection
+			
 			//wrap
 			attributeSelection.setEvaluator(myfeatureSelection);
-			attributeSelection.setSearch(ranker);
+			attributeSelection.setSearch(search);
 			attributeSelection.setInputFormat(trainingInstances);
 			//exeute
 			featureSelected = Filter.useFilter(trainingInstances, attributeSelection);
