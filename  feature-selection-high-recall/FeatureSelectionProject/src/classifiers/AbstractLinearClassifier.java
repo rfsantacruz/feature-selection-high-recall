@@ -44,14 +44,7 @@ public abstract class AbstractLinearClassifier extends AbstractClassifier {
 	}
 	@Override
 	public void setOptions(String[] options) throws Exception {
-		String[] nop = new String[options.length + 2];
-		for (int i = 0; i < options.length; i++) {
-			nop[i] = options[i];
-		}
-		nop[options.length] = "-W ";
-		nop[options.length + 1] = "1";
-		
-		model.setOptions(nop);
+		model.setOptions(options);
 	}
 	
 	
