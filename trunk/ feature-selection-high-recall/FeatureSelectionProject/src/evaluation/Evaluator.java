@@ -1,34 +1,34 @@
 package evaluation;
 
 
-import java.util.Arrays;
 import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import problems.ClassificationProblem;
-
+import utils.Util;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Attribute;
 import weka.core.Instances;
-import weka.core.Option;
 import weka.core.Utils;
 import classifiers.AbstractLinearClassifier;
+
+import com.google.common.collect.Lists;
+
 import experiment.ExperimentReport;
 
 public class Evaluator extends Evaluation {
 
-	
+
 	public Evaluator(ClassificationProblem cp) throws Exception{
 		super(cp.getData());
 	}
 
 
-	public ExperimentReport crossValidateModel(AbstractLinearClassifier c, ClassificationProblem cp, int folds, long seed, Map<String, String[]> params ){
+	public ExperimentReport crossValidateModel(AbstractLinearClassifier c, ClassificationProblem cp, int folds, long seed, Map<String,Set<String>> params ){
 
 		ExperimentReport reportPerf = new ExperimentReport(cp.getName(), c.getClassifierName());
 
@@ -55,50 +55,39 @@ public class Evaluator extends Evaluation {
 				Instances train = new Instances(trainAndValid, 0, trainSize);
 				Instances valid = new Instances(trainAndValid, trainSize , trainAndValid.size() - train.size());
 
+				if(params != null && !params.isEmpty()){
+					List<String> modelSettings = Util.generateModels(Lists.newArrayList(params.values()));
+					String optimumSetting = "";
+					double erroRate = Double.MAX_VALUE;
+					for (String setting : modelSettings) {
+						c.resetClassifier();
+						//set parameter, train and evaluate
+						c.setOptions(Utils.splitOptions(setting));
+						c.buildClassifier(train);
+						this.evaluateModel(c, valid);
+						double currentErrorRate = errorRate();
 
-				//train and evaluate
-				//store param*
-				Map<String, String> optimumValue = new HashMap<String, String>();
-				if(params != null && params.size() > 0){
-					for(String paramKey : params.keySet() ){
-						//get the desired tune values
-						String[] paramList = params.get(paramKey);
-						double erroRate = Double.MAX_VALUE;
-						//loop throug the values
-						for (String v : paramList) {
-							c.resetClassifier();
-							//set parameter, train and evaluate
-							c.setOptions(Utils.splitOptions(v));
-							c.buildClassifier(train);
-							this.evaluateModel(c, valid);
-							//save the optimum value
-							if(errorRate()  < erroRate){
-								erroRate = errorRate();
-								optimumValue.put(paramKey, v);
-							}
+						if(currentErrorRate  < erroRate){
+							erroRate = currentErrorRate;
+							optimumSetting = setting;
 						}
 					}
-
 					c.resetClassifier();
-					//config optimum parameters
-					String op = "";
-					for (String paramName : optimumValue.keySet()) {
-						 op += optimumValue.get(paramName) + " ";
-					}
-					c.setOptions(Utils.splitOptions(op));
+					c.setOptions(Utils.splitOptions(optimumSetting));
 				}
-				
+
 				//train with optimum parameters
 				c.buildClassifier(trainAndValid);
 
 				//test and report the performance
 				this.evaluateModel(c, test);
 				reportPerf.setAccuracy(reportPerf.getAccuracy() + ((1-errorRate())/folds));
-				reportPerf.setPrecision(reportPerf.getPrecision() + (precision(test)/folds));
-				reportPerf.setRecall(reportPerf.getRecall() + ((recall(test))/folds));
-				reportPerf.setF_measure(reportPerf.getF_measure() + (fMeasure(test)/folds));
-
+				reportPerf.setPrecision(reportPerf.getPrecision() + (precision()/folds));
+				reportPerf.setRecall(reportPerf.getRecall() + ((recall())/folds));
+				reportPerf.setF_measure(reportPerf.getF_measure() + (fMeasure()/folds));
 			}
+
+
 
 		}catch(Exception e){
 			e.printStackTrace();
@@ -122,60 +111,60 @@ public class Evaluator extends Evaluation {
 
 
 	//overload for overall fmeasure
-	public double fMeasure(Instances cp) {
+	public double fMeasure() {
 		double retValue = 0.0;
 		int numOfLabels = 0;
-		int classIndex = cp.classIndex();
-		Attribute att  = cp.attribute(classIndex);
-		Enumeration<String> values = att.enumerateValues();
+		int classIndex = super.getHeader().classIndex();
+		Attribute att  = super.getHeader().attribute(classIndex);
 		
+		Enumeration<String> values = att.enumerateValues();
 		while(values.hasMoreElements()){
 			int classValue = att.indexOfValue(values.nextElement());
 			numOfLabels++;
 			retValue += super.fMeasure(classValue);
 		}
-		
+
 		return retValue/numOfLabels;
 	}
 
 
 	//overload for overrall precision
-	public double precision(Instances cp) {
+	public double precision() {
 		double retValue = 0.0;
 		int numOfLabels = 0;
-		int classIndex = cp.classIndex();
-		Attribute att  = cp.attribute(classIndex);
-		Enumeration<String> values = att.enumerateValues();
+		int classIndex = super.getHeader().classIndex();
+		Attribute att  = super.getHeader().attribute(classIndex);
 		
+		Enumeration<String> values = att.enumerateValues();
 		while(values.hasMoreElements()){
 			int classValue = att.indexOfValue(values.nextElement());
 			numOfLabels++;
 			retValue += super.precision(classValue);
 		}
-		
+
 		return retValue/numOfLabels;
 	}
 
-
 	//overload for overrall recall
-	public double recall(Instances cp) {
+	public double recall() {
 		double retValue = 0.0;
 		int numOfLabels = 0;
+
+		int classIndex = super.getHeader().classIndex();
+		Attribute att  = super.getHeader().attribute(classIndex);
 		
-		int classIndex = cp.classIndex();
-		Attribute att  = cp.attribute(classIndex);
 		Enumeration<String> values = att.enumerateValues();
-		
+
 		while(values.hasMoreElements()){
 			int classValue = att.indexOfValue(values.nextElement());
 			numOfLabels++;
 			retValue += super.recall(classValue);
 		}
-		
+
 		return retValue/numOfLabels;
 	}
 
-	
+
 
 
 }
