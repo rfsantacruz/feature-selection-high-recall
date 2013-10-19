@@ -6,6 +6,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+
+import com.google.common.collect.Sets;
 
 import problems.ClassificationProblem;
 import utils.Util;
@@ -37,18 +40,18 @@ public class backgroudCodeTest implements IExperimentCommand {
 		List<ExperimentReport> result = new ArrayList<ExperimentReport>();
 
 		//feature selection
-		Instances featureSelected = this.featureSelection(cp.getData(),3);
-		cp.setData(featureSelected);
+		//Instances featureSelected = this.featureSelection(cp.getData(),3);
+		//cp.setData(featureSelected);
 
-		//define what parameter optimize to each model
-		Map<String, String[]> paramLR = new HashMap<String, String[]>();
-		paramLR.put("-C", new String[]{"-C 0.1", "-C 0.3", "-C 1.0", "-C 1.3"});
-		paramLR.put("-B", new String[]{"-B 0.1", "-B 0.3", "-B 1.0", "-B 1.3"});
+		//define what parameter each model will cross validate
+		HashMap<String,Set<String>> paramLR = new HashMap<String,Set<String>>();
+		paramLR.put("-C",Sets.newHashSet("-C 0.1", "-C 0.3", "-C 1.0", "-C 1.3"));
+		paramLR.put("-B",Sets.newHashSet("-B 0.1", "-B 0.3", "-B 1.0", "-B 1.3"));
 		
-		Map<String, String[]> paramSVM = new HashMap<String, String[]>();
-		paramLR.put("-C", new String[]{"-C 0.1", "-C 0.3", "-C 1.0", "-C 1.3"});
-		paramLR.put("-B", new String[]{"-B 0.1", "-B 0.3", "-B 1.0", "-B 1.3"});
-		
+		HashMap<String,Set<String>> paramSVM = new HashMap<String,Set<String>>();
+		paramSVM.put("-C",Sets.newHashSet("-C 0.1", "-C 0.3", "-C 1.0", "-C 1.3"));
+		paramSVM.put("-B",Sets.newHashSet("-B 0.1", "-B 0.3", "-B 1.0", "-B 1.3"));
+		//bayes there is no parameters
 		
 		//create classifier
 		AbstractLinearClassifier lr = new LogisticRegressionClassifier();
@@ -113,11 +116,13 @@ public class backgroudCodeTest implements IExperimentCommand {
 
 
 	public static void main(String[] args) {
+		double start = System.currentTimeMillis();
 		String path = "./data";
 		IExperimentCommand cmd = new backgroudCodeTest();
 		ExperimentExecutor exe = new ExperimentExecutor();
 		List<ExperimentReport> result = exe.executeCommandInFiles(cmd, path);
 		utils.Util.saveExperimentReportAsCSV("./results/backgroudtest.csv", result, ",");
+		System.out.println("elapsed time: " + (System.currentTimeMillis() - start));
 	}
 
 
