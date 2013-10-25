@@ -10,11 +10,14 @@ public class testClasifiers {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		ClassificationProblem cp = new ClassificationProblem("data/iris.data.arff");
-		LogisticRegressionClassifier lr = new LogisticRegressionClassifier();
-		SVMLinearClassifier svm = new SVMLinearClassifier();
-		NaiveBayes nb = new NaiveBayes();
+		
 		try {
+			
+			ClassificationProblem cp = new ClassificationProblem("data/iris.data.arff");
+			LogisticRegressionClassifier lr = new LogisticRegressionClassifier();
+			SVMLinearClassifier svm = new SVMLinearClassifier();
+			NaiveBayes nb = new NaiveBayes();
+			
 			lr.buildClassifier(cp.getData());
 			svm.buildClassifier(cp.getData());
 			nb.buildClassifier(cp.getData());

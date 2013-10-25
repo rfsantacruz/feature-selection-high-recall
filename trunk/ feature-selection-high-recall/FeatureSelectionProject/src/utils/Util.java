@@ -19,6 +19,8 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.apache.commons.io.FileUtils;
+
 import com.google.common.base.Function;
 import com.google.common.base.Functions;
 import com.google.common.base.Joiner;
@@ -31,7 +33,7 @@ import experiment.ExperimentReport;
 
 
 public class Util {
-
+	
 
 	public static List<ClassificationProblem> readAllFilesARFFFromDirectory(String path){
 		List<ClassificationProblem> problems = new ArrayList<ClassificationProblem>();
@@ -90,16 +92,10 @@ public class Util {
 	}
 	
 	public static void saveExperimentReportAsXML(String filePath, List<ExperimentReport> reports){
-		Path file = Paths.get(filePath);
-		try(PrintWriter out = new PrintWriter(file.toFile())){
-			for (ExperimentReport report : reports) {
-				out.println(report.toXML());
-			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
+		//TODO
 	}
 	
+	//generate all possibles models based on param
 	public static List<String> generateModels(List<Set<String>> paramsList){
 		List<String> modelsStringSetting = null;
 		final Joiner joiner = Joiner.on(" ").skipNulls();

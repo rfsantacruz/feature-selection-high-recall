@@ -66,9 +66,11 @@ public class SVMLinearClassifier extends AbstractLinearClassifier {
 
 	//test the clasifier implmentation
 	public static void main(String[] args) {
-		ClassificationProblem cp = new ClassificationProblem("data/iris.data.arff");
-		SVMLinearClassifier classifier = new SVMLinearClassifier();
+		
 		try {
+			
+			ClassificationProblem cp = new ClassificationProblem("data/iris.data.arff");
+			SVMLinearClassifier classifier = new SVMLinearClassifier();
 			classifier.buildClassifier(cp.getData());
 			System.out.println(Arrays.toString(classifier.classifyAll(cp.getData(), null)));
 

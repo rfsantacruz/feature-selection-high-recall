@@ -1,11 +1,16 @@
 package problems;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
 import java.util.List;
+
+import org.apache.commons.io.FileUtils;
 
 import utils.IConstants;
 import utils.Util;
@@ -25,39 +30,26 @@ public class ClassificationProblem {
 
 
 	//constructor
-	public ClassificationProblem(String filePath){
-
-		//set the filepath of arff file
-		this.setFilePath(filePath);
-
-		try (BufferedReader br = new BufferedReader(new FileReader(this.filePath)))
-		{
-			this.data = new Instances(br);
-			this.data.setClassIndex(data.numAttributes() - 1);
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 
+	public ClassificationProblem(String filePath) throws IOException{
+		this(filePath, new FileReader(filePath));
 	}
 
 	//contructor
-	public ClassificationProblem(String filepath,InputStreamReader ird){
+	public ClassificationProblem(String filepath,InputStreamReader ird) throws IOException{
 
 		if(ird != null){
 			//set the filepath of arff file
 			this.setFilePath(filepath);
-
 			try (BufferedReader br = new BufferedReader(ird))
 			{
 				this.data = new Instances(br);
+				this.data.setClassIndex(data.numAttributes() - 1);
 
-			} catch (IOException e) {
-				e.printStackTrace();
 			} 
 		}
 	}
 
-	
+
 	//getters and setters
 	public int getNumAttributes(){
 		return data.numAttributes();
@@ -78,7 +70,7 @@ public class ClassificationProblem {
 	public Instances getData() {
 		return data;
 	}
-	
+
 	public void setData(Instances newData) {
 		this.data = newData;
 	}
@@ -90,7 +82,7 @@ public class ClassificationProblem {
 	public void setFilePath(String filePath) {
 		this.filePath = Paths.get(filePath).toString();;
 	}
-	
+
 	//methods
 	@Override
 	public String toString() {
@@ -107,14 +99,14 @@ public class ClassificationProblem {
 	public static void main(String[] args) {
 		//List<ClassificationProblem> problems = Util.readAllFilesARFFFromJar(IConstants.jAR_DATASETS_PATH);
 		List<ClassificationProblem> problems = Util.readAllFilesARFFFromDirectory(IConstants.DATA_DIRECTORY_PATH);
-		
+
 		ClassificationProblem cp = problems.get(0);
 		System.out.println(cp.data.classAttribute().toString());
-		
-		
+
+
 
 	}
 
-	
+
 
 }
