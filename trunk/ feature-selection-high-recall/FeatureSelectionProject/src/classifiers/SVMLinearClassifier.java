@@ -48,6 +48,13 @@ public class SVMLinearClassifier extends AbstractLinearClassifier {
 		this.getModel().setSVMType(new SelectedTag(1, LibLINEAR.TAGS_SVMTYPE));
 		
 	}
+	
+	@Override
+	public void setOptions(String[] options) throws Exception {
+		super.setOptions(options);
+		//set the liblinear to use l2 regularized logistic regression
+		this.getModel().setSVMType(new SelectedTag(1, LibLINEAR.TAGS_SVMTYPE));
+	}
 
 	//get and setters with cast
 	private LibLINEAR getModel() {

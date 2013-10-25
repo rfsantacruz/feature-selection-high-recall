@@ -1,5 +1,8 @@
 package classifiers;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Enumeration;
 import java.util.Map;
 
@@ -44,7 +47,18 @@ public abstract class AbstractLinearClassifier extends AbstractClassifier {
 	}
 	@Override
 	public void setOptions(String[] options) throws Exception {
+		
+		//work around to avoid the api print trash in the console
+		PrintStream console = System.out;
+		System.setOut(new PrintStream(new OutputStream() {
+		    @Override public void write(int b) throws IOException {}
+		}));
+		
 		model.setOptions(options);
+		
+		//work around to avoid the api print trash in the console
+		System.setOut(console);
+		
 	}
 	
 	
