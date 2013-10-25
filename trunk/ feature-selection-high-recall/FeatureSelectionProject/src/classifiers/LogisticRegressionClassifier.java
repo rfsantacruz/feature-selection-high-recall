@@ -50,7 +50,14 @@ public class LogisticRegressionClassifier extends AbstractLinearClassifier{
 		this.model = new LibLINEAR();
 		this.getModel().setSVMType(new SelectedTag(0, LibLINEAR.TAGS_SVMTYPE));
 	}
-
+	
+	@Override
+	public void setOptions(String[] options) throws Exception {
+		super.setOptions(options);
+		//set the liblinear to use l2 regularized logistic regression
+		this.getModel().setSVMType(new SelectedTag(0, LibLINEAR.TAGS_SVMTYPE));
+	}
+	
 	
 	//test the model implementation
 	public static void main(String[] args) {
@@ -65,12 +72,7 @@ public class LogisticRegressionClassifier extends AbstractLinearClassifier{
 		}
 	}
 
-	@Override
-	public void setOptions(String[] options) throws Exception {
-		super.setOptions(options);
-		//set the liblinear to use l2 regularized logistic regression
-		this.getModel().setSVMType(new SelectedTag(0, LibLINEAR.TAGS_SVMTYPE));
-	}
+	
 	
 
 }
