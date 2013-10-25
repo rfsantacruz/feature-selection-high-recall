@@ -13,10 +13,13 @@ public class evaluatorWEKATest {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		ClassificationProblem cp = new ClassificationProblem("data/iris.data.arff");
-		NaiveBayesClassifier classifier = new NaiveBayesClassifier();
+		
 		
 		try {
+			
+			ClassificationProblem cp = new ClassificationProblem("data/iris.data.arff");
+			NaiveBayesClassifier classifier = new NaiveBayesClassifier();
+			
 			System.out.println("weka eval 1");
 			Evaluation eval = new Evaluation(cp.getData());
 			classifier.buildClassifier(cp.getData());

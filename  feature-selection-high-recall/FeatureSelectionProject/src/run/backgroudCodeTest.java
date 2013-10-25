@@ -119,9 +119,10 @@ public class backgroudCodeTest implements IExperimentCommand {
 	public static void main(String[] args) {
 		double start = System.currentTimeMillis();
 		String path = "./data";
+		String jarPath = "./data/datasets-UCI.jar";
 		IExperimentCommand cmd = new backgroudCodeTest();
-		ExperimentExecutor exe = new ExperimentExecutor();
-		List<ExperimentReport> result = exe.executeCommandInFiles(cmd, path);
+		List<ExperimentReport> result = ExperimentExecutor.getInstance().executeCommandInFiles(cmd, path);
+		//List<ExperimentReport> result = ExperimentExecutor.getInstance().executeCommandInJAR(cmd, jarPath);
 		utils.Util.saveExperimentReportAsCSV("./results/backgroudtest.csv", result, ",");
 		System.out.println("elapsed time: " + (System.currentTimeMillis() - start));
 	}
