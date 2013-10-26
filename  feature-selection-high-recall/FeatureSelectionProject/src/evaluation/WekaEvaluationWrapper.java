@@ -99,6 +99,13 @@ public class WekaEvaluationWrapper{
 	}
 	
 	//wrraped metrics
+	public double accuracy() throws Exception {
+		if(this.wekaEvaluation == null)
+			throw new Exception("The evaluate model was not called before");
+		
+		return 1 - this.wekaEvaluation.errorRate();
+	}
+	
 	
 	public double errorRate() throws Exception {
 		if(this.wekaEvaluation == null)
