@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 import problems.ClassificationProblem;
 import classifiers.NaiveBayesClassifier;
-import evaluation.Evaluator;
+import evaluation.WekaEvaluationWrapper;
 import weka.classifiers.evaluation.Evaluation;
 
 public class evaluatorWEKATest {
@@ -36,7 +36,7 @@ public class evaluatorWEKATest {
 			System.out.println(eval.recall(0));
 			
 			
-			Evaluator eval2 = new Evaluator(cp);
+			WekaEvaluationWrapper eval2 = new WekaEvaluationWrapper(cp);
 			
 			System.out.println("My eval 1");
 			classifier.buildClassifier(cp.getData());
