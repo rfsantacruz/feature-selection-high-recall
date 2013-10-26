@@ -18,7 +18,8 @@ import evaluation.WekaEvaluationWrapper;
 
 public class WekaAPITests {
 
-	//test weka evaluation class. it will fail
+	//test weka evaluation class. it will fail because the weka evaluation class dont reset in each call of evaluatemodel
+	//because that i coded wekaevaluationwrapper
 	@Test
 	public void testWEKAEvaluation() {
 		try{
@@ -71,7 +72,7 @@ public class WekaAPITests {
 	}
 	
 	//test if subsequent calling to build classifier make the classifier training continously 
-	//or in each call it is reseted automatically
+	//or in each call it is reseted automatically. It is reseted...
 	@Test
 	public void testWEKABuildClassfier(){
 

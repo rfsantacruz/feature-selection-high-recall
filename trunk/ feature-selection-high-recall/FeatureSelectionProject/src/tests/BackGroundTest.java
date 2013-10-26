@@ -50,7 +50,7 @@ public class BackGroundTest {
 	}
 
 	//test classifier in artificial linear sparable data
-	//Obs naive bayes is missing in one example
+	//TODO:Obs naive bayes is missing in one example
 	@Test
 	public void testClassifiersInArtificialData() {
 
@@ -91,7 +91,8 @@ public class BackGroundTest {
 		}
 	}
 
-	//test classifier and cross validation in a data base with know performance TODO: test in uci data to check measures (NB and LR)(SVM near)
+	//test classifier and cross validation in a data base with know performance 
+	//TODO: No refrence to NB and LR. There is reference just to Linear SVM (near the reference 0.04 of distance) 
 	@Test
 	public void testClassifierInUCIData() {
 		try{
