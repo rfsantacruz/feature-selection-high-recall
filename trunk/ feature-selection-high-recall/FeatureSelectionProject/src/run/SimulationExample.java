@@ -32,7 +32,7 @@ import experiment.IExperimentCommand;
 import featureSelection.DummyAttributeSelectionAlgorithm;
 import featureSelection.DummySubsetAttributeSelection;
 
-public class backgroudCodeTest implements IExperimentCommand {
+public class SimulationExample implements IExperimentCommand {
 
 
 	@Override
@@ -120,7 +120,7 @@ public class backgroudCodeTest implements IExperimentCommand {
 		double start = System.currentTimeMillis();
 		String path = "./data";
 		String jarPath = "./data/datasets-UCI.jar";
-		IExperimentCommand cmd = new backgroudCodeTest();
+		IExperimentCommand cmd = new SimulationExample();
 		List<ExperimentReport> result = ExperimentExecutor.getInstance().executeCommandInFiles(cmd, path);
 		//List<ExperimentReport> result = ExperimentExecutor.getInstance().executeCommandInJAR(cmd, jarPath);
 		utils.Util.saveExperimentReportAsCSV("./results/backgroudtest.csv", result, ",");
