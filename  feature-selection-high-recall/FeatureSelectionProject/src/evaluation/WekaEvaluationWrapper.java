@@ -21,12 +21,12 @@ import com.google.common.collect.Lists;
 
 import experiment.ExperimentReport;
 
-public class Evaluator{
+public class WekaEvaluationWrapper{
 
 	private Evaluation wekaEvaluation ;
 	private ClassificationProblem problem;
 
-	public Evaluator(ClassificationProblem cp){
+	public WekaEvaluationWrapper(ClassificationProblem cp){
 		this.problem = cp;
 	}
 
