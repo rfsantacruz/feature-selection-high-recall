@@ -58,31 +58,31 @@ public class BackGroundTest {
 
 			ClassificationProblem cp = new ClassificationProblem("./TestDataSets/lsdata1.arff");
 			WekaEvaluationWrapper ev = new WekaEvaluationWrapper(cp);
-			
+
 			AbstractLinearClassifier nb = new NaiveBayesClassifier();
 			AbstractLinearClassifier lr = new LogisticRegressionClassifier();
 			AbstractLinearClassifier svm = new SVMLinearClassifier();
-			
+
 
 			nb.buildClassifier(cp.getData());
 			ev.evaluateModel(nb,cp.getData());
 			double error_rate_nb = ev.errorRate();
-			
-			
+
+
 			lr.buildClassifier(cp.getData());
 			ev.evaluateModel(lr,cp.getData());
 			double error_rate_lr = ev.errorRate();
-			
-			
+
+
 			svm.buildClassifier(cp.getData());
 			ev.evaluateModel(svm,cp.getData());
 			double error_rate_svm = ev.errorRate();
-			
-			
+
+
 			Assert.assertTrue("Naive byes' erro rate for linear separable data have less than 1%", error_rate_nb < 0.01 );
 			Assert.assertTrue("Logistic Regression's erro rate for linear separable data have to be zer0",error_rate_lr == 0 );
 			Assert.assertTrue("Linear SVM's erro rate for linear separable data have to be zero",error_rate_svm == 0 );
-			
+
 
 		}catch(IOException e){
 			fail("Can't read the arff file" + e.getMessage());
@@ -96,7 +96,7 @@ public class BackGroundTest {
 	public void testClassifierInUCIData() {
 		try{
 			ClassificationProblem cp = new ClassificationProblem("./TestDataSets/heart-statlog.arff");
-			
+
 			NaiveBayesClassifier nb = new NaiveBayesClassifier();
 			LogisticRegressionClassifier lr = new LogisticRegressionClassifier();
 			SVMLinearClassifier svm = new SVMLinearClassifier();
@@ -105,13 +105,13 @@ public class BackGroundTest {
 
 			eval.crossValidateModel(nb, cp, 10, 10, null);
 			//Assert.assertTrue("Naive Bayes performance not expected", Math.abs(eval.accuracy()-0.75) < 0.05);
-			
+
 			HashMap<String,Set<String>> paramLR = new HashMap<String,Set<String>>();
 			paramLR.put("-C",utils.Util.generateModelsStringSettings("-C", 0.01, 0.03, 0.1, 0.3, 1, 1.3));
 			paramLR.put("-B",utils.Util.generateModelsStringSettings("-B", 0.01, 0.03, 0.1, 0.3, 1, 1.3));
 			eval.crossValidateModel(lr, cp, 10, 10, paramLR);
 			Assert.assertTrue("Logistic Regression performance not expected", Math.abs(eval.accuracy()-0.85) < 0.05);
-			
+
 
 			HashMap<String,Set<String>> paramSVM = new HashMap<String,Set<String>>();
 			paramSVM.put("-C",utils.Util.generateModelsStringSettings("-C", 0.01, 0.03, 0.1, 0.3, 1, 1.3));
@@ -180,31 +180,31 @@ public class BackGroundTest {
 			ClassificationProblem cp = new ClassificationProblem("./data/iris.data.arff");
 			AbstractLinearClassifier lr = new LogisticRegressionClassifier();
 			WekaEvaluationWrapper ev = new WekaEvaluationWrapper(cp);
-			
+
 			ev.crossValidateModel(lr, cp, 10, 10, null);
 			double accuracy = 1 - ev.errorRate();
 			double precision = ev.precision();
 			double recall = ev.recall();
 			double fmeasure = ev.fMeasure();
-			
+
 			HashMap<String,Set<String>> paramLR = new HashMap<String,Set<String>>();
 			paramLR.put("-C",Sets.newHashSet("-C 0.1", "-C 0.3", "-C 1.0", "-C 1.3"));
 			paramLR.put("-B",Sets.newHashSet("-B 0.1", "-B 0.3", "-B 1.0", "-B 1.3"));
-			
+
 			//return the classifier already tuned
 			ev.crossValidateModel(lr, cp, 10, 10, paramLR);
 			double accuracy_aftercv = 1 - ev.errorRate();
 			double precision_aftercv = ev.precision();
 			double recall_aftercv = ev.recall();
 			double fmeasure_aftercv = ev.fMeasure();
-			
-			
+
+
 			Assert.assertTrue("The cross validated classifier have to be better in accuracy", accuracy_aftercv >=  accuracy);
 			Assert.assertTrue("The cross validated classifier have to be better in precision", precision_aftercv >=  precision);
 			Assert.assertTrue("The cross validator classifier have to be better in recall", recall_aftercv >=  recall);
 			Assert.assertTrue("The cross validator classifier have to be better in fmeasure", fmeasure_aftercv >=  fmeasure);
-			
-			
+
+
 		}catch(IOException e){
 			fail("Can't read the arff file" + e.getMessage());
 		} catch (Exception e) {
@@ -212,5 +212,35 @@ public class BackGroundTest {
 		}
 	}
 
+	//naive test of metrics with the artificial data where the classifier can predict right every trainig example
+	// accuraccy = precision = recall = fmeasure = 1  and errorrate = a
+	public void testMetrics(){
+		String filePath = "./TestDataSets/lsdata1.arff";
+		ClassificationProblem cp;
+		try {
+			
+			cp = new ClassificationProblem(filePath);
+			AbstractLinearClassifier svm = new SVMLinearClassifier();
+			WekaEvaluationWrapper eval = new WekaEvaluationWrapper(cp);
+
+			svm.buildClassifier(cp.getData());
+			eval.evaluateModel(svm,cp.getData());
+			double error_rate_nb = eval.errorRate();
+			double accuracy_nb = eval.accuracy();
+			double precision_nb = eval.precision();
+			double recall_nb = eval.recall();
+			double fmeasure_nb = eval.fMeasure();
+			
+			Assert.assertEquals(error_rate_nb, 0);
+			Assert.assertEquals(accuracy_nb, 1);
+			Assert.assertEquals(precision_nb, 1);
+			Assert.assertEquals(recall_nb, 1);
+			Assert.assertEquals(fmeasure_nb, 1);
+			
+
+		} catch (Exception e) {
+			fail("Problem to read the arrff file: " + e.getMessage());
+		}
+	}
 
 }
