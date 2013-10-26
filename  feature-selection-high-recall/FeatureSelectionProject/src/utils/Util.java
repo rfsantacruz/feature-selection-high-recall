@@ -91,9 +91,6 @@ public class Util {
 		}
 	}
 	
-	public static void saveExperimentReportAsXML(String filePath, List<ExperimentReport> reports){
-		//TODO
-	}
 	
 	//generate all possibles models based on param
 	public static List<String> generateModels(List<Set<String>> paramsList){
