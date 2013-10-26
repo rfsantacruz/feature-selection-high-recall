@@ -25,7 +25,7 @@ import classifiers.AbstractLinearClassifier;
 import classifiers.LogisticRegressionClassifier;
 import classifiers.NaiveBayesClassifier;
 import classifiers.SVMLinearClassifier;
-import evaluation.Evaluator;
+import evaluation.WekaEvaluationWrapper;
 import experiment.ExperimentExecutor;
 import experiment.ExperimentReport;
 import experiment.IExperimentCommand;
@@ -61,7 +61,7 @@ public class backgroudCodeTest implements IExperimentCommand {
 
 		try {
 			//create the evauator object
-			Evaluator ev = new Evaluator(cp);
+			WekaEvaluationWrapper ev = new WekaEvaluationWrapper(cp);
 			
 			//cross validate the models
 			ExperimentReport lrReport = ev.crossValidateModel(lr, cp, 10, System.currentTimeMillis(), paramLR);
