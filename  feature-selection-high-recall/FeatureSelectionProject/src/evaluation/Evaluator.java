@@ -14,19 +14,21 @@ import weka.classifiers.Evaluation;
 import weka.core.Attribute;
 import weka.core.Instances;
 import weka.core.Utils;
+import weka.gui.beans.AbstractEvaluator;
 import classifiers.AbstractLinearClassifier;
 
 import com.google.common.collect.Lists;
 
 import experiment.ExperimentReport;
 
-public class Evaluator extends Evaluation {
+public class Evaluator{
 
+	private Evaluation wekaEvaluation ;
+	private ClassificationProblem problem;
 
-	public Evaluator(ClassificationProblem cp) throws Exception{
-		super(cp.getData());
+	public Evaluator(ClassificationProblem cp){
+		this.problem = cp;
 	}
-
 
 	public ExperimentReport crossValidateModel(AbstractLinearClassifier c, ClassificationProblem cp, int folds, long seed, Map<String,Set<String>> params ){
 
@@ -95,51 +97,68 @@ public class Evaluator extends Evaluation {
 		return reportPerf;
 
 	}
-
-	@Override
-	public void crossValidateModel(Classifier classifier, Instances data,
-			int numFolds, Random random, Object... forPredictionsPrinting)
-					throws Exception {
-		throw new IllegalAccessError("Method does not should to be used");
+	
+	//wrraped metrics
+	
+	public double errorRate() throws Exception {
+		if(this.wekaEvaluation == null)
+			throw new Exception("The evaluate model was not called before");
+		
+		return this.wekaEvaluation.errorRate();
+	}
+	
+	public double correct() throws Exception {
+		if(this.wekaEvaluation == null)
+			throw new Exception("The evaluate model was not called before");
+		
+		return this.wekaEvaluation.correct();
+	}
+	
+	public double incorrect() throws Exception {
+		if(this.wekaEvaluation == null)
+			throw new Exception("The evaluate model was not called before");
+		
+		return this.wekaEvaluation.incorrect();
 	}
 
-	@Override
-	public void crossValidateModel(String classifierString, Instances data,
-			int numFolds, String[] options, Random random) throws Exception {
-		throw new IllegalAccessError("Method does not should to be used");
+	//execute before calculate metrics
+	public void evaluateModel(AbstractLinearClassifier c, Instances test) throws Exception {
+		this.wekaEvaluation = new Evaluation(this.problem.getData());
+		this.wekaEvaluation.evaluateModel(c, test);
 	}
 
-
-	//overload for overall fmeasure
-	public double fMeasure() {
+	//fmeasure
+	public double fMeasure() throws Exception {
+		if(this.wekaEvaluation == null)
+			throw new Exception("The evaluate model was not called before");
+		
 		double retValue = 0.0;
 		int numOfLabels = 0;
-		int classIndex = super.getHeader().classIndex();
-		Attribute att  = super.getHeader().attribute(classIndex);
+		int classIndex = this.wekaEvaluation.getHeader().classIndex();
+		Attribute att  = this.wekaEvaluation.getHeader().attribute(classIndex);
 		
 		Enumeration<String> values = att.enumerateValues();
 		while(values.hasMoreElements()){
 			int classValue = att.indexOfValue(values.nextElement());
 			numOfLabels++;
-			retValue += super.fMeasure(classValue);
+			retValue += this.wekaEvaluation.fMeasure(classValue);
 		}
 
 		return retValue/numOfLabels;
 	}
 
-
 	//overload for overrall precision
 	public double precision() {
 		double retValue = 0.0;
 		int numOfLabels = 0;
-		int classIndex = super.getHeader().classIndex();
-		Attribute att  = super.getHeader().attribute(classIndex);
+		int classIndex = this.wekaEvaluation.getHeader().classIndex();
+		Attribute att  = this.wekaEvaluation.getHeader().attribute(classIndex);
 		
 		Enumeration<String> values = att.enumerateValues();
 		while(values.hasMoreElements()){
 			int classValue = att.indexOfValue(values.nextElement());
 			numOfLabels++;
-			retValue += super.precision(classValue);
+			retValue += this.wekaEvaluation.precision(classValue);
 		}
 
 		return retValue/numOfLabels;
@@ -150,19 +169,28 @@ public class Evaluator extends Evaluation {
 		double retValue = 0.0;
 		int numOfLabels = 0;
 
-		int classIndex = super.getHeader().classIndex();
-		Attribute att  = super.getHeader().attribute(classIndex);
+		int classIndex = this.wekaEvaluation.getHeader().classIndex();
+		Attribute att  = this.wekaEvaluation.getHeader().attribute(classIndex);
 		
 		Enumeration<String> values = att.enumerateValues();
 
 		while(values.hasMoreElements()){
 			int classValue = att.indexOfValue(values.nextElement());
 			numOfLabels++;
-			retValue += super.recall(classValue);
+			retValue += this.wekaEvaluation.recall(classValue);
 		}
 
 		return retValue/numOfLabels;
 	}
+
+
+
+	
+
+	public ClassificationProblem getProblem() {
+		return problem;
+	}
+
 
 
 
