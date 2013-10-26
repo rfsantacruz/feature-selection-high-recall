@@ -115,5 +115,14 @@ public class Util {
 		
 		return modelsStringSetting;
 	}
+	
+	public static Set<String> generateModelsStringSettings(String settingCode, double... values){
+		
+		Set<String> ret = new HashSet<String>();
+		for (double d : values) {
+			ret.add(settingCode + " " + d);
+		}
+		return ret;
+	}
 
 }
