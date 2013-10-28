@@ -3,6 +3,7 @@ package tests;
 import java.util.Arrays;
 
 import problems.ClassificationProblem;
+import classifiers.AbstractLinearClassifier;
 import classifiers.NaiveBayesClassifier;
 import evaluation.WekaEvaluationWrapper;
 import weka.classifiers.evaluation.Evaluation;
@@ -18,7 +19,7 @@ public class evaluatorWEKATest {
 		try {
 			
 			ClassificationProblem cp = new ClassificationProblem("data/iris.data.arff");
-			NaiveBayesClassifier classifier = new NaiveBayesClassifier();
+			AbstractLinearClassifier classifier = new NaiveBayesClassifier();
 			
 			System.out.println("weka eval 1");
 			Evaluation eval = new Evaluation(cp.getData());
