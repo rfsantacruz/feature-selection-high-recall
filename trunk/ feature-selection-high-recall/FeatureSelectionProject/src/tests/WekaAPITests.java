@@ -24,7 +24,7 @@ public class WekaAPITests {
 	public void testWEKAEvaluation() {
 		try{
 			ClassificationProblem cp = new ClassificationProblem("data/iris.data.arff");
-			NaiveBayesClassifier classifier = new NaiveBayesClassifier();
+			AbstractLinearClassifier classifier = new NaiveBayesClassifier();
 
 			Evaluation eval = new Evaluation(cp.getData());
 

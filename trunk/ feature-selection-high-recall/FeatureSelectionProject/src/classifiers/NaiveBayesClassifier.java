@@ -51,7 +51,7 @@ public class NaiveBayesClassifier extends AbstractLinearClassifier {
 		
 		try {
 			ClassificationProblem cp = new ClassificationProblem("data/iris.data.arff");
-			NaiveBayesClassifier classifier = new NaiveBayesClassifier();
+			AbstractLinearClassifier classifier = new NaiveBayesClassifier();
 			classifier.buildClassifier(cp.getData());
 			System.out.println(Arrays.toString(classifier.classifyAll(cp.getData(), null)));
 

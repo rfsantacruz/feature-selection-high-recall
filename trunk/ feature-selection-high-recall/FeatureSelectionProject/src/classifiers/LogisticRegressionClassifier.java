@@ -64,7 +64,7 @@ public class LogisticRegressionClassifier extends AbstractLinearClassifier{
 		
 		try {
 			ClassificationProblem cp = new ClassificationProblem("data/iris.data.arff");
-			LogisticRegressionClassifier classifier = new LogisticRegressionClassifier();
+			AbstractLinearClassifier classifier = new LogisticRegressionClassifier();
 			classifier.buildClassifier(cp.getData());
 			System.out.println(Arrays.toString(classifier.classifyAll(cp.getData(), null)));
 

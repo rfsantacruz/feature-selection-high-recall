@@ -50,7 +50,6 @@ public class BackGroundTest {
 	}
 
 	//test classifier in artificial linear sparable data
-	//TODO:Obs naive bayes is missing in one example
 	@Test
 	public void testClassifiersInArtificialData() {
 
@@ -98,9 +97,9 @@ public class BackGroundTest {
 		try{
 			ClassificationProblem cp = new ClassificationProblem("./TestDataSets/heart-statlog.arff");
 
-			NaiveBayesClassifier nb = new NaiveBayesClassifier();
-			LogisticRegressionClassifier lr = new LogisticRegressionClassifier();
-			SVMLinearClassifier svm = new SVMLinearClassifier();
+			AbstractLinearClassifier nb = new NaiveBayesClassifier();
+			AbstractLinearClassifier lr = new LogisticRegressionClassifier();
+			AbstractLinearClassifier svm = new SVMLinearClassifier();
 
 			WekaEvaluationWrapper eval = new WekaEvaluationWrapper(cp);
 
