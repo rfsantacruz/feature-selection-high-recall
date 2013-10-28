@@ -19,12 +19,9 @@ public class LogisticRegressionClassifier extends AbstractLinearClassifier{
 		classifierName = "LogisticRegression";
 	}
 
-	//get and setter cats to acctual model
+	//get cast to acctual model
 	public LibLINEAR getModel() {
 		return (LibLINEAR)model;
-	}
-	public void setModel(LibLINEAR model) {
-		this.model = model;
 	}
 
 	@Override

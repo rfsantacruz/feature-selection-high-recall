@@ -24,9 +24,6 @@ public class SVMLinearClassifier extends AbstractLinearClassifier {
 
 		//set the liblinear to use L2-loss support vector machines (dual)
 		this.getModel().setSVMType(new SelectedTag(1, LibLINEAR.TAGS_SVMTYPE));
-		
-		//debug:
-		//System.out.println(Arrays.toString(this.getModel().getOptions()));
 
 		//build the classify (= train)
 		this.model.buildClassifier(data);
@@ -56,12 +53,9 @@ public class SVMLinearClassifier extends AbstractLinearClassifier {
 		this.getModel().setSVMType(new SelectedTag(1, LibLINEAR.TAGS_SVMTYPE));
 	}
 
-	//get and setters with cast
+	//get  with cast
 	private LibLINEAR getModel() {
 		return (LibLINEAR)this.model ;
-	}
-	public void setModel(LibLINEAR model) {
-		this.model = model;
 	}
 
 	//test the clasifier implmentation
