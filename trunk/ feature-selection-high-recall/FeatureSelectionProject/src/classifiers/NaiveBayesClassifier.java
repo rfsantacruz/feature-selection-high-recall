@@ -34,10 +34,7 @@ public class NaiveBayesClassifier extends AbstractLinearClassifier {
 	public NaiveBayes getModel() {
 		return (NaiveBayes)model;
 	}
-	public void setModel(NaiveBayes model) {
-		this.model = model;
-	}
-
+	
 	//reset default options
 	@Override
 	public void resetClassifier() {
