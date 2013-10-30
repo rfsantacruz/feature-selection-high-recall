@@ -6,6 +6,6 @@ import problems.ClassificationProblem;
 
 public interface IExperimentCommand {
 
-	public List<ExperimentReport> execute(ClassificationProblem cp);
+	public List<AbstractExperimentReport> execute(ClassificationProblem cp);
 	
 }
