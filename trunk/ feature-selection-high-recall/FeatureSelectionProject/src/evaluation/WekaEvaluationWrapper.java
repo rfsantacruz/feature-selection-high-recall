@@ -9,17 +9,13 @@ import java.util.Set;
 
 import problems.ClassificationProblem;
 import utils.Util;
-import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.core.Attribute;
 import weka.core.Instances;
 import weka.core.Utils;
-import weka.gui.beans.AbstractEvaluator;
 import classifiers.AbstractLinearClassifier;
 
 import com.google.common.collect.Lists;
-
-import experiment.ExperimentReport;
 
 public class WekaEvaluationWrapper{
 
@@ -30,10 +26,13 @@ public class WekaEvaluationWrapper{
 		this.problem = cp;
 	}
 
-	public ExperimentReport crossValidateModel(AbstractLinearClassifier c, ClassificationProblem cp, int folds, long seed, Map<String,Set<String>> params ){
+	public CrossValidationOutput crossValidateModel(AbstractLinearClassifier c, ClassificationProblem cp, int folds, long seed, Map<String,Set<String>> params ){
 
-		ExperimentReport reportPerf = new ExperimentReport(cp.getName(), c.getClassifierName());
-
+		double accuracy = 0;
+		double precision = 0;
+		double recall = 0;
+		double fmeasure = 0;
+		
 		try{
 
 			Random rand = new Random(seed); 
@@ -56,10 +55,11 @@ public class WekaEvaluationWrapper{
 				int trainSize = (int)Math.round(trainAndValid.size() * 0.8);
 				Instances train = new Instances(trainAndValid, 0, trainSize);
 				Instances valid = new Instances(trainAndValid, trainSize , trainAndValid.size() - train.size());
-
+				
+				String optimumSetting = "";
 				if(params != null && !params.isEmpty()){
 					List<String> modelSettings = Util.generateModels(Lists.newArrayList(params.values()));
-					String optimumSetting = "";
+					
 					double erroRate = Double.MAX_VALUE;
 					for (String setting : modelSettings) {
 						c.resetClassifier();
@@ -74,19 +74,19 @@ public class WekaEvaluationWrapper{
 							optimumSetting = setting;
 						}
 					}
-					c.resetClassifier();
-					c.setOptions(Utils.splitOptions(optimumSetting));
 				}
 
 				//train with optimum parameters
+				c.resetClassifier();
+				c.setOptions(Utils.splitOptions(optimumSetting));
 				c.buildClassifier(trainAndValid);
 
 				//test and report the performance
 				this.evaluateModel(c, test);
-				reportPerf.setAccuracy(reportPerf.getAccuracy() + ((1-errorRate())/folds));
-				reportPerf.setPrecision(reportPerf.getPrecision() + (precision()/folds));
-				reportPerf.setRecall(reportPerf.getRecall() + ((recall())/folds));
-				reportPerf.setF_measure(reportPerf.getF_measure() + (fMeasure()/folds));
+				accuracy += (this.accuracy()/folds);
+				precision += (this.precision()/folds);
+				recall += (this.recall()/folds);
+				fmeasure += (this.fMeasure()/folds);
 			}
 
 
@@ -94,7 +94,10 @@ public class WekaEvaluationWrapper{
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		return reportPerf;
+		
+		CrossValidationOutput cvo = new CrossValidationOutput(precision, recall, accuracy, fmeasure);
+		
+		return cvo;
 
 	}
 	
@@ -189,10 +192,6 @@ public class WekaEvaluationWrapper{
 
 		return retValue/numOfLabels;
 	}
-
-
-
-	
 
 	public ClassificationProblem getProblem() {
 		return problem;
