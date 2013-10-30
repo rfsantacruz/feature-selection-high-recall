@@ -1,44 +1,38 @@
 package run;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 import java.util.Set;
-import java.util.logging.Level;
-
-import com.google.common.collect.Sets;
 
 import problems.ClassificationProblem;
-import utils.Util;
 import weka.attributeSelection.ASEvaluation;
-import weka.attributeSelection.GreedyStepwise;
-import weka.filters.supervised.attribute.AttributeSelection;
 import weka.attributeSelection.Ranker;
 import weka.core.Instances;
-import weka.core.Option;
-import weka.core.Utils;
 import weka.filters.Filter;
+import weka.filters.supervised.attribute.AttributeSelection;
 import classifiers.AbstractLinearClassifier;
 import classifiers.LogisticRegressionClassifier;
 import classifiers.NaiveBayesClassifier;
 import classifiers.SVMLinearClassifier;
+
+import com.google.common.collect.Sets;
+
+import evaluation.CrossValidationOutput;
 import evaluation.WekaEvaluationWrapper;
+import experiment.AbstractExperimentReport;
+import experiment.ClassificationExperimentReport;
 import experiment.ExperimentExecutor;
-import experiment.ExperimentReport;
 import experiment.IExperimentCommand;
 import featureSelection.DummyAttributeSelectionAlgorithm;
-import featureSelection.DummySubsetAttributeSelection;
 
 public class SimulationExample implements IExperimentCommand {
 
 
 	@Override
-	public List<ExperimentReport> execute(ClassificationProblem cp) {
+	public List<AbstractExperimentReport> execute(ClassificationProblem cp) {
 
-		List<ExperimentReport> result = new ArrayList<ExperimentReport>();
+		List<AbstractExperimentReport> result = new ArrayList<AbstractExperimentReport>();
 
 		//feature selection
 		//Instances featureSelected = this.featureSelection(cp.getData(),3);
@@ -64,17 +58,20 @@ public class SimulationExample implements IExperimentCommand {
 			WekaEvaluationWrapper ev = new WekaEvaluationWrapper(cp);
 			
 			//cross validate the models
-			ExperimentReport lrReport = ev.crossValidateModel(lr, cp, 10, System.currentTimeMillis(), paramLR);
-			System.out.println(lrReport);
-			result.add(lrReport);
+			CrossValidationOutput lrcv = ev.crossValidateModel(lr, cp, 10, System.currentTimeMillis(), paramLR);
+			System.out.println(lrcv);
+			result.add(new ClassificationExperimentReport(lrcv.getPrecision(), lrcv.getRecall(), lrcv.getAccuracy()
+					, lrcv.getF_measure(), cp.getName(), lr.getClassifierName()));
 			
-			ExperimentReport svmReport = ev.crossValidateModel(svm, cp, 10, System.currentTimeMillis(), paramSVM);
-			System.out.println(svmReport);
-			result.add(svmReport);
+			CrossValidationOutput svmcv = ev.crossValidateModel(svm, cp, 10, System.currentTimeMillis(), paramSVM);
+			System.out.println(svmcv);
+			result.add(new ClassificationExperimentReport(svmcv.getPrecision(), svmcv.getRecall(), svmcv.getAccuracy()
+					, svmcv.getF_measure(), cp.getName(), svm.getClassifierName()));
 			
-			ExperimentReport nbReport = ev.crossValidateModel(nb, cp, 10, System.currentTimeMillis(), null);
-			System.out.println(nbReport);
-			result.add(nbReport);
+			CrossValidationOutput nbcv = ev.crossValidateModel(nb, cp, 10, System.currentTimeMillis(), null);
+			System.out.println(nbcv);
+			result.add(new ClassificationExperimentReport(nbcv.getPrecision(), nbcv.getRecall(), nbcv.getAccuracy()
+					, nbcv.getF_measure(), cp.getName(), nb.getClassifierName()));
 
 			
 		} catch (Exception e) {
@@ -121,9 +118,9 @@ public class SimulationExample implements IExperimentCommand {
 		String path = "./data";
 		String jarPath = "./data/datasets-UCI.jar";
 		IExperimentCommand cmd = new SimulationExample();
-		List<ExperimentReport> result = ExperimentExecutor.getInstance().executeCommandInFiles(cmd, path);
-		//List<ExperimentReport> result = ExperimentExecutor.getInstance().executeCommandInJAR(cmd, jarPath);
-		utils.Util.saveExperimentReportAsCSV("./results/backgroudtest.csv", result, ",");
+		List<AbstractExperimentReport> result = ExperimentExecutor.getInstance().executeCommandInFiles(cmd, path);
+		//List<AbstractExperimentReport> result = ExperimentExecutor.getInstance().executeCommandInJAR(cmd, jarPath);
+		AbstractExperimentReport.saveInFile(result, "./results/backgroudtest.csv");
 		System.out.println("elapsed time: " + (System.currentTimeMillis() - start));
 	}
 
