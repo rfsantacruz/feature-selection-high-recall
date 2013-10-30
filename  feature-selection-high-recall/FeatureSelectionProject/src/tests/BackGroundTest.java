@@ -20,9 +20,11 @@ import classifiers.SVMLinearClassifier;
 
 import com.google.common.collect.Sets;
 
+import evaluation.CrossValidationOutput;
 import evaluation.WekaEvaluationWrapper;
+import experiment.AbstractExperimentReport;
+import experiment.ClassificationExperimentReport;
 import experiment.ExperimentExecutor;
-import experiment.ExperimentReport;
 import experiment.IExperimentCommand;
 
 public class BackGroundTest {
@@ -96,7 +98,7 @@ public class BackGroundTest {
 	public void testClassifierInUCIData() {
 		try{
 			ClassificationProblem cp = new ClassificationProblem("./TestDataSets/heart-statlog.arff");
-
+	
 			AbstractLinearClassifier nb = new NaiveBayesClassifier();
 			AbstractLinearClassifier lr = new LogisticRegressionClassifier();
 			AbstractLinearClassifier svm = new SVMLinearClassifier();
@@ -133,70 +135,72 @@ public class BackGroundTest {
 		IExperimentCommand cmd = new IExperimentCommand() {
 
 			@Override
-			public List<ExperimentReport> execute(ClassificationProblem cp) {
-				ArrayList<ExperimentReport> exp = new ArrayList<ExperimentReport>();
-				exp.add(new ExperimentReport("test", "test"));
+			public List<AbstractExperimentReport> execute(ClassificationProblem cp) {
+				ArrayList<AbstractExperimentReport> exp = new ArrayList<AbstractExperimentReport>();
+				exp.add(new ClassificationExperimentReport("test", "test"));
 				return exp;
 			}
 		};
 		String dataPath = "./data/iris.data.arff";
-		ExperimentReport exprep = ExperimentExecutor.getInstance().executeCommandInFile(cmd, dataPath);
+		ClassificationExperimentReport exprep = (ClassificationExperimentReport)ExperimentExecutor.getInstance().executeCommandInFile(cmd, dataPath);
 		Assert.assertTrue("", exprep.getProblemName().equals("test"));
 
 		IExperimentCommand cmd2 = new IExperimentCommand() {
 
 			@Override
-			public List<ExperimentReport> execute(ClassificationProblem cp) {
-				ArrayList<ExperimentReport> exp = new ArrayList<ExperimentReport>();
-				exp.add(new ExperimentReport(cp.getName(), cp.getName()));
+			public List<AbstractExperimentReport> execute(ClassificationProblem cp) {
+				ArrayList<AbstractExperimentReport> exp = new ArrayList<AbstractExperimentReport>();
+				exp.add(new ClassificationExperimentReport(cp.getName(), cp.getName()));
 				return exp;
 			}
 		};
 		String dataPath2 = "./data";
-		List<ExperimentReport> exprep2 = ExperimentExecutor.getInstance().executeCommandInFiles(cmd2, dataPath2);
+		List<AbstractExperimentReport> exprep2 =  ExperimentExecutor.getInstance().executeCommandInFiles(cmd2, dataPath2);
 		Assert.assertNotNull("Returning null in execute experiemnts in a diretory", exprep2);
 		Assert.assertTrue("Retrunning zero items in execute experiemnts in a diretory", exprep2.size() > 0);
 
 		IExperimentCommand cmd3 = new IExperimentCommand() {
 
 			@Override
-			public List<ExperimentReport> execute(ClassificationProblem cp) {
-				ArrayList<ExperimentReport> exp = new ArrayList<ExperimentReport>();
-				exp.add(new ExperimentReport(cp.getName(), cp.getName()));
+			public List<AbstractExperimentReport> execute(ClassificationProblem cp) {
+				ArrayList<AbstractExperimentReport> exp = new ArrayList<AbstractExperimentReport>();
+				exp.add(new ClassificationExperimentReport(cp.getName(), cp.getName()));
 				return exp;
 			}
 		};
 		String dataPath3 = "./data/datasets-UCI.jar";
-		List<ExperimentReport> exprep3 = ExperimentExecutor.getInstance().executeCommandInJAR(cmd3, dataPath3);
+		List<AbstractExperimentReport> exprep3 = ExperimentExecutor.getInstance().executeCommandInJAR(cmd3, dataPath3);
 		Assert.assertNotNull("Execute Experiment in jar data set: return null", exprep3);
 		Assert.assertTrue("Execute Experiment in jar data set have to get 36 reports(==36 problems)" + exprep3.size(), exprep3.size() == 36);
 
 	}
 
 	//test cross validation
+	//TODO: check if the crossvalidation have to give the best results
 	@Test
 	public void testCrossValidation() {
 		try{
-			ClassificationProblem cp = new ClassificationProblem("./data/iris.data.arff");
+			ClassificationProblem p = new ClassificationProblem("./data/iris.data.arff");
 			AbstractLinearClassifier lr = new LogisticRegressionClassifier();
-			WekaEvaluationWrapper ev = new WekaEvaluationWrapper(cp);
+			WekaEvaluationWrapper ev = new WekaEvaluationWrapper(p);
 
-			ev.crossValidateModel(lr, cp, 10, 10, null);
-			double accuracy = 1 - ev.errorRate();
-			double precision = ev.precision();
-			double recall = ev.recall();
-			double fmeasure = ev.fMeasure();
+			//cross validation with default parameters
+			CrossValidationOutput cvo = ev.crossValidateModel(lr, p, 10, 10, null);
+			double accuracy = cvo.getAccuracy();
+			double precision = cvo.getPrecision();
+			double recall = cvo.getRecall();
+			double fmeasure = cvo.getF_measure();
 
 			HashMap<String,Set<String>> paramLR = new HashMap<String,Set<String>>();
-			paramLR.put("-C",Sets.newHashSet("-C 0.1", "-C 0.3", "-C 1.0", "-C 1.3"));
-			paramLR.put("-B",Sets.newHashSet("-B 0.1", "-B 0.3", "-B 1.0", "-B 1.3"));
+			paramLR.put("-C",Sets.newHashSet("-C 0.1", "-C 0.3", "-C 1.0"));
+			paramLR.put("-B",Sets.newHashSet("-B 0.1", "-B 0.3", "-B 1.0"));
 
-			//return the classifier already tuned
-			ev.crossValidateModel(lr, cp, 10, 10, paramLR);
-			double accuracy_aftercv = 1 - ev.errorRate();
-			double precision_aftercv = ev.precision();
-			double recall_aftercv = ev.recall();
-			double fmeasure_aftercv = ev.fMeasure();
+			//return the classifier already tuned with cross validation with parameters
+			CrossValidationOutput cvo2 = ev.crossValidateModel(lr, p, 10, 10, paramLR);
+			double accuracy_aftercv = cvo2.getAccuracy();
+			double precision_aftercv = cvo2.getPrecision();
+			double recall_aftercv = cvo2.getRecall();
+			double fmeasure_aftercv = cvo2.getF_measure();
 
 
 			Assert.assertTrue("The cross validated classifier have to be better in accuracy", accuracy_aftercv >=  accuracy);
@@ -220,6 +224,7 @@ public class BackGroundTest {
 		try {
 			
 			cp = new ClassificationProblem(filePath);
+
 			AbstractLinearClassifier svm = new SVMLinearClassifier();
 			WekaEvaluationWrapper eval = new WekaEvaluationWrapper(cp);
 
