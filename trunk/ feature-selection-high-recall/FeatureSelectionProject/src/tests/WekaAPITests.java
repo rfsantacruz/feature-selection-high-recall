@@ -1,6 +1,6 @@
 package tests;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
@@ -14,6 +14,7 @@ import classifiers.AbstractLinearClassifier;
 import classifiers.LogisticRegressionClassifier;
 import classifiers.NaiveBayesClassifier;
 import classifiers.SVMLinearClassifier;
+import de.bwaldvogel.liblinear.Problem;
 import evaluation.WekaEvaluationWrapper;
 
 public class WekaAPITests {
@@ -78,7 +79,6 @@ public class WekaAPITests {
 
 		try {
 			ClassificationProblem cp = new ClassificationProblem("./TestDataSets/heart-statlog.arff");
-
 
 			AbstractLinearClassifier nb = new NaiveBayesClassifier();
 			AbstractLinearClassifier lr = new LogisticRegressionClassifier();
