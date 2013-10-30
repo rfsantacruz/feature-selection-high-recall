@@ -1,14 +1,9 @@
 package experiment;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.DecimalFormat;
 
 //class to save the metrics generated
-public class ExperimentReport {
+public class ClassificationExperimentReport extends AbstractExperimentReport{
 
 	private double precision;
 	private double recall;
@@ -18,10 +13,10 @@ public class ExperimentReport {
 	private String classifierName;
 	private static final DecimalFormat  formatter = new DecimalFormat ("#0.000"); 
 
-
-	public ExperimentReport(double precision, double recall, double accuracy,
+	
+	
+	public ClassificationExperimentReport(double precision, double recall, double accuracy,
 			double f_measure, String problemName, String classifierName) {
-		super();
 		this.precision = precision;
 		this.recall = recall;
 		this.accuracy = accuracy;
@@ -30,7 +25,7 @@ public class ExperimentReport {
 		this.setClassifierName(classifierName);
 	}
 
-	public ExperimentReport(String problemName, String classifierName) {
+	public ClassificationExperimentReport(String problemName, String classifierName) {
 		this.problemName = problemName;
 		this.classifierName = classifierName;
 	}
@@ -80,16 +75,18 @@ public class ExperimentReport {
 				+ ", classifierName=" + classifierName + "]";
 	}
 
-	public String toCSV(){
+	private String toCSV(){
 		return 	toCSV(";");
 	}
-	public String toCSV(String sep){
+	private String toCSV(String sep){
 		return problemName + sep + classifierName + sep + formatter.format(accuracy) + sep + formatter.format(precision) + sep + formatter.format(recall) + sep
 				+ formatter.format(f_measure);		
 	}
 
-	public String toXML() {
-		return null;
+	@Override
+	public String outPutRepresentation() {
+		// TODO: implement to plot matlab graphs
+		return this.toCSV();
 	}
 
 
