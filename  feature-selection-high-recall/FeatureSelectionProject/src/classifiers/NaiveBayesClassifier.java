@@ -39,7 +39,6 @@ public class NaiveBayesClassifier extends AbstractLinearClassifier {
 	@Override
 	public void resetClassifier() {
 		model = new NaiveBayesClassifier();
-
 	}
 
 
