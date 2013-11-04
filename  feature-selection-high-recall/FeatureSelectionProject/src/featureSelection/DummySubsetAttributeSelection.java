@@ -20,6 +20,12 @@ public class DummySubsetAttributeSelection extends ASEvaluation implements Subse
 	//analyse subsets of attributes
 	@Override
 	public double evaluateSubset(BitSet subSet) throws Exception {
+		
+		for (int i = 0; i < this.data.numAttributes(); i++) {
+			if(subSet.get(i)){
+				return Math.random();
+			}
+		}
 		return 0;
 	}
 	
