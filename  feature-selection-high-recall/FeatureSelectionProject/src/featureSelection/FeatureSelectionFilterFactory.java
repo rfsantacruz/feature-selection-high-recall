@@ -1,6 +1,5 @@
 package featureSelection;
 
-import classifiers.NaiveBayesClassifier;
 import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.ASSearch;
 import weka.attributeSelection.CfsSubsetEval;
@@ -11,8 +10,7 @@ import weka.attributeSelection.Ranker;
 import weka.attributeSelection.SymmetricalUncertAttributeEval;
 import weka.attributeSelection.WrapperSubsetEval;
 import weka.core.SelectedTag;
-import weka.filters.Filter;
-import weka.filters.supervised.attribute.AttributeSelection;
+import weka.attributeSelection.AttributeSelection;
 
 public class FeatureSelectionFilterFactory {
 
@@ -27,7 +25,7 @@ public class FeatureSelectionFilterFactory {
 	public FeatureSelectionFilterFactory(){}
 
 	//create filter to be used in the simulations 
-	public Filter createFilter(EFeatureSelectionAlgorithm EType,FeatureSelectionFactoryParameters parameter) throws Exception{
+	public AttributeSelection createFilter(EFeatureSelectionAlgorithm EType,FeatureSelectionFactoryParameters parameter) throws Exception{
 		
 		//base classes
 		AttributeSelection attributeSelection = new AttributeSelection();
@@ -119,7 +117,7 @@ public class FeatureSelectionFilterFactory {
 		//wrap the evaluator and the search algorithm
 		attributeSelection.setEvaluator(evaluator);
 		attributeSelection.setSearch(search);
-		attributeSelection.setInputFormat(parameter.getFormatData());
+		//attributeSelection.setInputFormat(parameter.getFormatData());
 
 		//return the filter
 		return attributeSelection;

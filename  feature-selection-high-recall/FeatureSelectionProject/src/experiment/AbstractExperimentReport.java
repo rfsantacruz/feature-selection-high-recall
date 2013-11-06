@@ -10,6 +10,9 @@ public abstract class AbstractExperimentReport {
 
 	
 	public abstract String outPutRepresentation();
+	
+	public abstract void saveInFile(String path);
+	
 	public static void saveInFile(List<AbstractExperimentReport> exps, String filePath){
 		if(exps != null && exps.size() > 0){
 			Path file = Paths.get(filePath);

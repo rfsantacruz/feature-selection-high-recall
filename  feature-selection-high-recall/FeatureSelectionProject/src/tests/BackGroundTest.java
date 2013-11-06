@@ -13,7 +13,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import problems.ClassificationProblem;
-import classifiers.AbstractLinearClassifier;
+import weka.classifiers.AbstractClassifier;
 import classifiers.LogisticRegressionClassifier;
 import classifiers.NaiveBayesClassifier;
 import classifiers.SVMLinearClassifier;
@@ -60,9 +60,9 @@ public class BackGroundTest {
 			ClassificationProblem cp = new ClassificationProblem("./TestDataSets/lsdata1.arff");
 			WekaEvaluationWrapper ev = new WekaEvaluationWrapper(cp);
 
-			AbstractLinearClassifier nb = new NaiveBayesClassifier();
-			AbstractLinearClassifier lr = new LogisticRegressionClassifier();
-			AbstractLinearClassifier svm = new SVMLinearClassifier();
+			AbstractClassifier nb = new NaiveBayesClassifier();
+			AbstractClassifier lr = new LogisticRegressionClassifier();
+			AbstractClassifier svm = new SVMLinearClassifier();
 
 
 			nb.buildClassifier(cp.getData());
@@ -99,9 +99,9 @@ public class BackGroundTest {
 		try{
 			ClassificationProblem cp = new ClassificationProblem("./TestDataSets/heart-statlog.arff");
 	
-			AbstractLinearClassifier nb = new NaiveBayesClassifier();
-			AbstractLinearClassifier lr = new LogisticRegressionClassifier();
-			AbstractLinearClassifier svm = new SVMLinearClassifier();
+			AbstractClassifier nb = new NaiveBayesClassifier();
+			AbstractClassifier lr = new LogisticRegressionClassifier();
+			AbstractClassifier svm = new SVMLinearClassifier();
 
 			WekaEvaluationWrapper eval = new WekaEvaluationWrapper(cp);
 
@@ -181,7 +181,7 @@ public class BackGroundTest {
 	public void testCrossValidation() {
 		try{
 			ClassificationProblem p = new ClassificationProblem("./data/iris.data.arff");
-			AbstractLinearClassifier lr = new LogisticRegressionClassifier();
+			AbstractClassifier lr = new LogisticRegressionClassifier();
 			WekaEvaluationWrapper ev = new WekaEvaluationWrapper(p);
 
 			//cross validation with default parameters
@@ -225,7 +225,7 @@ public class BackGroundTest {
 			
 			cp = new ClassificationProblem(filePath);
 
-			AbstractLinearClassifier svm = new SVMLinearClassifier();
+			AbstractClassifier svm = new SVMLinearClassifier();
 			WekaEvaluationWrapper eval = new WekaEvaluationWrapper(cp);
 
 			svm.buildClassifier(cp.getData());

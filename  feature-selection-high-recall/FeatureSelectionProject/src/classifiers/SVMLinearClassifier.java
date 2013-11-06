@@ -1,21 +1,23 @@
 package classifiers;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Arrays;
 
 import problems.ClassificationProblem;
+import weka.classifiers.AbstractClassifier;
 import weka.classifiers.functions.LibLINEAR;
 import weka.core.Instance;
 import weka.core.Instances;
 import weka.core.SelectedTag;
 
-public class SVMLinearClassifier extends AbstractLinearClassifier {
+public class SVMLinearClassifier extends LibLINEAR {
 
 
 	//constructor
 	public SVMLinearClassifier(){
-		model =  new LibLINEAR();
-		this.getModel().setSVMType(new SelectedTag(1, LibLINEAR.TAGS_SVMTYPE));
-		classifierName = "LinearSVM";
+		this.setSVMType(new SelectedTag(1, LibLINEAR.TAGS_SVMTYPE));
 	}
 
 	@Override
@@ -23,59 +25,61 @@ public class SVMLinearClassifier extends AbstractLinearClassifier {
 			throws Exception {
 
 		//set the liblinear to use L2-loss support vector machines (dual)
-		this.getModel().setSVMType(new SelectedTag(1, LibLINEAR.TAGS_SVMTYPE));
+		this.setSVMType(new SelectedTag(1, LibLINEAR.TAGS_SVMTYPE));
 
 		//build the classify (= train)
-		this.model.buildClassifier(data);
+		super.buildClassifier(data);
 
 	}
-	
+
 	@Override
 	public double classifyInstance(Instance arg0) throws Exception {
 		//set the liblinear to use L2-loss support vector machines (dual)
-		this.getModel().setSVMType(new SelectedTag(1, LibLINEAR.TAGS_SVMTYPE));
+		this.setSVMType(new SelectedTag(1, LibLINEAR.TAGS_SVMTYPE));
 		//classify the new instance
-		return this.model.classifyInstance(arg0);
-	}
-	
-	//reset to default options
-	@Override
-	public void resetClassifier() {
-		this.model = new LibLINEAR();
-		this.getModel().setSVMType(new SelectedTag(1, LibLINEAR.TAGS_SVMTYPE));
-		
-	}
-	
-	@Override
-	public void setOptions(String[] options) throws Exception {
-		super.setOptions(options);
-		//set the liblinear to use l2 regularized logistic regression
-		this.getModel().setSVMType(new SelectedTag(1, LibLINEAR.TAGS_SVMTYPE));
+		return super.classifyInstance(arg0);
 	}
 
-	//get  with cast
-	private LibLINEAR getModel() {
-		return (LibLINEAR)this.model ;
+
+
+	@Override
+	public void setOptions(String[] options) throws Exception {
+
+		//work around to avoid the api print trash in the console
+		PrintStream console = System.out;
+		System.setOut(new PrintStream(new OutputStream() {
+			@Override public void write(int b) throws IOException {}
+		}));
+
+		super.setOptions(options);
+
+		//set the liblinear to use l2 regularized logistic regression
+		this.setSVMType(new SelectedTag(1, LibLINEAR.TAGS_SVMTYPE));
+
+		//work around to avoid the api print trash in the console
+		System.setOut(console);
 	}
+
 
 	//test the clasifier implmentation
 	public static void main(String[] args) {
-		
-		try {
-			
-			ClassificationProblem cp = new ClassificationProblem("data/iris.data.arff");
-			AbstractLinearClassifier classifier = new SVMLinearClassifier();
-			classifier.buildClassifier(cp.getData());
-			System.out.println(Arrays.toString(classifier.classifyAll(cp.getData(), null)));
 
+		try {
+
+			ClassificationProblem cp = new ClassificationProblem("data/iris.data.arff");
+			AbstractClassifier classifier = new SVMLinearClassifier();
+			classifier.buildClassifier(cp.getData());
+			for (Instance instance : cp.getData()) {
+				System.out.print(classifier.classifyInstance(instance) + ", ");
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	
 
-	
+
+
 
 
 
