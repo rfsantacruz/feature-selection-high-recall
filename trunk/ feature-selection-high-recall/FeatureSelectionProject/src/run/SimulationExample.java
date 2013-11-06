@@ -7,11 +7,11 @@ import java.util.Set;
 
 import problems.ClassificationProblem;
 import weka.attributeSelection.ASEvaluation;
-import weka.attributeSelection.Ranker;
+import weka.attributeSelection.GreedyStepwise;
+import weka.classifiers.AbstractClassifier;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.supervised.attribute.AttributeSelection;
-import classifiers.AbstractLinearClassifier;
 import classifiers.LogisticRegressionClassifier;
 import classifiers.NaiveBayesClassifier;
 import classifiers.SVMLinearClassifier;
@@ -24,7 +24,7 @@ import experiment.AbstractExperimentReport;
 import experiment.ClassificationExperimentReport;
 import experiment.ExperimentExecutor;
 import experiment.IExperimentCommand;
-import featureSelection.DummyAttributeSelectionAlgorithm;
+import featureSelection.DummySubsetAttributeSelection;
 
 public class SimulationExample implements IExperimentCommand {
 
@@ -35,7 +35,7 @@ public class SimulationExample implements IExperimentCommand {
 		List<AbstractExperimentReport> result = new ArrayList<AbstractExperimentReport>();
 
 		//feature selection
-		//Instances featureSelected = this.featureSelection(cp.getData(),3);
+		Instances featureSelected = this.featureSelection(cp.getData(),3);
 		//cp.setData(featureSelected);
 
 		//define what parameter each model will cross validate
@@ -49,9 +49,9 @@ public class SimulationExample implements IExperimentCommand {
 		//bayes there is no parameters
 		
 		//create classifier
-		AbstractLinearClassifier lr = new LogisticRegressionClassifier();
-		AbstractLinearClassifier svm = new SVMLinearClassifier();
-		AbstractLinearClassifier nb = new NaiveBayesClassifier();
+		AbstractClassifier lr = new LogisticRegressionClassifier();
+		AbstractClassifier svm = new SVMLinearClassifier();
+		AbstractClassifier nb = new NaiveBayesClassifier();
 
 		try {
 			//create the evauator object
@@ -61,17 +61,17 @@ public class SimulationExample implements IExperimentCommand {
 			CrossValidationOutput lrcv = ev.crossValidateModel(lr, cp, 10, System.currentTimeMillis(), paramLR);
 			System.out.println(lrcv);
 			result.add(new ClassificationExperimentReport(lrcv.getPrecision(), lrcv.getRecall(), lrcv.getAccuracy()
-					, lrcv.getF_measure(), cp.getName(), lr.getClassifierName()));
+					, lrcv.getF_measure(), cp.getName(), "LogisticRegression"));
 			
 			CrossValidationOutput svmcv = ev.crossValidateModel(svm, cp, 10, System.currentTimeMillis(), paramSVM);
 			System.out.println(svmcv);
 			result.add(new ClassificationExperimentReport(svmcv.getPrecision(), svmcv.getRecall(), svmcv.getAccuracy()
-					, svmcv.getF_measure(), cp.getName(), svm.getClassifierName()));
+					, svmcv.getF_measure(), cp.getName(), "SVMLinear"));
 			
 			CrossValidationOutput nbcv = ev.crossValidateModel(nb, cp, 10, System.currentTimeMillis(), null);
 			System.out.println(nbcv);
 			result.add(new ClassificationExperimentReport(nbcv.getPrecision(), nbcv.getRecall(), nbcv.getAccuracy()
-					, nbcv.getF_measure(), cp.getName(), nb.getClassifierName()));
+					, nbcv.getF_measure(), cp.getName(), "NaiveBayes"));
 
 			
 		} catch (Exception e) {
@@ -91,13 +91,13 @@ public class SimulationExample implements IExperimentCommand {
 			//atribute selection filter
 			AttributeSelection attributeSelection = new AttributeSelection();
 			//obect to evaluate the attribute and guide the search
-			ASEvaluation myfeatureSelection = new DummyAttributeSelectionAlgorithm();
-			//ASEvaluation myfeatureSelection = new DummySubsetAttributeSelection(); //in case of subset selection
+			//ASEvaluation myfeatureSelection = new DummyAttributeSelectionAlgorithm();
+			ASEvaluation myfeatureSelection = new DummySubsetAttributeSelection(); //in case of subset selection
 			
 			//choose based on a rank of the attibutes evaluated
-			Ranker search = new Ranker();
-			search.setNumToSelect(n);
-			//GreedyStepwise search = new GreedyStepwise(); // in case of subset selection
+			//Ranker search = new Ranker();
+			//search.setNumToSelect(n);
+			GreedyStepwise search = new GreedyStepwise(); // in case of subset selection
 			
 			//wrap
 			attributeSelection.setEvaluator(myfeatureSelection);

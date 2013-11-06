@@ -5,27 +5,14 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
-import java.util.Enumeration;
 
 import org.junit.Test;
 
-import classifiers.NaiveBayesClassifier;
-
 import problems.ClassificationProblem;
-import weka.attributeSelection.ASEvaluation;
-import weka.attributeSelection.CfsSubsetEval;
-import weka.attributeSelection.GreedyStepwise;
-import weka.attributeSelection.Ranker;
-import weka.attributeSelection.WrapperSubsetEval;
-import weka.classifiers.bayes.NaiveBayes;
-import weka.classifiers.meta.AttributeSelectedClassifier;
-import weka.core.Instances;
-import weka.core.SelectedTag;
-import weka.filters.Filter;
-import weka.filters.supervised.attribute.AttributeSelection;
+import weka.attributeSelection.AttributeSelection;
 import JavaMI.Entropy;
 import JavaMI.MutualInformation;
-import featureSelection.ConditionalEntropyFeatureSelection;
+import classifiers.NaiveBayesClassifier;
 import featureSelection.EFeatureSelectionAlgorithm;
 import featureSelection.FeatureSelectionFactoryParameters;
 import featureSelection.FeatureSelectionFilterFactory;
@@ -72,12 +59,17 @@ public class FeatureSelectionAlgorithmsTest {
 			FeatureSelectionFactoryParameters parameter = 
 					new FeatureSelectionFactoryParameters(5, null, cp.getData());
 
-			Filter filter = FeatureSelectionFilterFactory.getInstance()
+			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
 					.createFilter(EFeatureSelectionAlgorithm.INFORMATIONGAIN_RANK, parameter);
 
 			//exeute
-			Instances featureSelected = Filter.useFilter(cp.getData(), filter);
-			System.out.println(featureSelected.toSummaryString());
+			filter.SelectAttributes(cp.getData());
+			int[] idxs = filter.selectedAttributes();
+			System.out.println(EFeatureSelectionAlgorithm.INFORMATIONGAIN_RANK.name());
+			for (int id : idxs) {
+				System.out.println(cp.getData().attribute(id));
+			}
+
 
 
 		} catch (IOException e) {
@@ -100,12 +92,16 @@ public class FeatureSelectionAlgorithmsTest {
 					new FeatureSelectionFactoryParameters(5, null, cp.getData());
 
 			//filter application
-			Filter filter = FeatureSelectionFilterFactory.getInstance()
+			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
 					.createFilter(EFeatureSelectionAlgorithm.CONDITIONAL_ENTROPY_RANK, parameter);
 
 			//exeute
-			Instances featureSelected = Filter.useFilter(cp.getData(), filter);
-			System.out.println(featureSelected.toSummaryString());
+			filter.SelectAttributes(cp.getData());
+			int[] idxs = filter.selectedAttributes();
+			System.out.println(EFeatureSelectionAlgorithm.CONDITIONAL_ENTROPY_RANK.name());
+			for (int id : idxs) {
+				System.out.println(cp.getData().attribute(id));
+			}
 
 		} catch (IOException e) {
 			fail("problems to read the data set: " + e.getMessage());
@@ -127,12 +123,16 @@ public class FeatureSelectionAlgorithmsTest {
 					new FeatureSelectionFactoryParameters(5, null, cp.getData());
 
 			//filter application
-			Filter filter = FeatureSelectionFilterFactory.getInstance()
+			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
 					.createFilter(EFeatureSelectionAlgorithm.GAINRATIO_RANK, parameter);
 
 			//exeute
-			Instances featureSelected = Filter.useFilter(cp.getData(), filter);
-			System.out.println(featureSelected.toSummaryString());
+			filter.SelectAttributes(cp.getData());
+			int[] idxs = filter.selectedAttributes();
+			System.out.println(EFeatureSelectionAlgorithm.GAINRATIO_RANK.name());
+			for (int id : idxs) {
+				System.out.println(cp.getData().attribute(id));
+			}
 
 		} catch (IOException e) {
 			fail("problems to read the data set: " + e.getMessage());
@@ -154,12 +154,16 @@ public class FeatureSelectionAlgorithmsTest {
 					new FeatureSelectionFactoryParameters(5, null, cp.getData());
 
 			//filter application
-			Filter filter = FeatureSelectionFilterFactory.getInstance()
+			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
 					.createFilter(EFeatureSelectionAlgorithm.SYMMETRICAL_UNCERT_RANK, parameter);
 
 			//exeute
-			Instances featureSelected = Filter.useFilter(cp.getData(), filter);
-			System.out.println(featureSelected.toSummaryString());
+			filter.SelectAttributes(cp.getData());
+			int[] idxs = filter.selectedAttributes();
+			System.out.println(EFeatureSelectionAlgorithm.SYMMETRICAL_UNCERT_RANK.name());
+			for (int id : idxs) {
+				System.out.println(cp.getData().attribute(id));
+			}
 
 		} catch (IOException e) {
 			fail("problems to read the data set: " + e.getMessage());
@@ -181,12 +185,16 @@ public class FeatureSelectionAlgorithmsTest {
 					new FeatureSelectionFactoryParameters(5, null, cp.getData());
 
 			//filter application
-			Filter filter = FeatureSelectionFilterFactory.getInstance()
+			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
 					.createFilter(EFeatureSelectionAlgorithm.CORRELATION_BASED_SUBSET, parameter);
 
 			//exeute
-			Instances featureSelected = Filter.useFilter(cp.getData(), filter);
-			System.out.println(featureSelected.toSummaryString());
+			filter.SelectAttributes(cp.getData());
+			int[] idxs = filter.selectedAttributes();
+			System.out.println(EFeatureSelectionAlgorithm.CORRELATION_BASED_SUBSET.name());
+			for (int id : idxs) {
+				System.out.println(cp.getData().attribute(id));
+			}
 
 		} catch (IOException e) {
 			fail("problems to read the data set: " + e.getMessage());
@@ -208,12 +216,16 @@ public class FeatureSelectionAlgorithmsTest {
 					new FeatureSelectionFactoryParameters(5, null, cp.getData());
 
 			//filter application
-			Filter filter = FeatureSelectionFilterFactory.getInstance()
+			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
 					.createFilter(EFeatureSelectionAlgorithm.MRMR_MI_BASED_SUBSET, parameter);
 
 			//exeute
-			Instances featureSelected = Filter.useFilter(cp.getData(), filter);
-			System.out.println(featureSelected.toSummaryString());
+			filter.SelectAttributes(cp.getData());
+			System.out.println(EFeatureSelectionAlgorithm.MRMR_MI_BASED_SUBSET.name());
+			int[] idxs = filter.selectedAttributes();
+			for (int id : idxs) {
+				System.out.println(cp.getData().attribute(id));
+			}
 
 		} catch (IOException e) {
 			fail("problems to read the data set: " + e.getMessage());
@@ -223,7 +235,7 @@ public class FeatureSelectionAlgorithmsTest {
 
 	}
 
-	
+
 	//TODO: check the scott answer about the foward selection
 	@Test
 	public void testForwardFeatureSelectionAlgorithm(){
@@ -237,12 +249,17 @@ public class FeatureSelectionAlgorithmsTest {
 					new FeatureSelectionFactoryParameters(5, new NaiveBayesClassifier(), cp.getData());
 
 			//filter application
-			Filter filter = FeatureSelectionFilterFactory.getInstance()
+			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
 					.createFilter(EFeatureSelectionAlgorithm.FORWARD_SELECTION_WRAPPER, parameter);
 
 			//exeute
-			Instances featureSelected = Filter.useFilter(cp.getData(), filter);
-			System.out.println(featureSelected.toSummaryString());
+			filter.SelectAttributes(cp.getData());
+			int[] idxs = filter.selectedAttributes();
+			System.out.println(EFeatureSelectionAlgorithm.FORWARD_SELECTION_WRAPPER.name());
+			for (int id : idxs) {
+				System.out.println(cp.getData().attribute(id));
+			}
+
 
 		} catch (IOException e) {
 			fail("problems to read the data set: " + e.getMessage());
@@ -264,12 +281,16 @@ public class FeatureSelectionAlgorithmsTest {
 					new FeatureSelectionFactoryParameters(5, new NaiveBayesClassifier(), cp.getData());
 
 			//filter application
-			Filter filter = FeatureSelectionFilterFactory.getInstance()
+			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
 					.createFilter(EFeatureSelectionAlgorithm.BACKWARD_SELECTION_WRAPPER, parameter);
 
 			//exeute
-			Instances featureSelected = Filter.useFilter(cp.getData(), filter);
-			System.out.println(featureSelected.toSummaryString());
+			filter.SelectAttributes(cp.getData());
+			int[] idxs = filter.selectedAttributes();
+			System.out.println(EFeatureSelectionAlgorithm.BACKWARD_SELECTION_WRAPPER.name());
+			for (int id : idxs) {
+				System.out.println(cp.getData().attribute(id));
+			}
 
 		} catch (IOException e) {
 			fail("problems to read the data set: " + e.getMessage());
@@ -278,6 +299,6 @@ public class FeatureSelectionAlgorithmsTest {
 		}
 	}
 
-	
-	
+
+
 }

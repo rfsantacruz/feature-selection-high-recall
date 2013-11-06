@@ -9,12 +9,14 @@ import junit.framework.Assert;
 import org.junit.Test;
 
 import problems.ClassificationProblem;
+import weka.classifiers.AbstractClassifier;
 import weka.classifiers.evaluation.Evaluation;
-import classifiers.AbstractLinearClassifier;
+import weka.core.Instances;
+import weka.filters.Filter;
+import weka.filters.unsupervised.attribute.Remove;
 import classifiers.LogisticRegressionClassifier;
 import classifiers.NaiveBayesClassifier;
 import classifiers.SVMLinearClassifier;
-import de.bwaldvogel.liblinear.Problem;
 import evaluation.WekaEvaluationWrapper;
 
 public class WekaAPITests {
@@ -25,7 +27,7 @@ public class WekaAPITests {
 	public void testWEKAEvaluation() {
 		try{
 			ClassificationProblem cp = new ClassificationProblem("data/iris.data.arff");
-			AbstractLinearClassifier classifier = new NaiveBayesClassifier();
+			AbstractClassifier classifier = new NaiveBayesClassifier();
 
 			Evaluation eval = new Evaluation(cp.getData());
 
@@ -80,9 +82,9 @@ public class WekaAPITests {
 		try {
 			ClassificationProblem cp = new ClassificationProblem("./TestDataSets/heart-statlog.arff");
 
-			AbstractLinearClassifier nb = new NaiveBayesClassifier();
-			AbstractLinearClassifier lr = new LogisticRegressionClassifier();
-			AbstractLinearClassifier svm = new SVMLinearClassifier();
+			AbstractClassifier nb = new NaiveBayesClassifier();
+			AbstractClassifier lr = new LogisticRegressionClassifier();
+			AbstractClassifier svm = new SVMLinearClassifier();
 
 			WekaEvaluationWrapper eval = new WekaEvaluationWrapper(cp);
 			
@@ -124,4 +126,25 @@ public class WekaAPITests {
 		}
 	}
 
+	@Test
+	public void testFilters(){
+		try {
+			ClassificationProblem cp = new ClassificationProblem("data/iris.data.arff");
+			Instances data = cp.getData();
+			Remove rm = new Remove();
+			rm.setAttributeIndicesArray(new int[]{1,4});
+			rm.setInputFormat(data);
+			Instances res = Filter.useFilter(data, rm);
+			
+			System.out.println(res == data);
+			
+			
+		} catch (IOException e) {
+			fail("cant read the data set");
+			e.printStackTrace();
+		} catch (Exception e) {
+			
+			e.printStackTrace();
+		}
+	}
 }

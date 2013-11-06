@@ -1,5 +1,9 @@
 package experiment;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.DecimalFormat;
 
 //class to save the metrics generated
@@ -13,8 +17,8 @@ public class ClassificationExperimentReport extends AbstractExperimentReport{
 	private String classifierName;
 	private static final DecimalFormat  formatter = new DecimalFormat ("#0.000"); 
 
-	
-	
+
+
 	public ClassificationExperimentReport(double precision, double recall, double accuracy,
 			double f_measure, String problemName, String classifierName) {
 		this.precision = precision;
@@ -85,8 +89,18 @@ public class ClassificationExperimentReport extends AbstractExperimentReport{
 
 	@Override
 	public String outPutRepresentation() {
-		// TODO: implement to plot matlab graphs
 		return this.toCSV();
+	}
+
+	@Override
+	public void saveInFile(String filePath) {
+		Path file = Paths.get(filePath);
+		try(PrintWriter out = new PrintWriter(file.toFile())){
+			out.println(this.outPutRepresentation());
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 
