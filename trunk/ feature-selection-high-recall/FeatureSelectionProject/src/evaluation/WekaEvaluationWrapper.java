@@ -41,95 +41,89 @@ public class WekaEvaluationWrapper{
 		this.problem = cp;
 	}
 
-	public CrossValidationOutput crossValidateModel(AbstractClassifier c, ClassificationProblem cp, int folds, long seed, Map<String,Set<String>> params ){
+	public CrossValidationOutput crossValidateModel(AbstractClassifier c, ClassificationProblem cp, int folds, long seed, Map<String,Set<String>> params ) throws Exception{
 		return this.crossValidateModel(c, null, cp, folds, seed, params);
 	}
-	public CrossValidationOutput crossValidateModel(AbstractClassifier c, AttributeSelection FeatureSelector,ClassificationProblem cp, int folds, long seed, Map<String,Set<String>> params ){
+	public CrossValidationOutput crossValidateModel(AbstractClassifier c, AttributeSelection FeatureSelector,ClassificationProblem cp, int folds, long seed, Map<String,Set<String>> params ) throws Exception{
 
 		double accuracy = 0;
 		double precision = 0;
 		double recall = 0;
 		double fmeasure = 0;
 
-		try{
 
-			Random rand = new Random(seed); 
-			//randomize the data
-			Instances randData = new Instances(cp.getData());   
-			randData.randomize(rand);
+		Random rand = new Random(seed); 
+		//randomize the data
+		Instances randData = new Instances(cp.getData());   
+		randData.randomize(rand);
 
-			//if it's necessary stratify to put aproximadetly 
-			//the same amount of data of different classes in each fold
-			//randData.stratify(folds);
+		//if it's necessary stratify to put aproximadetly 
+		//the same amount of data of different classes in each fold
+		//randData.stratify(folds);
 
-			//for each fold
-			for (int n = 0; n < folds; n++) {
-				//split: (train + validation) and test
-				Instances trainAndValid = randData.trainCV(folds, n);
-				Instances test = randData.testCV(folds, n);
-
-
-				//split: train and validation
-				int trainSize = (int)Math.round(trainAndValid.size() * 0.8);
-				Instances train = new Instances(trainAndValid, 0, trainSize);
-				Instances valid = new Instances(trainAndValid, trainSize , trainAndValid.size() - train.size());
-
-				//perform the feature selection in the train data
-				if (FeatureSelector != null) {
-					//select feature algorithm invocation
-					FeatureSelector.SelectAttributes(train);
-					//get attributes indexes
-					int[] selectedFeatures = FeatureSelector.selectedAttributes();
-					//build a filter to remove not selected features
-					Remove rm = new Remove();
-					rm.setInvertSelection(true);
-					rm.setAttributeIndicesArray(selectedFeatures);
-					rm.setInputFormat(train);
-					//remove not selected features
-					train = Filter.useFilter(train, rm);
-					valid = Filter.useFilter(valid, rm);
-					test = Filter.useFilter(test, rm);
-					trainAndValid  = Filter.useFilter(trainAndValid, rm);
-				}	
-				
+		//for each fold
+		for (int n = 0; n < folds; n++) {
+			//split: (train + validation) and test
+			Instances trainAndValid = randData.trainCV(folds, n);
+			Instances test = randData.testCV(folds, n);
 
 
-				String optimumSetting = "";
-				if(params != null && !params.isEmpty()){
-					List<String> modelSettings = Util.generateModels(Lists.newArrayList(params.values()));
+			//split: train and validation
+			int trainSize = (int)Math.round(trainAndValid.size() * 0.8);
+			Instances train = new Instances(trainAndValid, 0, trainSize);
+			Instances valid = new Instances(trainAndValid, trainSize , trainAndValid.size() - train.size());
 
-					double erroRate = Double.MAX_VALUE;
-					for (String setting : modelSettings) {
-						//set parameter, train and evaluate
-						c.setOptions(Utils.splitOptions(setting));
-						c.buildClassifier(train);
-						this.evaluateModel(c, valid);
-						double currentErrorRate = errorRate();
+			//perform the feature selection in the train data
+			if (FeatureSelector != null) {
+				//select feature algorithm invocation
+				FeatureSelector.SelectAttributes(train);
+				//get attributes indexes
+				int[] selectedFeatures = FeatureSelector.selectedAttributes();
+				//build a filter to remove not selected features
+				Remove rm = new Remove();
+				rm.setInvertSelection(true);
+				rm.setAttributeIndicesArray(selectedFeatures);
+				rm.setInputFormat(train);
+				//remove not selected features
+				train = Filter.useFilter(train, rm);
+				valid = Filter.useFilter(valid, rm);
+				test = Filter.useFilter(test, rm);
+				trainAndValid  = Filter.useFilter(trainAndValid, rm);
+			}	
 
-						if(currentErrorRate  < erroRate){
-							erroRate = currentErrorRate;
-							optimumSetting = setting;
-						}
+
+
+			String optimumSetting = "";
+			if(params != null && !params.isEmpty()){
+				List<String> modelSettings = Util.generateModels(Lists.newArrayList(params.values()));
+
+				double erroRate = Double.MAX_VALUE;
+				for (String setting : modelSettings) {
+					//set parameter, train and evaluate
+					c.setOptions(Utils.splitOptions(setting));
+					c.buildClassifier(train);
+					this.evaluateModel(c, valid);
+					double currentErrorRate = errorRate();
+
+					if(currentErrorRate  < erroRate){
+						erroRate = currentErrorRate;
+						optimumSetting = setting;
 					}
 				}
-
-				//train with optimum parameters
-				c.setOptions(Utils.splitOptions(optimumSetting));
-				c.buildClassifier(trainAndValid);
-
-				//test and report the performance
-				this.evaluateModel(c, test);
-				accuracy += (this.accuracy()/folds);
-				precision += (this.precision()/folds);
-				recall += (this.recall()/folds);
-				fmeasure += (this.fMeasure()/folds);
 			}
 
+			//train with optimum parameters
+			c.setOptions(Utils.splitOptions(optimumSetting));
+			c.buildClassifier(trainAndValid);
 
-
-		}catch(Exception e){
-			e.printStackTrace();
+			//test and report the performance
+			this.evaluateModel(c, test);
+			accuracy += (this.accuracy()/folds);
+			precision += (this.precision()/folds);
+			recall += (this.recall()/folds);
+			fmeasure += (this.fMeasure()/folds);
 		}
+
 
 		CrossValidationOutput cvo = new CrossValidationOutput(precision, recall, accuracy, fmeasure);
 

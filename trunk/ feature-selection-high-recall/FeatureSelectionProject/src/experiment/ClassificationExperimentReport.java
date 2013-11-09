@@ -80,7 +80,7 @@ public class ClassificationExperimentReport extends AbstractExperimentReport{
 	}
 
 	private String toCSV(){
-		return 	toCSV(";");
+		return 	toCSV(",");
 	}
 	private String toCSV(String sep){
 		return problemName + sep + classifierName + sep + formatter.format(accuracy) + sep + formatter.format(precision) + sep + formatter.format(recall) + sep
@@ -88,20 +88,32 @@ public class ClassificationExperimentReport extends AbstractExperimentReport{
 	}
 
 	@Override
-	public String outPutRepresentation() {
-		return this.toCSV();
-	}
-
-	@Override
 	public void saveInFile(String filePath) {
 		Path file = Paths.get(filePath);
 		try(PrintWriter out = new PrintWriter(file.toFile())){
-			out.println(this.outPutRepresentation());
+			out.println(this.toCSV());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 
 	}
+
+	@Override
+	public void plot(String filePath) {
+		//nothing implemented
+	}
+	@Override
+	public String saveString() {
+		return this.toCSV();
+	}
+
+	@Override
+	public String plotString() {
+		// nothing to implement
+		return null;
+	}
+	
+
 
 
 }

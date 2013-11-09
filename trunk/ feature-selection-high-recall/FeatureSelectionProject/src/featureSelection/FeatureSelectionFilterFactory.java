@@ -3,6 +3,7 @@ package featureSelection;
 import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.ASSearch;
 import weka.attributeSelection.CfsSubsetEval;
+import weka.attributeSelection.CorrelationAttributeEval;
 import weka.attributeSelection.GainRatioAttributeEval;
 import weka.attributeSelection.GreedyStepwise;
 import weka.attributeSelection.InfoGainAttributeEval;
@@ -45,6 +46,14 @@ public class FeatureSelectionFilterFactory {
 		case CONDITIONAL_ENTROPY_RANK:
 			//conditional entropy evaluator
 			evaluator = new ConditionalEntropyFeatureSelection();
+			//rank the features based on the evaluator
+			search = new Ranker();
+			((Ranker) search).setNumToSelect(parameter.getNumberOfFeature());
+			break;
+			
+		case CORRELATION_BASED_RANK:
+			//Pearson Correlation by attribute
+			evaluator = new CorrelationAttributeEval();
 			//rank the features based on the evaluator
 			search = new Ranker();
 			((Ranker) search).setNumToSelect(parameter.getNumberOfFeature());

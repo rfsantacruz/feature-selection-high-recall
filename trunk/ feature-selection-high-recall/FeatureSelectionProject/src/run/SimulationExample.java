@@ -120,7 +120,7 @@ public class SimulationExample implements IExperimentCommand {
 		IExperimentCommand cmd = new SimulationExample();
 		List<AbstractExperimentReport> result = ExperimentExecutor.getInstance().executeCommandInFiles(cmd, path);
 		//List<AbstractExperimentReport> result = ExperimentExecutor.getInstance().executeCommandInJAR(cmd, jarPath);
-		AbstractExperimentReport.saveInFile(result, "./results/backgroudtest.csv");
+		AbstractExperimentReport.saveAll(result, "./results/backgroudtest.csv");
 		System.out.println("elapsed time: " + (System.currentTimeMillis() - start));
 	}
 

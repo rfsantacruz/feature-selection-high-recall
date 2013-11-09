@@ -3,12 +3,17 @@ package tests;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import junit.framework.Assert;
 
 import org.junit.Test;
 
 import problems.ClassificationProblem;
+import utils.Util;
 import weka.classifiers.AbstractClassifier;
 import weka.classifiers.evaluation.Evaluation;
 import weka.core.Instances;
@@ -73,7 +78,7 @@ public class WekaAPITests {
 			fail("Erro in build the classifier" + e.getMessage());
 		}
 	}
-	
+
 	//test if subsequent calling to build classifier make the classifier training continously 
 	//or in each call it is reseted automatically. It is reseted...
 	@Test
@@ -87,39 +92,39 @@ public class WekaAPITests {
 			AbstractClassifier svm = new SVMLinearClassifier();
 
 			WekaEvaluationWrapper eval = new WekaEvaluationWrapper(cp);
-			
+
 			//nb
 			nb.buildClassifier(cp.getData());
 			eval.evaluateModel(nb, cp.getData());
 			double accuracy1 = eval.accuracy();
-			
+
 			nb.buildClassifier(cp.getData());
 			eval.evaluateModel(nb, cp.getData());
 			double accuracy2 = eval.accuracy();
 			Assert.assertTrue("The accuracy or other metric have to be the same after subsequent naivebayes.buildclassifier", accuracy1 == accuracy2);
-			
+
 			//lr
 			lr.buildClassifier(cp.getData());
 			eval.evaluateModel(lr, cp.getData());
 			accuracy1 = eval.accuracy();
-			
+
 			lr.buildClassifier(cp.getData());
 			eval.evaluateModel(lr, cp.getData());
 			accuracy2 = eval.accuracy();
 			Assert.assertTrue("The accuracy or other metric have to be the same after subsequent logisticRegression.buildclassifier", accuracy1 == accuracy2);
-			
+
 			//svm
 			svm.buildClassifier(cp.getData());
 			eval.evaluateModel(svm, cp.getData());
 			accuracy1 = eval.accuracy();
-			
+
 			svm.buildClassifier(cp.getData());
 			eval.evaluateModel(svm, cp.getData());
 			accuracy2 = eval.accuracy();
 			Assert.assertTrue("The accuracy or other metric have to be the same after subsequent svm.buildclassifier", accuracy1 == accuracy2);
-			
-			
-			
+
+
+
 		} catch (Exception e) {
 			fail("can not read the file or problem in evaluation");
 			e.printStackTrace();
@@ -135,15 +140,15 @@ public class WekaAPITests {
 			rm.setAttributeIndicesArray(new int[]{1,4});
 			rm.setInputFormat(data);
 			Instances res = Filter.useFilter(data, rm);
-			
+
 			System.out.println(res == data);
-			
-			
+
+
 		} catch (IOException e) {
 			fail("cant read the data set");
 			e.printStackTrace();
 		} catch (Exception e) {
-			
+
 			e.printStackTrace();
 		}
 	}

@@ -12,6 +12,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.text.StrBuilder;
+
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
@@ -26,14 +28,55 @@ public class FeatureSelectionExperimentReport extends AbstractExperimentReport {
 	private int maxNumFeatures;
 	private String metricName;
 
-
 	@Override
-	public String outPutRepresentation() {
-		return null;
+	public void saveInFile(String path) {
+		String fileName = Joiner.on("_").skipNulls().join(this.problem, this.classifier, this.metricName, ".m" );
+		Path file = Paths.get(path,fileName);
+
+		try(PrintWriter out = new PrintWriter(file.toFile())){
+
+			out.print(this.saveString());			
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+
+	}
+	
+	@Override
+	public String saveString() {
+		
+		StrBuilder sb = new StrBuilder();
+		sb.appendln(Joiner.on(",").skipNulls().join(this.problem, this.classifier, this.metricName,this.maxNumFeatures));
+
+		for (String alg : featureSelection2metric.keySet()) {
+			if(featureSelection2metric.get(alg) != null){
+				sb.append(Joiner.on(",").skipNulls().join(alg,","));
+				sb.appendln(Joiner.on(",").skipNulls().join(featureSelection2metric.get(alg)));
+			}
+		}
+		return sb.toString();
+	}
+		
+	@Override
+	public void plot(String path) {
+
+		String fileName = Joiner.on("_").skipNulls().join(this.problem, this.classifier, this.metricName, ".m" );
+		Path file = Paths.get(path,fileName);
+
+		try(PrintWriter out = new PrintWriter(file.toFile())){
+
+			out.print(this.plotString());			
+
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
-	public void saveInFile(String path) {
+	public String plotString() {
+
+		StrBuilder sb = new StrBuilder();
 
 		Iterator<String> plotSymbols =   Iterables.cycle(
 				"'-yo'","'-mo'","'-co'","'-ro'","'-go'","'-bo'","'-wo'","'-ko'",
@@ -42,47 +85,41 @@ public class FeatureSelectionExperimentReport extends AbstractExperimentReport {
 				"'-yx'","'-mx'","'-cx'","'-rx'","'-gx'","'-bx'","'-wx'","'-kx'",
 				"'-ys'","'-ms'","'-cs'","'-rs'","'-gs'","'-bs'","'-ws'","'-ks'",
 				"'-yd'","'-md'","'-cd'","'-rd'","'-gd'","'-bd'","'-wd'","'-kd'").iterator();
-		
-		String fileName = Joiner.on("_").skipNulls().join(this.problem, this.classifier, this.metricName, ".m" );
 
-		Path file = Paths.get(path,fileName);
-		try(PrintWriter out = new PrintWriter(file.toFile())){
 
-			out.println("%simulation Plot");
 
-			out.println("%open plot");
-			out.println("figure, hold on;");
-			out.println();
+		sb.appendln("%simulation Plot");
 
-			out.println("%Simulation results");
-			out.println("n_features = [1: "+ this.maxNumFeatures + "];");
-			out.println();
-			List<String> legend = new ArrayList<String>();
-			for (String alg : this.featureSelection2metric.keySet()) {
-				if(featureSelection2metric.get(alg) != null){
-					String metric = "metric_" + alg;
-					String error = "err_" + alg;
-					legend.add("'" + alg.replaceAll("_", " ") + "'");
-					String symbol = plotSymbols.next();
+		sb.appendln("%open plot");
+		sb.appendln("figure, hold on;");
+		sb.appendln("");
 
-					out.println(metric + " = ["+ Joiner.on(", ").skipNulls().join(featureSelection2metric.get(alg)) + "];");
-					out.println(error + " = std(" + metric + ")*ones(size(n_features));");
-					out.println("errorbar(n_features, "+ metric + "," + error + ","+ symbol +",'LineWidth', 1.5,'MarkerSize',8)");
-					out.println();
-				}
+		sb.appendln("%Simulation results");
+		sb.appendln("n_features = [1: "+ this.maxNumFeatures + "];");
+		sb.appendln("");
+
+		List<String> legend = new ArrayList<String>();
+		for (String alg : this.featureSelection2metric.keySet()) {
+			if(featureSelection2metric.get(alg) != null){
+				String metric = "metric_" + alg;
+				String error = "err_" + alg;
+				legend.add("'" + alg.replaceAll("_", " ") + "'");
+				String symbol = plotSymbols.next();
+
+				sb.appendln(metric + " = ["+ Joiner.on(", ").skipNulls().join(featureSelection2metric.get(alg)) + "];");
+				sb.appendln(error + " = std(" + metric + ")*ones(size(n_features));");
+				sb.appendln("errorbar(n_features, "+ metric + "," + error + ","+ symbol +",'LineWidth', 1.5,'MarkerSize',8)");
+				sb.appendln("");
 			}
-
-			out.println("%plots settings");
-			out.println("title('"+ Joiner.on(" ").skipNulls().join(this.problem, this.classifier, this.metricName ) +"');");
-			out.println("xlabel('number of features');");
-			out.println("ylabel('"+ this.metricName +"');");
-			out.println("legend(" + Joiner.on(",").skipNulls().join(legend) + ");");
-
-
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
 		}
 
+		sb.appendln("%plots settings");
+		sb.appendln("title('"+ Joiner.on(" ").skipNulls().join(this.problem, this.classifier, this.metricName ) +"');");
+		sb.appendln("xlabel('number of features');");
+		sb.appendln("ylabel('"+ this.metricName +"');");
+		sb.appendln("legend(" + Joiner.on(",").skipNulls().join(legend) + ");");
+
+		return sb.toString();
 	}
 
 
@@ -141,6 +178,7 @@ public class FeatureSelectionExperimentReport extends AbstractExperimentReport {
 	public void setMetricName(String metricName) {
 		this.metricName = metricName;
 	}
+
 
 
 }
