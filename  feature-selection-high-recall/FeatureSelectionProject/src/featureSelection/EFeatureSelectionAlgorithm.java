@@ -40,7 +40,7 @@ public enum EFeatureSelectionAlgorithm {
 	FORWARD_SELECTION_WRAPPER,
 	//wrapper foward search technique
 
-	BACKWARD_SELECTION_WRAPPER()
+	BACKWARD_SELECTION_WRAPPER
 	//wrapper BACKWARD search technique
 
 }

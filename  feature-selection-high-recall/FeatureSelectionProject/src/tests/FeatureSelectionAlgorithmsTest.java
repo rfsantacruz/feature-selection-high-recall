@@ -175,7 +175,38 @@ public class FeatureSelectionAlgorithmsTest {
 
 	//TODO: Confirm if the correlation-based feature selection will be used. and test its results, i may use a artificial data set
 	@Test
-	public void testCorrelationBasedFeatureSlection(){
+	public void testCorrelationBasedRankFeatureSlection(){
+		String dataset = "./TestDataSets/heart-statlog.arff";
+		try {
+			ClassificationProblem cp = new ClassificationProblem(dataset);
+
+			//filter parameters
+			FeatureSelectionFactoryParameters parameter = 
+					new FeatureSelectionFactoryParameters(5, null, cp.getData());
+
+			//filter application
+			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
+					.createFilter(EFeatureSelectionAlgorithm.CORRELATION_BASED_RANK, parameter);
+
+			//exeute
+			filter.SelectAttributes(cp.getData());
+			int[] idxs = filter.selectedAttributes();
+			System.out.println(EFeatureSelectionAlgorithm.CORRELATION_BASED_SUBSET.name());
+			for (int id : idxs) {
+				System.out.println(cp.getData().attribute(id));
+			}
+
+		} catch (IOException e) {
+			fail("problems to read the data set: " + e.getMessage());
+		} catch (Exception e) {
+			fail("problems in the feature selection engine: " + e.getMessage());
+		}
+
+	}
+
+	//TODO: Confirm if the correlation-based feature selection will be used. and test its results, i may use a artificial data set
+	@Test
+	public void testCorrelationBasedSubsetFeatureSlection(){
 		String dataset = "./TestDataSets/heart-statlog.arff";
 		try {
 			ClassificationProblem cp = new ClassificationProblem(dataset);

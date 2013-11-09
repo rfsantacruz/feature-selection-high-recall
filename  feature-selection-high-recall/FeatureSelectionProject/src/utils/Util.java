@@ -14,6 +14,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import problems.ClassificationProblem;
 
@@ -100,4 +104,18 @@ public class Util {
 		return ret;
 	}
 
+	public static Logger getFileLogger(String logName, String logPath){
+		try {
+			SimpleFormatter formatter = new SimpleFormatter();  
+			FileHandler file = new FileHandler(logPath);
+			file.setFormatter(formatter);
+			
+			Logger.getLogger(logName).addHandler(file);
+			
+		} catch (SecurityException | IOException e) {
+			e.printStackTrace();
+		}
+		
+		return Logger.getLogger(logName);
+	}
 }
