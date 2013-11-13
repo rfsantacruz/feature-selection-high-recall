@@ -186,10 +186,10 @@ public class BackGroundTest {
 
 			//cross validation with default parameters
 			CrossValidationOutput cvo = ev.crossValidateModel(lr, p, 10, 10, null);
-			double accuracy = cvo.getAccuracy();
-			double precision = cvo.getPrecision();
-			double recall = cvo.getRecall();
-			double fmeasure = cvo.getF_measure();
+			double accuracy = cvo.accuracyMean();
+			double precision = cvo.precisionMean();
+			double recall = cvo.recallMean();
+			double fmeasure = cvo.fmeasureMean();
 
 			HashMap<String,Set<String>> paramLR = new HashMap<String,Set<String>>();
 			paramLR.put("-C",Sets.newHashSet("-C 0.1", "-C 0.3", "-C 1.0"));
@@ -197,10 +197,10 @@ public class BackGroundTest {
 
 			//return the classifier already tuned with cross validation with parameters
 			CrossValidationOutput cvo2 = ev.crossValidateModel(lr, p, 10, 10, paramLR);
-			double accuracy_aftercv = cvo2.getAccuracy();
-			double precision_aftercv = cvo2.getPrecision();
-			double recall_aftercv = cvo2.getRecall();
-			double fmeasure_aftercv = cvo2.getF_measure();
+			double accuracy_aftercv = cvo2.accuracyMean();
+			double precision_aftercv = cvo2.precisionMean();
+			double recall_aftercv = cvo2.recallMean();
+			double fmeasure_aftercv = cvo2.fmeasureMean();
 
 
 			Assert.assertTrue("The cross validated classifier have to be better in accuracy", accuracy_aftercv >=  accuracy);

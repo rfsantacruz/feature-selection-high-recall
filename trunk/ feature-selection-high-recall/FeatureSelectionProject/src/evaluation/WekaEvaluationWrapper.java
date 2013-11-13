@@ -44,12 +44,10 @@ public class WekaEvaluationWrapper{
 	public CrossValidationOutput crossValidateModel(AbstractClassifier c, ClassificationProblem cp, int folds, long seed, Map<String,Set<String>> params ) throws Exception{
 		return this.crossValidateModel(c, null, cp, folds, seed, params);
 	}
+	
 	public CrossValidationOutput crossValidateModel(AbstractClassifier c, AttributeSelection FeatureSelector,ClassificationProblem cp, int folds, long seed, Map<String,Set<String>> params ) throws Exception{
 
-		double accuracy = 0;
-		double precision = 0;
-		double recall = 0;
-		double fmeasure = 0;
+		CrossValidationOutput cvo = new CrossValidationOutput(seed, folds);
 
 
 		Random rand = new Random(seed); 
@@ -67,9 +65,9 @@ public class WekaEvaluationWrapper{
 			Instances trainAndValid = randData.trainCV(folds, n);
 			Instances test = randData.testCV(folds, n);
 
-
+			
 			//split: train and validation
-			int trainSize = (int)Math.round(trainAndValid.size() * 0.8);
+			int trainSize = trainAndValid.size() - test.size(); //(int)Math.round(trainAndValid.size() * 0.8);
 			Instances train = new Instances(trainAndValid, 0, trainSize);
 			Instances valid = new Instances(trainAndValid, trainSize , trainAndValid.size() - train.size());
 
@@ -118,14 +116,10 @@ public class WekaEvaluationWrapper{
 
 			//test and report the performance
 			this.evaluateModel(c, test);
-			accuracy += (this.accuracy()/folds);
-			precision += (this.precision()/folds);
-			recall += (this.recall()/folds);
-			fmeasure += (this.fMeasure()/folds);
+			
+			FoldResult fr = new FoldResult(this.accuracy(), this.precision(), this.recall(), this.fMeasure(), optimumSetting);
+			cvo.addFoldResult(fr);
 		}
-
-
-		CrossValidationOutput cvo = new CrossValidationOutput(precision, recall, accuracy, fmeasure);
 
 		return cvo;
 

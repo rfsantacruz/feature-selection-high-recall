@@ -22,7 +22,8 @@ import com.google.common.collect.Lists;
 
 public class FeatureSelectionExperimentReport extends AbstractExperimentReport {
 
-	private Map<String, List<Double>> featureSelection2metric;
+	private Map<String, List<Double>> featureSelection2MetricMean;
+	private Map<String, List<Double>> featureSelection2MetricStd;
 	private String classifier;
 	private String problem;
 	private int maxNumFeatures;
@@ -42,22 +43,23 @@ public class FeatureSelectionExperimentReport extends AbstractExperimentReport {
 		}
 
 	}
-	
+
 	@Override
 	public String saveString() {
-		
+
 		StrBuilder sb = new StrBuilder();
 		sb.appendln(Joiner.on(",").skipNulls().join(this.problem, this.classifier, this.metricName,this.maxNumFeatures));
 
-		for (String alg : featureSelection2metric.keySet()) {
-			if(featureSelection2metric.get(alg) != null){
+		for (String alg : featureSelection2MetricMean.keySet()) {
+			if(featureSelection2MetricMean.get(alg) != null){
 				sb.append(Joiner.on(",").skipNulls().join(alg,","));
-				sb.appendln(Joiner.on(",").skipNulls().join(featureSelection2metric.get(alg)));
+				sb.append(Joiner.on(",").skipNulls().join(featureSelection2MetricMean.get(alg)));
+				sb.appendln(Joiner.on(",").skipNulls().join(featureSelection2MetricMean.get(alg)));
 			}
 		}
 		return sb.toString();
 	}
-		
+
 	@Override
 	public void plot(String path) {
 
@@ -99,15 +101,15 @@ public class FeatureSelectionExperimentReport extends AbstractExperimentReport {
 		sb.appendln("");
 
 		List<String> legend = new ArrayList<String>();
-		for (String alg : this.featureSelection2metric.keySet()) {
-			if(featureSelection2metric.get(alg) != null){
+		for (String alg : this.featureSelection2MetricMean.keySet()) {
+			if(featureSelection2MetricMean.get(alg) != null){
 				String metric = "metric_" + alg;
 				String error = "err_" + alg;
 				legend.add("'" + alg.replaceAll("_", " ") + "'");
 				String symbol = plotSymbols.next();
 
-				sb.appendln(metric + " = ["+ Joiner.on(", ").skipNulls().join(featureSelection2metric.get(alg)) + "];");
-				sb.appendln(error + " = std(" + metric + ")*ones(size(n_features));");
+				sb.appendln(metric + " = ["+ Joiner.on(", ").skipNulls().join(featureSelection2MetricMean.get(alg)) + "];");
+				sb.appendln(error + " = 2.262 .* (1/"+Math.sqrt(10)+") .* ["+ Joiner.on(", ").skipNulls().join(featureSelection2MetricStd.get(alg)) + "];");
 				sb.appendln("errorbar(n_features, "+ metric + "," + error + ","+ symbol +",'LineWidth', 1.5,'MarkerSize',8)");
 				sb.appendln("");
 			}
@@ -128,23 +130,34 @@ public class FeatureSelectionExperimentReport extends AbstractExperimentReport {
 	}
 
 	public FeatureSelectionExperimentReport(
-			Map<String, List<Double>> featureSelection2metric,
+			Map<String, List<Double>> featureSelection2metric, Map<String, List<Double>> featureSelection2metricStd,
 			String classifier, String problem, int maxNumFeatures,
 			String metricName) {
 		super();
-		this.featureSelection2metric = featureSelection2metric;
+		this.featureSelection2MetricMean = featureSelection2metric;
+		this.featureSelection2MetricStd = featureSelection2metricStd;
 		this.classifier = classifier;
 		this.problem = problem;
 		this.maxNumFeatures = maxNumFeatures;
 		this.metricName = metricName;
 	}
 
+	public FeatureSelectionExperimentReport(String classifierName, String problemName,
+			int maxNumFeatures, String metricName) {
+		this.classifier = classifierName;
+		this.problem = problemName;
+		this.maxNumFeatures = maxNumFeatures;
+		this.featureSelection2MetricMean = new HashMap<String, List<Double>>();
+		this.featureSelection2MetricStd = new HashMap<String, List<Double>>();
+		this.metricName = metricName;
+	}
+
 	public Map<String, List<Double>> getFeatureSelection2metric() {
-		return featureSelection2metric;
+		return featureSelection2MetricMean;
 	}
 
 	public void setFeatureSelection2metric(Map<String, List<Double>> featureSelection2metric) {
-		this.featureSelection2metric = featureSelection2metric;
+		this.featureSelection2MetricMean = featureSelection2metric;
 	}
 
 	public String getClassifier() {
@@ -179,6 +192,27 @@ public class FeatureSelectionExperimentReport extends AbstractExperimentReport {
 		this.metricName = metricName;
 	}
 
+	public Map<String, List<Double>> getFeatureSelection2MetricStd() {
+		return featureSelection2MetricStd;
+	}
+
+	public void setFeatureSelection2MetricStd(
+			Map<String, List<Double>> featureSelection2MetricStd) {
+		this.featureSelection2MetricStd = featureSelection2MetricStd;
+	}
+
+	public void metricStdAddValue(String alg, double value){
+		if(!this.featureSelection2MetricStd.containsKey(alg)){
+			this.featureSelection2MetricStd.put(alg, new ArrayList<Double>());
+		}
+		this.featureSelection2MetricStd.get(alg).add(value);
+	}
+	public void metricMeanAddValue(String alg, double value){
+		if(!this.featureSelection2MetricMean.containsKey(alg)){
+			this.featureSelection2MetricMean.put(alg, new ArrayList<Double>());
+		}
+		this.featureSelection2MetricMean.get(alg).add(value);
+	}
 
 
 }

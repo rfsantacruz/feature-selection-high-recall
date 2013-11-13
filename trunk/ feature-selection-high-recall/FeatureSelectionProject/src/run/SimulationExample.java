@@ -60,18 +60,18 @@ public class SimulationExample implements IExperimentCommand {
 			//cross validate the models
 			CrossValidationOutput lrcv = ev.crossValidateModel(lr, cp, 10, System.currentTimeMillis(), paramLR);
 			System.out.println(lrcv);
-			result.add(new ClassificationExperimentReport(lrcv.getPrecision(), lrcv.getRecall(), lrcv.getAccuracy()
-					, lrcv.getF_measure(), cp.getName(), "LogisticRegression"));
+			result.add(new ClassificationExperimentReport(lrcv.precisionMean(), lrcv.recallMean(), lrcv.accuracyMean()
+					, lrcv.fmeasureMean(), cp.getName(), "LogisticRegression"));
 			
 			CrossValidationOutput svmcv = ev.crossValidateModel(svm, cp, 10, System.currentTimeMillis(), paramSVM);
 			System.out.println(svmcv);
-			result.add(new ClassificationExperimentReport(svmcv.getPrecision(), svmcv.getRecall(), svmcv.getAccuracy()
-					, svmcv.getF_measure(), cp.getName(), "SVMLinear"));
+			result.add(new ClassificationExperimentReport(svmcv.precisionMean(), svmcv.recallMean(), svmcv.accuracyMean()
+					, svmcv.fmeasureMean(), cp.getName(), "SVMLinear"));
 			
 			CrossValidationOutput nbcv = ev.crossValidateModel(nb, cp, 10, System.currentTimeMillis(), null);
 			System.out.println(nbcv);
-			result.add(new ClassificationExperimentReport(nbcv.getPrecision(), nbcv.getRecall(), nbcv.getAccuracy()
-					, nbcv.getF_measure(), cp.getName(), "NaiveBayes"));
+			result.add(new ClassificationExperimentReport(nbcv.precisionMean(), nbcv.recallMean(), nbcv.accuracyMean()
+					, nbcv.fmeasureMean(), cp.getName(), "NaiveBayes"));
 
 			
 		} catch (Exception e) {
