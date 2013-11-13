@@ -92,24 +92,23 @@ public class FeatureSelectionExperiment implements IExperimentCommand{
 
 
 		for (ELinearClassifier ecl :  this.classifiers){
-
+			
 			//get the classifier and the parameters
 			AbstractClassifier cl = ClassifierFactory.getInstance().createClassifier(ecl);
 			Map<String,Set<String>> param =  this.setUpClassifiersParameters(ecl);
 
+			
+			//instatiate reports
 			int maxNumFeatures = cp.getNumAttributes() - 1;
-			Map<String, List<Double>> alg2accuracy = new HashMap<String, List<Double>>();
-			Map<String, List<Double>> alg2precision = new HashMap<String, List<Double>>();
-			Map<String, List<Double>> alg2recall = new HashMap<String, List<Double>>();
-			Map<String, List<Double>> alg2fmeasure = new HashMap<String, List<Double>>();
-
+			FeatureSelectionExperimentReport exp_acc = new FeatureSelectionExperimentReport(ecl.name(), cp.getName(), maxNumFeatures, "Accuracy");
+			FeatureSelectionExperimentReport exp_pre = new FeatureSelectionExperimentReport(ecl.name(), cp.getName(), maxNumFeatures, "Precision");
+			FeatureSelectionExperimentReport exp_rec = new FeatureSelectionExperimentReport(ecl.name(), cp.getName(), maxNumFeatures, "Recall");
+			FeatureSelectionExperimentReport exp_fm = new FeatureSelectionExperimentReport(ecl.name(), cp.getName(), maxNumFeatures, "FMeasure");
+			
+			//run all selected feature selection algorithm
 			for (EFeatureSelectionAlgorithm alg : this.selectionAlgs) {
 				
 				try {
-					alg2accuracy.put(alg.name(), new ArrayList<Double>());
-					alg2precision.put(alg.name(), new ArrayList<Double>());
-					alg2recall.put(alg.name(), new ArrayList<Double>());
-					alg2fmeasure.put(alg.name(), new ArrayList<Double>());
 
 					for (int n_features = 1; n_features <= cp.getNumAttributes() - 1; n_features++) {
 
@@ -119,19 +118,22 @@ public class FeatureSelectionExperiment implements IExperimentCommand{
 
 						//cross validate
 						CrossValidationOutput outlr = eval.crossValidateModel(cl, filter,cp, 10, 10, param);
-						alg2accuracy.get(alg.name()).add(outlr.getAccuracy());
-						alg2precision.get(alg.name()).add(outlr.getPrecision());
-						alg2recall.get(alg.name()).add(outlr.getRecall());
-						alg2fmeasure.get(alg.name()).add(outlr.getF_measure());
+						
+						//collect cross validation measurement
+						exp_acc.metricMeanAddValue(alg.name(), outlr.accuracyMean());
+						exp_pre.metricMeanAddValue(alg.name(), outlr.precisionMean());
+						exp_rec.metricMeanAddValue(alg.name(), outlr.recallMean());
+						exp_fm.metricMeanAddValue(alg.name(), outlr.fmeasureMean());
+						
+						exp_acc.metricStdAddValue(alg.name(), outlr.accuracyStd());
+						exp_pre.metricStdAddValue(alg.name(), outlr.precisionStd());
+						exp_rec.metricStdAddValue(alg.name(), outlr.recallyStd());
+						exp_fm.metricStdAddValue(alg.name(), outlr.fmeasureStd());
+						
 					}
 					System.out.println("Simulation: " +ecl.name() + " and " + alg.name() + " done!" );
 
 				} catch (Exception e) {
-					alg2accuracy.remove(alg.name());
-					alg2precision.remove(alg.name());
-					alg2recall.remove(alg.name());
-					alg2fmeasure.remove(alg.name());
-					
 					String msg = Joiner.on(" ").skipNulls().join("problem in:",cp.getName(),ecl.name(),alg.name());
 					log.log(Level.WARNING,msg , e);
 					System.out.println(msg);
@@ -139,25 +141,10 @@ public class FeatureSelectionExperiment implements IExperimentCommand{
 
 			}
 
-			//set up the results of the experiment
-			FeatureSelectionExperimentReport exp_acc = 
-					new FeatureSelectionExperimentReport(alg2accuracy, ecl.name(), cp.getName(), maxNumFeatures, "Accuracy");
-
-			FeatureSelectionExperimentReport exp_pre = 
-					new FeatureSelectionExperimentReport(alg2precision, ecl.name(), cp.getName(), maxNumFeatures, "Precision");
-
-			FeatureSelectionExperimentReport exp_rec = 
-					new FeatureSelectionExperimentReport(alg2recall, ecl.name(), cp.getName(), maxNumFeatures, "Recall");
-
-			FeatureSelectionExperimentReport exp_fm = 
-					new FeatureSelectionExperimentReport(alg2fmeasure, ecl.name(), cp.getName(), maxNumFeatures, "Fmeasure");
-
-
 			this.savePartialResuls(result, exp_acc, exp_pre, exp_rec, exp_fm);
 
-
-
 		}
+		
 		System.out.println("Simulation in Problem " + cp.getName() + " done!" );
 
 		return result;
