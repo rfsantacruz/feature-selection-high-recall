@@ -42,7 +42,7 @@ public class MRMRFeatureSelection extends ASEvaluation implements SubsetEvaluato
 				double[] featureI = this.dataDiscretized.attributeToDoubleArray(i);
 				relevance += MutualInformation.calculateMutualInformation(classATT, featureI);
 				
-				for (int j = i + 1; j < this.dataDiscretized.numAttributes(); j++) {
+				for (int j = 0; j < this.dataDiscretized.numAttributes(); j++) {
 					if(i != j && subSet.get(j)){
 						double[] featureJ = this.dataDiscretized.attributeToDoubleArray(j);
 						redundancy += MutualInformation.calculateMutualInformation(featureI,featureJ);
