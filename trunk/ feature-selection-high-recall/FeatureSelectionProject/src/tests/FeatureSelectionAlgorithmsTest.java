@@ -9,7 +9,14 @@ import java.text.DecimalFormat;
 import org.junit.Test;
 
 import problems.ClassificationProblem;
+import weka.attributeSelection.ASEvaluation;
+import weka.attributeSelection.ASSearch;
+import weka.attributeSelection.AttributeEvaluator;
 import weka.attributeSelection.AttributeSelection;
+import weka.attributeSelection.BestFirst;
+import weka.attributeSelection.GreedyStepwise;
+import weka.attributeSelection.Ranker;
+import weka.attributeSelection.ReliefFAttributeEval;
 import JavaMI.Entropy;
 import JavaMI.MutualInformation;
 import classifiers.NaiveBayesClassifier;
@@ -47,8 +54,7 @@ public class FeatureSelectionAlgorithmsTest {
 		assertTrue("MI(Y,X) = MI(X,Y) = H(X) - H(X|Y), therefore the result is wrong", Double.valueOf(formatter.format(mi)) == mi2);
 
 	}
-
-	//TODO: test the results of mutual information feature selection. i may use a artificial data set
+	
 	@Test
 	public void testInformationGainFeatureSelection() {
 		String dataset = "./TestDataSets/heart-statlog.arff";
@@ -80,7 +86,6 @@ public class FeatureSelectionAlgorithmsTest {
 
 	}
 
-	//TODO: test the results of conditional entropy feature selection. i may use a artificial data set
 	@Test
 	public void testConditionalEntropy() {
 		String dataset = "./TestDataSets/heart-statlog.arff";
@@ -111,7 +116,6 @@ public class FeatureSelectionAlgorithmsTest {
 
 	}
 
-	//TODO: test the results of gain ratio feature selection. i may use a artificial data set
 	@Test
 	public void testGainRationRank() {
 		String dataset = "./TestDataSets/heart-statlog.arff";
@@ -142,7 +146,6 @@ public class FeatureSelectionAlgorithmsTest {
 
 	}
 
-	//TODO: test the results of Symmetrical Uncert feature selection. i may use a artificial data set
 	@Test
 	public void SymmetricalUncertRank() {
 		String dataset = "./TestDataSets/heart-statlog.arff";
@@ -173,7 +176,6 @@ public class FeatureSelectionAlgorithmsTest {
 
 	}
 
-	//TODO: Confirm if the correlation-based feature selection will be used. and test its results, i may use a artificial data set
 	@Test
 	public void testCorrelationBasedRankFeatureSlection(){
 		String dataset = "./TestDataSets/heart-statlog.arff";
@@ -204,7 +206,6 @@ public class FeatureSelectionAlgorithmsTest {
 
 	}
 
-	//TODO: Confirm if the correlation-based feature selection will be used. and test its results, i may use a artificial data set
 	@Test
 	public void testCorrelationBasedSubsetFeatureSlection(){
 		String dataset = "./TestDataSets/heart-statlog.arff";
@@ -235,7 +236,6 @@ public class FeatureSelectionAlgorithmsTest {
 
 	}
 
-	//TODO: Confirm if the correlation-based feature selection will be used. and test its results, i may use a artificial data set
 	@Test
 	public void testMRMRFeatureSlection(){
 		String dataset = "./TestDataSets/heart-statlog.arff";
@@ -265,9 +265,7 @@ public class FeatureSelectionAlgorithmsTest {
 		}
 
 	}
-
-
-	//TODO: check the scott answer about the foward selection
+	
 	@Test
 	public void testForwardFeatureSelectionAlgorithm(){
 
@@ -299,7 +297,6 @@ public class FeatureSelectionAlgorithmsTest {
 		}
 	}
 
-	//TODO: check the scott answer about the foward selection
 	@Test
 	public void testBackwardFeatureSelectionAlgorithm(){
 
@@ -330,6 +327,94 @@ public class FeatureSelectionAlgorithmsTest {
 		}
 	}
 
+	@Test
+	public void testRelif(){
+		String dataset = "./TestDataSets/heart-statlog.arff";
+		try {
+			ClassificationProblem cp = new ClassificationProblem(dataset);
+
+			AttributeSelection filter = new AttributeSelection();
+			//reliff evaluator
+			ASEvaluation evaluator = new ReliefFAttributeEval();
+			//rank by evaluator values
+			ASSearch search  = new Ranker();
+			((Ranker) search).setNumToSelect(5);
+			
+
+			filter.setEvaluator(evaluator);
+			filter.setSearch(search);
+			//exeute
+			filter.SelectAttributes(cp.getData());
+			int[] idxs = filter.selectedAttributes();
+			System.out.println(EFeatureSelectionAlgorithm.RELIFF.name());
+			for (int id : idxs) {
+				System.out.println(cp.getData().attribute(id));
+			}
+
+		} catch (IOException e) {
+			fail("problems to read the data set: " + e.getMessage());
+		} catch (Exception e) {
+			fail("problems in the feature selection engine: " + e.getMessage());
+		}
+	}
+
+	@Test
+	public void testFCBF(){
+		String dataset = "./TestDataSets/heart-statlog.arff";
+		try {
+			ClassificationProblem cp = new ClassificationProblem(dataset);
+
+			//filter parameters
+			FeatureSelectionFactoryParameters parameter = 
+					new FeatureSelectionFactoryParameters(5, new NaiveBayesClassifier(), cp.getData());
+
+			//filter application
+			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
+					.createFilter(EFeatureSelectionAlgorithm.FCBF, parameter);
+
+			//exeute
+			filter.SelectAttributes(cp.getData());
+			int[] idxs = filter.selectedAttributes();
+			System.out.println(EFeatureSelectionAlgorithm.FCBF.name());
+			for (int id : idxs) {
+				System.out.println(cp.getData().attribute(id));
+			}
+
+		} catch (IOException e) {
+			fail("problems to read the data set: " + e.getMessage());
+		} catch (Exception e) {
+			fail("problems in the feature selection engine: " + e.getMessage());
+		}
+	}
+	
+	@Test
+	public void testSVMRFE(){
+		String dataset = "./TestDataSets/heart-statlog.arff";
+		try {
+			ClassificationProblem cp = new ClassificationProblem(dataset);
+
+			//filter parameters
+			FeatureSelectionFactoryParameters parameter = 
+					new FeatureSelectionFactoryParameters(5, new NaiveBayesClassifier(), cp.getData());
+
+			//filter application
+			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
+					.createFilter(EFeatureSelectionAlgorithm.SVMRFE, parameter);
+
+			//exeute
+			filter.SelectAttributes(cp.getData());
+			int[] idxs = filter.selectedAttributes();
+			System.out.println(EFeatureSelectionAlgorithm.SVMRFE.name());
+			for (int id : idxs) {
+				System.out.println(cp.getData().attribute(id));
+			}
+
+		} catch (IOException e) {
+			fail("problems to read the data set: " + e.getMessage());
+		} catch (Exception e) {
+			fail("problems in the feature selection engine: " + e.getMessage());
+		}
+	}
 
 
 }
