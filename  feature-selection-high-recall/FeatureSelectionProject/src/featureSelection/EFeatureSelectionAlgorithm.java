@@ -2,7 +2,7 @@ package featureSelection;
 
 public enum EFeatureSelectionAlgorithm {
 
-	//ranks **********
+	//rank attributes **********
 
 	CONDITIONAL_ENTROPY_RANK,
 	//rank features by conditional entropy
@@ -25,6 +25,12 @@ public enum EFeatureSelectionAlgorithm {
 	//SymmU(Class, Attribute) = 2 * (H(Class) - H(Class | Attribute)) / H(Class) + H(Attribute).
 	//LINK: http://weka.sourceforge.net/doc.dev/weka/attributeSelection/SymmetricalUncertAttributeEval.html
 
+	RELIFF,
+	//Evaluates the worth of an attribute by repeatedly sampling an instance and considering the value of the given attribute for the nearest instance of the same and different class.
+	//Can operate on both discrete and continuous class data.
+	//http://weka.sourceforge.net/doc.dev/weka/attributeSelection/ReliefFAttributeEval.html
+	
+	
 	//subset ************
 
 	CORRELATION_BASED_SUBSET,
@@ -35,8 +41,17 @@ public enum EFeatureSelectionAlgorithm {
 	//Minimum-redundancy-maximum-relevance using mi
 	//LINK: http://en.wikipedia.org/wiki/Feature_selection#Minimum-redundancy-maximum-relevance_.28mRMR.29_feature_selection
 
+	FCBF,
+	//Feature selection method based on correlation measureand relevance&redundancy analysis. 
+	//link: http://weka.sourceforge.net/doc.packages/fastCorrBasedFS/weka/attributeSelection/FCBFSearch.html
+	
 	//wrappers ******
 
+	SVMRFE,
+	//Attributes are ranked by the square of the weight assigned by the SVM. 
+	//Attribute selection for multiclass problems is handled by ranking attributes for each class seperately using a one-vs-all method and then "dealing" from the top of each pile to give a final ranking.
+	//link: http://weka.sourceforge.net/doc.packages/SVMAttributeEval/weka/attributeSelection/SVMAttributeEval.html
+	
 	FORWARD_SELECTION_WRAPPER,
 	//wrapper foward search technique
 

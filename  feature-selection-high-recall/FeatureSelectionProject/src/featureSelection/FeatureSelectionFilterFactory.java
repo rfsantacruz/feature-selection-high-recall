@@ -4,11 +4,15 @@ import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.ASSearch;
 import weka.attributeSelection.CfsSubsetEval;
 import weka.attributeSelection.CorrelationAttributeEval;
+import weka.attributeSelection.FCBFSearch;
 import weka.attributeSelection.GainRatioAttributeEval;
 import weka.attributeSelection.GreedyStepwise;
 import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.Ranker;
+import weka.attributeSelection.ReliefFAttributeEval;
+import weka.attributeSelection.SVMAttributeEval;
 import weka.attributeSelection.SymmetricalUncertAttributeEval;
+import weka.attributeSelection.SymmetricalUncertAttributeSetEval;
 import weka.attributeSelection.WrapperSubsetEval;
 import weka.core.SelectedTag;
 import weka.attributeSelection.AttributeSelection;
@@ -35,6 +39,7 @@ public class FeatureSelectionFilterFactory {
 		
 		//set the evaluator and searcher for each algorithm
 		switch (EType) {
+		//rank attributes
 		case INFORMATIONGAIN_RANK:
 			//mutual information evaluator
 			evaluator = new InfoGainAttributeEval();
@@ -75,6 +80,15 @@ public class FeatureSelectionFilterFactory {
 			((Ranker) search).setNumToSelect(parameter.getNumberOfFeature());
 			break;
 			
+		case RELIFF:
+			//reliff evaluator
+			evaluator = new ReliefFAttributeEval();
+			//rank by evaluator values
+			search = new Ranker();
+			((Ranker) search).setNumToSelect(parameter.getNumberOfFeature());
+			break;
+			
+		//subset search
 		case CORRELATION_BASED_SUBSET:
 			//correlation based evaluator
 			evaluator = new CfsSubsetEval();
@@ -92,7 +106,25 @@ public class FeatureSelectionFilterFactory {
 			((GreedyStepwise)search).setGenerateRanking(true);
 			((GreedyStepwise)search).setNumToSelect(parameter.getNumberOfFeature());
 			break;
+			
+		case FCBF:
+			//correlation based evaluaton
+			evaluator = new SymmetricalUncertAttributeSetEval();
+			//choose based on a graddy search 
+			search = new FCBFSearch();
+			((FCBFSearch)search).setNumToSelect(parameter.getNumberOfFeature());
+			break;
 		
+			
+		//wrapper approaches
+		case SVMRFE:
+			//svmrfe evaluator
+			evaluator = new SVMAttributeEval();
+			//rank by evaluator values
+			search = new Ranker();
+			((Ranker) search).setNumToSelect(parameter.getNumberOfFeature());
+			break;
+			
 		case FORWARD_SELECTION_WRAPPER:
 			//wrraper method with the classifier
 			WrapperSubsetEval wrraperEvaluator = new WrapperSubsetEval();

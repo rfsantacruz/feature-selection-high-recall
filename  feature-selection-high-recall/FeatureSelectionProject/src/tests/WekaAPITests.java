@@ -22,6 +22,8 @@ import weka.filters.unsupervised.attribute.Remove;
 import classifiers.LogisticRegressionClassifier;
 import classifiers.NaiveBayesClassifier;
 import classifiers.SVMLinearClassifier;
+import evaluation.CrossValidationOutput;
+import evaluation.FoldResult;
 import evaluation.WekaEvaluationWrapper;
 
 public class WekaAPITests {
@@ -152,4 +154,5 @@ public class WekaAPITests {
 			e.printStackTrace();
 		}
 	}
+
 }

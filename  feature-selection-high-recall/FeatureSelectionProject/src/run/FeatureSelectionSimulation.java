@@ -36,16 +36,16 @@ import featureSelection.FeatureSelectionFactoryParameters;
 import featureSelection.FeatureSelectionFilterFactory;
 
 
-public class FeatureSelectionExperiment implements IExperimentCommand{
+public class FeatureSelectionSimulation implements IExperimentCommand{
 
 
 
 	private String GraphsPath = "./results/graphs";
 	private  List<EFeatureSelectionAlgorithm> selectionAlgs = null;
 	private List<ELinearClassifier> classifiers = null;
-	private Logger log = Util.getFileLogger(FeatureSelectionExperiment.class.getName(), "./results/logs/log.txt");
+	private Logger log = Util.getFileLogger(FeatureSelectionSimulation.class.getName(), "./results/logs/log.txt");
 
-	public FeatureSelectionExperiment(List<ELinearClassifier> classifiers, List<EFeatureSelectionAlgorithm> FetSelectionAlgs, String graphPath){
+	public FeatureSelectionSimulation(List<ELinearClassifier> classifiers, List<EFeatureSelectionAlgorithm> FetSelectionAlgs, String graphPath){
 
 		this.GraphsPath = graphPath;
 		this.selectionAlgs = FetSelectionAlgs;
@@ -172,14 +172,17 @@ public class FeatureSelectionExperiment implements IExperimentCommand{
 				,EFeatureSelectionAlgorithm.GAINRATIO_RANK
 				,EFeatureSelectionAlgorithm.INFORMATIONGAIN_RANK
 				,EFeatureSelectionAlgorithm.SYMMETRICAL_UNCERT_RANK
-				//,EFeatureSelectionAlgorithm.CORRELATION_BASED_SUBSET
-				//,EFeatureSelectionAlgorithm.MRMR_MI_BASED_SUBSET
+				,EFeatureSelectionAlgorithm.CORRELATION_BASED_SUBSET
+				,EFeatureSelectionAlgorithm.MRMR_MI_BASED_SUBSET
+				,EFeatureSelectionAlgorithm.FCBF
+				,EFeatureSelectionAlgorithm.RELIFF
+				//,EFeatureSelectionAlgorithm.SVMRFE
 				//,EFeatureSelectionAlgorithm.BACKWARD_SELECTION_WRAPPER
 				//,EFeatureSelectionAlgorithm.FORWARD_SELECTION_WRAPPER
 				);
 
 		//settinf the simulation
-		IExperimentCommand cmd = new FeatureSelectionExperiment(classifiers ,selectionAlgs, graphOutPutFolderPath);
+		IExperimentCommand cmd = new FeatureSelectionSimulation(classifiers ,selectionAlgs, graphOutPutFolderPath);
 		List<AbstractExperimentReport> result = ExperimentExecutor.getInstance().executeCommandInFiles(cmd, dataSetFolderpath);
 
 		//save results in csv

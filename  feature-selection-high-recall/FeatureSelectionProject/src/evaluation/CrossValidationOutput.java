@@ -5,8 +5,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.stat.StatUtils;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.primitives.Doubles;
+import com.google.common.primitives.Primitives;
 
 
 
@@ -16,8 +25,29 @@ public class CrossValidationOutput {
 	private long seed;
 	private int folds;
 	private static final DecimalFormat  formatter = new DecimalFormat ("#0.000");
-
-
+	
+	//functions to simplify code
+	private static Function<FoldResult, Double> getAccs = new Function<FoldResult, Double>(){
+		public Double apply(FoldResult foldResut) {
+		    return foldResut.getAccuracy();
+		  }
+	};
+	private static Function<FoldResult, Double> getPrecs = new Function<FoldResult, Double>(){
+		public Double apply(FoldResult foldResut) {
+		    return foldResut.getPrecision();
+		  }
+	};
+	private static Function<FoldResult, Double> getRecs = new Function<FoldResult, Double>(){
+		public Double apply(FoldResult foldResut) {
+		    return foldResut.getRecall();
+		  }
+	};
+	private static Function<FoldResult, Double> getfms = new Function<FoldResult, Double>(){
+		public Double apply(FoldResult foldResut) {
+		    return foldResut.getFmeasure();
+		  }
+	};
+	
 
 	public CrossValidationOutput(long seed,
 			int folds) {
@@ -28,65 +58,40 @@ public class CrossValidationOutput {
 		this.folds = folds;
 	}
 
-	
-	
 	public double accuracyStd(){
-		return Math.sqrt(StatUtils.variance(this.accuraccyVector()));
+		
+		double[] accuracys = Doubles.toArray(Lists.transform(this.foldsResults, getAccs));
+		return Math.sqrt(StatUtils.variance(accuracys));
 	}
 	public double precisionStd(){
-		return Math.sqrt(StatUtils.variance(this.precisionVector()));
+		
+		double[] precisions = Doubles.toArray(Lists.transform(this.foldsResults, getPrecs));
+		return Math.sqrt(StatUtils.variance(precisions));
 	}
 	public double recallyStd(){
-		return Math.sqrt(StatUtils.variance(this.recallVector()));
+		double[] recalls = Doubles.toArray(Lists.transform(this.foldsResults, getRecs));
+		return Math.sqrt(StatUtils.variance(recalls));
 	}
 	public double fmeasureStd(){
-		return Math.sqrt(StatUtils.variance(this.fmeasureVector()));
+		double[] fms = Doubles.toArray(Lists.transform(this.foldsResults, getfms));
+		return Math.sqrt(StatUtils.variance(fms));
 	}
 	public double accuracyMean(){
-		return StatUtils.mean(this.accuraccyVector());
+		double[] accs = Doubles.toArray(Lists.transform(this.foldsResults, getAccs));
+		return StatUtils.mean(accs);
 	}
 	public double precisionMean(){
-		return StatUtils.mean(this.precisionVector());
+		double[] precs = Doubles.toArray(Lists.transform(this.foldsResults, getPrecs));
+		return StatUtils.mean(precs);
 	}
 	public double recallMean(){
-		return StatUtils.mean(this.recallVector());
+		double[] recs = Doubles.toArray(Lists.transform(this.foldsResults, getRecs));
+		return StatUtils.mean(recs);
 	}
 	public double fmeasureMean(){
-		return StatUtils.mean(this.fmeasureVector());
+		double[] fms = Doubles.toArray(Lists.transform(this.foldsResults, getfms));
+		return StatUtils.mean(fms);
 	}
-	
-	
-	//private
-	private double[] accuraccyVector(){
-		double[] ret = new double[this.foldsResults.size()];
-		for (int i = 0; i < ret.length; i++) {
-			ret[i] = this.foldsResults.get(i).getAccuracy();
-		}
-		return ret;
-	}
-	private double[] precisionVector(){
-		double[] ret = new double[this.foldsResults.size()];
-		for (int i = 0; i < ret.length; i++) {
-			ret[i] = this.foldsResults.get(i).getPrecision();
-		}
-		return ret;
-	}
-	private double[] recallVector(){
-		double[] ret = new double[this.foldsResults.size()];
-		for (int i = 0; i < ret.length; i++) {
-			ret[i] = this.foldsResults.get(i).getRecall();
-		}
-		return ret;
-	}
-	private double[] fmeasureVector(){
-		double[] ret = new double[this.foldsResults.size()];
-		for (int i = 0; i < ret.length; i++) {
-			ret[i] = this.foldsResults.get(i).getFmeasure();
-		}
-		return ret;
-	}
-	
-	
 
 	//getters and setters
 	public List<FoldResult> getFoldsResults() {
@@ -127,10 +132,5 @@ public class CrossValidationOutput {
 				+ ", fmeasureStd()=" + formatter.format(fmeasureMean()) + ", seed=" + seed
 				+ ", folds=" + folds + "]";
 	}
-
-
-
-
-
 
 }

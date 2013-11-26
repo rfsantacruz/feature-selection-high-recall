@@ -51,10 +51,15 @@ public class FeatureSelectionExperimentReport extends AbstractExperimentReport {
 		sb.appendln(Joiner.on(",").skipNulls().join(this.problem, this.classifier, this.metricName,this.maxNumFeatures));
 
 		for (String alg : featureSelection2MetricMean.keySet()) {
+			sb.appendln(alg);
+			
 			if(featureSelection2MetricMean.get(alg) != null){
-				sb.append(Joiner.on(",").skipNulls().join(alg,","));
-				sb.append(Joiner.on(",").skipNulls().join(featureSelection2MetricMean.get(alg)));
+				sb.append("Mean,");
 				sb.appendln(Joiner.on(",").skipNulls().join(featureSelection2MetricMean.get(alg)));
+			}
+			if(featureSelection2MetricStd.get(alg)!= null){
+				sb.append("STD,");
+				sb.appendln(Joiner.on(",").skipNulls().join(featureSelection2MetricStd.get(alg)));
 			}
 		}
 		return sb.toString();
@@ -81,12 +86,12 @@ public class FeatureSelectionExperimentReport extends AbstractExperimentReport {
 		StrBuilder sb = new StrBuilder();
 
 		Iterator<String> plotSymbols =   Iterables.cycle(
-				"'-yo'","'-mo'","'-co'","'-ro'","'-go'","'-bo'","'-wo'","'-ko'",
-				"'-y+'","'-m+'","'-c+'","'-r+'","'-g+'","'-b+'","'-w+'","'-k+'",
-				"'-y*'","'-m*'","'-c*'","'-r*'","'-g*'","'-b*'","'-w*'","'-k*'",
-				"'-yx'","'-mx'","'-cx'","'-rx'","'-gx'","'-bx'","'-wx'","'-kx'",
-				"'-ys'","'-ms'","'-cs'","'-rs'","'-gs'","'-bs'","'-ws'","'-ks'",
-				"'-yd'","'-md'","'-cd'","'-rd'","'-gd'","'-bd'","'-wd'","'-kd'").iterator();
+				"'-yo'","'-mo'","'-co'","'-ro'","'-go'","'-bo'","'-ko'",
+				"'-y+'","'-m+'","'-c+'","'-r+'","'-g+'","'-b+'","'-k+'",
+				"'-y*'","'-m*'","'-c*'","'-r*'","'-g*'","'-b*'","'-k*'",
+				"'-yx'","'-mx'","'-cx'","'-rx'","'-gx'","'-bx'","'-kx'",
+				"'-ys'","'-ms'","'-cs'","'-rs'","'-gs'","'-bs'","'-ks'",
+				"'-yd'","'-md'","'-cd'","'-rd'","'-gd'","'-bd'","'-kd'").iterator();
 
 
 
