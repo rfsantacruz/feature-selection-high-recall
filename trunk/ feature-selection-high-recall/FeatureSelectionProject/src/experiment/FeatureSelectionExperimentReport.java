@@ -115,7 +115,7 @@ public class FeatureSelectionExperimentReport extends AbstractExperimentReport {
 
 				sb.appendln(metric + " = ["+ Joiner.on(", ").skipNulls().join(featureSelection2MetricMean.get(alg)) + "];");
 				sb.appendln(error + " = 2.262 .* (1/"+Math.sqrt(10)+") .* ["+ Joiner.on(", ").skipNulls().join(featureSelection2MetricStd.get(alg)) + "];");
-				sb.appendln("errorbar(n_features, "+ metric + "," + error + ","+ symbol +",'LineWidth', 1.5,'MarkerSize',8)");
+				sb.appendln("errorbar(n_features, "+ metric + "," + error + ","+ symbol +")");
 				sb.appendln("");
 			}
 		}
@@ -124,8 +124,9 @@ public class FeatureSelectionExperimentReport extends AbstractExperimentReport {
 		sb.appendln("title('"+ Joiner.on(" ").skipNulls().join(this.problem, this.classifier, this.metricName ) +"');");
 		sb.appendln("xlabel('number of features');");
 		sb.appendln("ylabel('"+ this.metricName +"');");
-		sb.appendln("legend(" + Joiner.on(",").skipNulls().join(legend) + ");");
-
+		sb.appendln("legend(" + Joiner.on(",").skipNulls().join(legend) + ",'Location', 'SouthOutside');");
+		sb.appendln("saveas(gcf, '" + Joiner.on("_").skipNulls().join(this.problem, this.classifier, this.metricName ) + "' , 'pdf')");
+		
 		return sb.toString();
 	}
 
