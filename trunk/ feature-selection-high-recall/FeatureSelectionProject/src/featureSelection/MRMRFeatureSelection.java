@@ -13,6 +13,8 @@ import weka.filters.supervised.attribute.Discretize;
 public class MRMRFeatureSelection extends ASEvaluation implements SubsetEvaluator   {
 	
 	private Instances dataDiscretized;
+	private double[] relevance;
+	private double[][] redundancy;
 	
 	//intialize the evaluator
 	@Override
@@ -22,6 +24,26 @@ public class MRMRFeatureSelection extends ASEvaluation implements SubsetEvaluato
 		disTransform.setUseBetterEncoding(true);
 		disTransform.setInputFormat(data);
 		this.dataDiscretized = Filter.useFilter(data, disTransform);
+		
+		//relevance precomputing mutual information feature-label
+		this.relevance = new double[this.dataDiscretized.numAttributes()];
+		double[] classATT = this.dataDiscretized.attributeToDoubleArray(this.dataDiscretized.classIndex());
+		for (int i = 0; i < this.relevance.length; i++) {
+			double[] featureI = this.dataDiscretized.attributeToDoubleArray(i);
+			relevance[i] = MutualInformation.calculateMutualInformation(classATT, featureI);
+		}
+		
+		//redundancy precomputing mutual information feature-feature
+		this.redundancy = new double[this.dataDiscretized.numAttributes()][this.dataDiscretized.numAttributes()];
+		for (int i = 0; i < redundancy.length; i++) {
+			double[] featureI = this.dataDiscretized.attributeToDoubleArray(i);
+			for (int j = 0; j < redundancy[i].length; j++) {
+				double[] featureJ = this.dataDiscretized.attributeToDoubleArray(j);
+				redundancy[i][j] = MutualInformation.calculateMutualInformation(featureI,featureJ);
+			}
+		}
+		
+		
 
 	}
 
@@ -36,16 +58,12 @@ public class MRMRFeatureSelection extends ASEvaluation implements SubsetEvaluato
 		double redundancy = 0.0;
 		double[] classATT = this.dataDiscretized.attributeToDoubleArray(this.dataDiscretized.classIndex());
 		
-		
 		for (int i = 0; i < this.dataDiscretized.numAttributes(); i++) {
 			if(subSet.get(i)){
-				double[] featureI = this.dataDiscretized.attributeToDoubleArray(i);
-				relevance += MutualInformation.calculateMutualInformation(classATT, featureI);
-				
+				relevance += this.relevance[i];
 				for (int j = 0; j < this.dataDiscretized.numAttributes(); j++) {
 					if(i != j && subSet.get(j)){
-						double[] featureJ = this.dataDiscretized.attributeToDoubleArray(j);
-						redundancy += MutualInformation.calculateMutualInformation(featureI,featureJ);
+						redundancy += this.redundancy[i][j];
 					}
 				}
 				
