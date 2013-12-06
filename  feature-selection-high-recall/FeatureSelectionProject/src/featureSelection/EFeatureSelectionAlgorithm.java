@@ -55,7 +55,21 @@ public enum EFeatureSelectionAlgorithm {
 	FORWARD_SELECTION_WRAPPER,
 	//wrapper foward search technique
 
-	BACKWARD_SELECTION_WRAPPER
+	BACKWARD_SELECTION_WRAPPER,
 	//wrapper BACKWARD search technique
+	
+	//our approach****************
+	
+	HIGH_PRE_EXPECT_APP,
+	//our model to optimize the expectation and to provide high precision
+	
+	HIGH_PRE_LOGLIK_APP,
+	//our model to optimize the log likelihood and to provide high precision
+	
+	HIGH_REC_EXPECT_APP,
+	//our model to optimize the expectation and to provide high recall
+	
+	HIGH_REC_LOG_APP
+	//our model to optimize the log likelihood and to provide high recall
 
 }
