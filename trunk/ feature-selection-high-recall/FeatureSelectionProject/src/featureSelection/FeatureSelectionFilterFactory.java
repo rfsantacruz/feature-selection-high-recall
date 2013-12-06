@@ -153,6 +153,40 @@ public class FeatureSelectionFilterFactory {
 			((GreedyStepwise)search).setGenerateRanking(true);
 			((GreedyStepwise)search).setNumToSelect(parameter.getNumberOfFeature());
 			break;
+			
+		case HIGH_PRE_EXPECT_APP:
+			//high precision evaluator derived from the maximization of the expectation 
+			evaluator = new HighPrecExpectationEvaluator();
+			//choose based on a graddy search 
+			search = new GreedyStepwise();
+			((GreedyStepwise)search).setGenerateRanking(true);
+			((GreedyStepwise)search).setNumToSelect(parameter.getNumberOfFeature());
+			break;
+		case HIGH_PRE_LOGLIK_APP:
+			//high precision evaluator derived from the maximization of the expectation 
+			evaluator = new HighPreLogLikelihoodEvaluator();
+			//choose based on a graddy search 
+			search = new GreedyStepwise();
+			((GreedyStepwise)search).setGenerateRanking(true);
+			((GreedyStepwise)search).setNumToSelect(parameter.getNumberOfFeature());
+			break;
+		
+		case HIGH_REC_EXPECT_APP:
+			//high precision evaluator derived from the maximization of the expectation 
+			evaluator = new HighRecExpectationEvaluator();
+			//choose based on a graddy search 
+			search = new GreedyStepwise();
+			((GreedyStepwise)search).setGenerateRanking(true);
+			((GreedyStepwise)search).setNumToSelect(parameter.getNumberOfFeature());
+			break;
+		case HIGH_REC_LOG_APP:
+			//high precision evaluator derived from the maximization of the expectation 
+			evaluator = new HighRecLogLikelihoodEvaluator();
+			//choose based on a graddy search 
+			search = new GreedyStepwise();
+			((GreedyStepwise)search).setGenerateRanking(true);
+			((GreedyStepwise)search).setNumToSelect(parameter.getNumberOfFeature());
+			break;
 		}
 		
 		//wrap the evaluator and the search algorithm
