@@ -112,7 +112,7 @@ public class HighPreLogLikelihoodEvaluator extends ASEvaluation implements Subse
 			//main probability of the equations
 			double p = 1;
 			//productory of P(y_i=1|x_i, f_i) for this datum. obs these probs were precomputed
-			for (int i = 0; i < this.dataBinarized.numAttributes(); i++) {
+			for (int i = 0; i < this.dataBinarized.numAttributes()-1; i++) {
 				if(subSet.get(i)){
 					int xdi = (int)datum.toDoubleArray()[i];
 					//P(y_i = 1|x_i, f_i)

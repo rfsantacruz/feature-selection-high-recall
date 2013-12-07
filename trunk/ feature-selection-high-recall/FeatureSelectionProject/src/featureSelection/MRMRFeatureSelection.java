@@ -26,7 +26,7 @@ public class MRMRFeatureSelection extends ASEvaluation implements SubsetEvaluato
 		this.dataDiscretized = Filter.useFilter(data, disTransform);
 		
 		//relevance precomputing mutual information feature-label
-		this.relevance = new double[this.dataDiscretized.numAttributes()];
+		this.relevance = new double[this.dataDiscretized.numAttributes() - 1];
 		double[] classATT = this.dataDiscretized.attributeToDoubleArray(this.dataDiscretized.classIndex());
 		for (int i = 0; i < this.relevance.length; i++) {
 			double[] featureI = this.dataDiscretized.attributeToDoubleArray(i);
@@ -34,7 +34,7 @@ public class MRMRFeatureSelection extends ASEvaluation implements SubsetEvaluato
 		}
 		
 		//redundancy precomputing mutual information feature-feature
-		this.redundancy = new double[this.dataDiscretized.numAttributes()][this.dataDiscretized.numAttributes()];
+		this.redundancy = new double[this.dataDiscretized.numAttributes() - 1][this.dataDiscretized.numAttributes() - 1];
 		for (int i = 0; i < redundancy.length; i++) {
 			double[] featureI = this.dataDiscretized.attributeToDoubleArray(i);
 			for (int j = 0; j < redundancy[i].length; j++) {
@@ -58,10 +58,10 @@ public class MRMRFeatureSelection extends ASEvaluation implements SubsetEvaluato
 		double redundancy = 0.0;
 		double[] classATT = this.dataDiscretized.attributeToDoubleArray(this.dataDiscretized.classIndex());
 		
-		for (int i = 0; i < this.dataDiscretized.numAttributes(); i++) {
+		for (int i = 0; i < this.dataDiscretized.numAttributes() - 1; i++) {
 			if(subSet.get(i)){
 				relevance += this.relevance[i];
-				for (int j = 0; j < this.dataDiscretized.numAttributes(); j++) {
+				for (int j = 0; j < this.dataDiscretized.numAttributes() - 1; j++) {
 					if(i != j && subSet.get(j)){
 						redundancy += this.redundancy[i][j];
 					}
