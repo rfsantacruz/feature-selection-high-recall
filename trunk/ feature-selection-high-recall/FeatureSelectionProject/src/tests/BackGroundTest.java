@@ -3,6 +3,7 @@ package tests;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +15,8 @@ import org.junit.Test;
 
 import problems.ClassificationProblem;
 import weka.classifiers.AbstractClassifier;
+import weka.classifiers.evaluation.Evaluation;
+import weka.core.Instance;
 import classifiers.LogisticRegressionClassifier;
 import classifiers.NaiveBayesClassifier;
 import classifiers.SVMLinearClassifier;
@@ -98,7 +101,7 @@ public class BackGroundTest {
 	public void testClassifierInUCIData() {
 		try{
 			ClassificationProblem cp = new ClassificationProblem("./TestDataSets/heart-statlog.arff");
-	
+
 			AbstractClassifier nb = new NaiveBayesClassifier();
 			AbstractClassifier lr = new LogisticRegressionClassifier();
 			AbstractClassifier svm = new SVMLinearClassifier();
@@ -216,32 +219,110 @@ public class BackGroundTest {
 		}
 	}
 
-	//naive test of metrics with the artificial data where the classifier can predict right every trainig example
-	// accuraccy = precision = recall = fmeasure = 1  and errorrate = a
+	//full weka evaluation metrics computation test and wekawrapperevaluation metric computation test
+	@Test
 	public void testMetrics(){
-		String filePath = "./TestDataSets/lsdata1.arff";
+		//initializations
+		String filePath = "./TestDataSets/breast-cancer.arff";
 		ClassificationProblem cp;
 		try {
+			//format to compute at least 4 digital fractions
+			final NumberFormat nf = NumberFormat.getInstance();
+			nf.setMinimumFractionDigits(4);
+			nf.setMaximumFractionDigits(4);
+			nf.setGroupingUsed(false);
 			
+			//read a data set
 			cp = new ClassificationProblem(filePath);
 
+			//classifier and evaluators
 			AbstractClassifier svm = new SVMLinearClassifier();
-			WekaEvaluationWrapper eval = new WekaEvaluationWrapper(cp);
-
+			Evaluation  eval = new Evaluation(cp.getData());
+			WekaEvaluationWrapper wrapper = new WekaEvaluationWrapper(cp);
+			
+			//train and evaluate
 			svm.buildClassifier(cp.getData());
 			eval.evaluateModel(svm,cp.getData());
-			double error_rate_nb = eval.errorRate();
-			double accuracy_nb = eval.accuracy();
-			double precision_nb = eval.precision();
-			double recall_nb = eval.recall();
-			double fmeasure_nb = eval.fMeasure();
+			wrapper.evaluateModel(svm, cp.getData());
 			
-			Assert.assertEquals(error_rate_nb, 0);
-			Assert.assertEquals(accuracy_nb, 1);
-			Assert.assertEquals(precision_nb, 1);
-			Assert.assertEquals(recall_nb, 1);
-			Assert.assertEquals(fmeasure_nb, 1);
 			
+			//weka evaluation accurracy
+			double weka_accuracy = 1 - eval.errorRate();
+			
+			//my computation accuracy
+			double accuracyNumerator = 0;
+			double accuracyDenominator = 0;
+			
+			//wrapper evaluation variables
+			double precisionMean = 0;
+			double recallMean = 0;
+			double FmeasureMean = 0;
+			
+			//compute metrics
+			for(int i = 0 ; i < cp.getData().classAttribute().numValues(); i ++){
+				double TP = 0;
+				double TN = 0;
+				double FP = 0;
+				double FN = 0;
+				for (Instance datum : cp.getData()) {					
+					double actual = datum.classValue();
+					double pred = svm.classifyInstance(datum);
+
+					if(i == actual){
+						if(pred == actual){
+							//tp++
+							TP++;
+						}else{
+							//fn++;
+							FN++;
+						}
+					}else{
+						if(pred == actual){
+							//tn++
+							TN++;
+						}else{
+							//fp++;
+							FP++;
+						}
+					}
+				}
+				
+				//my computation: precision, recall fmeasure for a given class i
+				double precision = (TP/(TP+FP));
+				double recall = (TP/(TP+FN));
+				double fmeasure = (2* precision * recall) / (precision + recall);
+				
+				//computation of mean and general accuracy
+				accuracyNumerator += TP+TN;
+				accuracyDenominator += TP+TN+FP+FN;
+				 precisionMean += precision;
+				 recallMean += recall;
+				 FmeasureMean += fmeasure;
+				
+				//weka computation
+				double weka_precision = eval.precision(i);
+				double weka_recall = eval.recall(i);
+				double weka_fmeasure = eval.fMeasure(i);
+				
+				//check if weka results and mine are the same
+				Assert.assertEquals("Weka Precision Wrong", nf.format(precision), nf.format(weka_precision));
+				Assert.assertEquals("Weka recall Wrong", nf.format(recall), nf.format(weka_recall));
+				Assert.assertEquals("Weka fscore Wrong", nf.format(fmeasure), nf.format(weka_fmeasure));
+				
+			}
+			
+			//compute general metrics
+			double accuraccy = accuracyNumerator / accuracyDenominator;
+			precisionMean = precisionMean / cp.getData().classAttribute().numValues();
+			recallMean = recallMean / cp.getData().classAttribute().numValues();
+			FmeasureMean = FmeasureMean / cp.getData().classAttribute().numValues();
+			
+			//check wraper and general metrics
+			Assert.assertEquals("Weka Accuracy Wrong", nf.format(accuraccy), nf.format(weka_accuracy));
+			Assert.assertEquals("Weka Accuracy in wrapper Wrong", nf.format(accuraccy), nf.format(wrapper.accuracy()));
+			Assert.assertEquals("Weka precision in wrapper Wrong", nf.format(precisionMean), nf.format(wrapper.precision()));
+			Assert.assertEquals("Weka recall in wrapper Wrong", nf.format(recallMean), nf.format(wrapper.recall()));
+			Assert.assertEquals("Weka fmeasure in wrapper Wrong", nf.format(FmeasureMean), nf.format(wrapper.fMeasure()));
 
 		} catch (Exception e) {
 			fail("Problem to read the arrff file: " + e.getMessage());
