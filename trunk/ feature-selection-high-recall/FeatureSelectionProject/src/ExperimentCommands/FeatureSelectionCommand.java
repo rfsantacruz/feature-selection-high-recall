@@ -38,7 +38,7 @@ import featureSelection.FeatureSelectionFilterFactory;
 
 public class FeatureSelectionCommand implements IExperimentCommand{
 
-	private String GraphsPath = "./results/graphs";
+	private String GraphsPath;
 	private  List<EFeatureSelectionAlgorithm> selectionAlgs = null;
 	private List<ELinearClassifier> classifiers = null;
 	private Logger log = Util.getFileLogger(FeatureSelectionCommand.class.getName(), "./results/logs/log.txt");
