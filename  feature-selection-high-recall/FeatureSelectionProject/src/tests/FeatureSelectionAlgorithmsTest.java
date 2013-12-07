@@ -419,8 +419,8 @@ public class FeatureSelectionAlgorithmsTest {
 	
 	@Test
 	public void testHighPrecEpctApp(){
-		String dataset = "./TestDataSets/heart-statlog.arff";
-		dataset = "./binary_data/vote.arff";
+		String dataset = "./binary_data/vote.arff";
+		//dataset = "./binary_data/newsgroupstest.arff";
 		try {
 			ClassificationProblem cp = new ClassificationProblem(dataset);
 
@@ -448,8 +448,8 @@ public class FeatureSelectionAlgorithmsTest {
 	}
 	@Test
 	public void testHighPrecLogLApp(){
-		String dataset = "./TestDataSets/heart-statlog.arff";
-		dataset = "./binary_data/vote.arff";
+		String dataset = "./binary_data/vote.arff";
+		//dataset = "./binary_data/newsgroupstest.arff";
 		try {
 			ClassificationProblem cp = new ClassificationProblem(dataset);
 
@@ -477,8 +477,8 @@ public class FeatureSelectionAlgorithmsTest {
 	}
 	@Test
 	public void testHighRecEpctApp(){
-		String dataset = "./TestDataSets/heart-statlog.arff";
-		dataset = "./binary_data/vote.arff";
+		String dataset = "./binary_data/vote.arff";
+		//dataset = "./binary_data/newsgroupstest.arff";
 		try {
 			ClassificationProblem cp = new ClassificationProblem(dataset);
 
@@ -506,8 +506,8 @@ public class FeatureSelectionAlgorithmsTest {
 	}
 	@Test
 	public void testHighRecLogLApp(){
-		String dataset = "./TestDataSets/heart-statlog.arff";
-		dataset = "./binary_data/vote.arff";
+		String dataset = "./binary_data/vote.arff";
+		//dataset = "./binary_data/newsgroupstest.arff";
 		try {
 			ClassificationProblem cp = new ClassificationProblem(dataset);
 
