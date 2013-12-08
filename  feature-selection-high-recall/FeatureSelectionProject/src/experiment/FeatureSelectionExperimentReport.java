@@ -31,7 +31,7 @@ public class FeatureSelectionExperimentReport extends AbstractExperimentReport {
 
 	@Override
 	public void saveInFile(String path) {
-		String fileName = Joiner.on("_").skipNulls().join(this.problem, this.classifier, this.metricName, ".m" );
+		String fileName = Joiner.on("_").skipNulls().join(this.problem.replaceAll("[^a-zA-Z0-9\\s]", ""), this.classifier, this.metricName, ".m" );
 		Path file = Paths.get(path,fileName);
 
 		try(PrintWriter out = new PrintWriter(file.toFile())){
@@ -48,7 +48,7 @@ public class FeatureSelectionExperimentReport extends AbstractExperimentReport {
 	public String saveString() {
 
 		StrBuilder sb = new StrBuilder();
-		sb.appendln(Joiner.on(",").skipNulls().join(this.problem, this.classifier, this.metricName,this.maxNumFeatures));
+		sb.appendln(Joiner.on(",").skipNulls().join(this.problem.replaceAll("[^a-zA-Z0-9\\s]", ""), this.classifier, this.metricName,this.maxNumFeatures));
 
 		for (String alg : featureSelection2MetricMean.keySet()) {
 			sb.appendln(alg);
@@ -68,7 +68,7 @@ public class FeatureSelectionExperimentReport extends AbstractExperimentReport {
 	@Override
 	public void plot(String path) {
 
-		String fileName = Joiner.on("_").skipNulls().join(this.problem, this.classifier, this.metricName, ".m" );
+		String fileName = Joiner.on("_").skipNulls().join(this.problem.replaceAll("[^a-zA-Z0-9\\s]", ""), this.classifier, this.metricName, ".m" );
 		Path file = Paths.get(path,fileName);
 
 		try(PrintWriter out = new PrintWriter(file.toFile())){
