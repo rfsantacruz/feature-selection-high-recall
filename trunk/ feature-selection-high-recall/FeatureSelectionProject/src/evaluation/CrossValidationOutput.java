@@ -4,18 +4,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.math3.stat.StatUtils;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.primitives.Doubles;
-import com.google.common.primitives.Primitives;
 
 
 
@@ -25,29 +14,6 @@ public class CrossValidationOutput {
 	private long seed;
 	private int folds;
 	private static final DecimalFormat  formatter = new DecimalFormat ("#0.000");
-	
-	//functions to simplify code
-	private static Function<FoldResult, Double> getAccs = new Function<FoldResult, Double>(){
-		public Double apply(FoldResult foldResut) {
-		    return foldResut.getAccuracy();
-		  }
-	};
-	private static Function<FoldResult, Double> getPrecs = new Function<FoldResult, Double>(){
-		public Double apply(FoldResult foldResut) {
-		    return foldResut.getPrecision();
-		  }
-	};
-	private static Function<FoldResult, Double> getRecs = new Function<FoldResult, Double>(){
-		public Double apply(FoldResult foldResut) {
-		    return foldResut.getRecall();
-		  }
-	};
-	private static Function<FoldResult, Double> getfms = new Function<FoldResult, Double>(){
-		public Double apply(FoldResult foldResut) {
-		    return foldResut.getFmeasure();
-		  }
-	};
-	
 
 	public CrossValidationOutput(long seed,
 			int folds) {
@@ -57,42 +23,23 @@ public class CrossValidationOutput {
 		this.seed = seed;
 		this.folds = folds;
 	}
-
-	public double accuracyStd(){
-		
-		double[] accuracys = Doubles.toArray(Lists.transform(this.foldsResults, getAccs));
-		return Math.sqrt(StatUtils.variance(accuracys));
-	}
-	public double precisionStd(){
-		
-		double[] precisions = Doubles.toArray(Lists.transform(this.foldsResults, getPrecs));
-		return Math.sqrt(StatUtils.variance(precisions));
-	}
-	public double recallyStd(){
-		double[] recalls = Doubles.toArray(Lists.transform(this.foldsResults, getRecs));
-		return Math.sqrt(StatUtils.variance(recalls));
-	}
-	public double fmeasureStd(){
-		double[] fms = Doubles.toArray(Lists.transform(this.foldsResults, getfms));
-		return Math.sqrt(StatUtils.variance(fms));
-	}
-	public double accuracyMean(){
-		double[] accs = Doubles.toArray(Lists.transform(this.foldsResults, getAccs));
-		return StatUtils.mean(accs);
-	}
-	public double precisionMean(){
-		double[] precs = Doubles.toArray(Lists.transform(this.foldsResults, getPrecs));
-		return StatUtils.mean(precs);
-	}
-	public double recallMean(){
-		double[] recs = Doubles.toArray(Lists.transform(this.foldsResults, getRecs));
-		return StatUtils.mean(recs);
-	}
-	public double fmeasureMean(){
-		double[] fms = Doubles.toArray(Lists.transform(this.foldsResults, getfms));
-		return StatUtils.mean(fms);
+	
+	public double metricMean(EClassificationMetric metric){
+		double[] metricVector = new double[this.foldsResults.size()]; 
+		for (int idx = 0 ; idx < metricVector.length ; idx++) {
+			metricVector[idx] = this.foldsResults.get(idx).getMetricReported(metric);
+		}
+		return StatUtils.mean(metricVector);
 	}
 
+	public double metricSTD(EClassificationMetric metric){
+		double[] metricVector = new double[this.foldsResults.size()]; 
+		for (int idx = 0 ; idx < metricVector.length ; idx++) {
+			metricVector[idx] = this.foldsResults.get(idx).getMetricReported(metric);
+		}
+		return Math.sqrt(StatUtils.variance(metricVector));
+	}
+	
 	//getters and setters
 	public List<FoldResult> getFoldsResults() {
 		return foldsResults;
@@ -124,12 +71,12 @@ public class CrossValidationOutput {
 
 	@Override
 	public String toString() {
-		return "CrossValidationOutput [accuracyMean()=" + formatter.format(accuracyMean())
-				+ ", precisionMean()=" + formatter.format(precisionMean()) + ", recallMean()="
-				+ formatter.format(recallMean()) + ", fmeasureMean()=" + formatter.format(fmeasureMean())
-				+ ", accuracyStd()=" + formatter.format(accuracyStd()) + ", precisionStd()="
-				+ formatter.format(precisionStd()) + ", recallyStd()=" + formatter.format(recallyStd())
-				+ ", fmeasureStd()=" + formatter.format(fmeasureMean()) + ", seed=" + seed
+		return "CrossValidationOutput [accuracyMean()=" + formatter.format(metricMean(EClassificationMetric.ACCURACY))
+				+ ", precisionMean()=" + formatter.format(metricMean(EClassificationMetric.PRECISION)) + ", recallMean()="
+				+ formatter.format(metricMean(EClassificationMetric.RECALL)) + ", fmeasureMean()=" + formatter.format(metricMean(EClassificationMetric.FSCORE))
+				+ ", accuracyStd()=" + formatter.format(metricSTD(EClassificationMetric.ACCURACY)) + ", precisionStd()="
+				+ formatter.format(metricSTD(EClassificationMetric.PRECISION)) + ", recallyStd()=" + formatter.format(metricSTD(EClassificationMetric.RECALL))
+				+ ", fmeasureStd()=" + formatter.format(metricSTD(EClassificationMetric.FSCORE)) + ", seed=" + seed
 				+ ", folds=" + folds + "]";
 	}
 

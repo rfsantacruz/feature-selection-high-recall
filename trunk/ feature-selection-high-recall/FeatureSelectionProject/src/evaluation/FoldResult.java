@@ -1,55 +1,27 @@
 package evaluation;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class FoldResult {
 
-	private double accuracy;
-	private double precision;
-	private double recall;
-	private double fmeasure;
+	private Map<EClassificationMetric, Double> metricsReported;
 	private String optimalSetting; 
 	
-	public FoldResult(double accuracy, double precision, double recall,
-			double fmeasure, String optimalSetting) {
-		super();
-		this.setAccuracy(accuracy);
-		this.precision = precision;
-		this.recall = recall;
-		this.fmeasure = fmeasure;
-		this.setOptimalSetting(optimalSetting);
+	public FoldResult( ) {
+		this.metricsReported = new HashMap<EClassificationMetric, Double>();
+	}
+	public FoldResult(String optimalString ) {
+		this.metricsReported = new HashMap<EClassificationMetric, Double>();
+		this.optimalSetting = optimalString;
 	}
 	
-	public FoldResult( ) {}
-
-	public double getAccuracy() {
-		return accuracy;
+	public void setMetricReported(EClassificationMetric metric, double metricValue){
+		this.metricsReported.put(metric, metricValue);
 	}
-
-	public void setAccuracy(double accuracy) {
-		this.accuracy = accuracy;
-	}
-
-	public double getPrecision() {
-		return precision;
-	}
-
-	public void setPrecision(double precision) {
-		this.precision = precision;
-	}
-
-	public double getRecall() {
-		return recall;
-	}
-
-	public void setRecall(double recall) {
-		this.recall = recall;
-	}
-
-	public double getFmeasure() {
-		return fmeasure;
-	}
-
-	public void setFmeasure(double fmeasure) {
-		this.fmeasure = fmeasure;
+	public double getMetricReported(EClassificationMetric metric){
+		Double value = this.metricsReported.get(metric); 
+		return value != null? value.doubleValue() : 0;
 	}
 
 	public String getOptimalSetting() {
