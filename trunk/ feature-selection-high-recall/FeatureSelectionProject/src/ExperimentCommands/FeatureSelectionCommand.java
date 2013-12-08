@@ -142,7 +142,8 @@ public class FeatureSelectionCommand implements IExperimentCommand{
 			}
 
 			this.savePartialResuls(result, exp_acc, exp_pre, exp_rec, exp_fm);
-
+			
+			System.out.println("Simulation: " + ecl.name() + " in problem " + cp.getName() + " done!" );
 		}
 		
 		System.out.println("Simulation in Problem " + cp.getName() + " done!" );
