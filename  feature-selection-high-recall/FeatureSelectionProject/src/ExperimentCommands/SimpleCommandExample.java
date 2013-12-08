@@ -19,6 +19,7 @@ import classifiers.SVMLinearClassifier;
 import com.google.common.collect.Sets;
 
 import evaluation.CrossValidationOutput;
+import evaluation.EClassificationMetric;
 import evaluation.WekaEvaluationWrapper;
 import experiment.AbstractExperimentReport;
 import experiment.ClassificationExperimentReport;
@@ -60,18 +61,18 @@ public class SimpleCommandExample implements IExperimentCommand {
 			//cross validate the models
 			CrossValidationOutput lrcv = ev.crossValidateModel(lr, cp, 10, System.currentTimeMillis(), paramLR);
 			System.out.println(lrcv);
-			result.add(new ClassificationExperimentReport(lrcv.precisionMean(), lrcv.recallMean(), lrcv.accuracyMean()
-					, lrcv.fmeasureMean(), cp.getName(), "LogisticRegression"));
+			result.add(new ClassificationExperimentReport(lrcv.metricMean(EClassificationMetric.PRECISION), lrcv.metricMean(EClassificationMetric.RECALL), lrcv.metricMean(EClassificationMetric.ACCURACY)
+					, lrcv.metricMean(EClassificationMetric.FSCORE), cp.getName(), "LogisticRegression"));
 
 			CrossValidationOutput svmcv = ev.crossValidateModel(svm, cp, 10, System.currentTimeMillis(), paramSVM);
 			System.out.println(svmcv);
-			result.add(new ClassificationExperimentReport(svmcv.precisionMean(), svmcv.recallMean(), svmcv.accuracyMean()
-					, svmcv.fmeasureMean(), cp.getName(), "SVMLinear"));
+			result.add(new ClassificationExperimentReport(svmcv.metricMean(EClassificationMetric.PRECISION), svmcv.metricMean(EClassificationMetric.RECALL), svmcv.metricMean(EClassificationMetric.ACCURACY)
+					, svmcv.metricMean(EClassificationMetric.FSCORE), cp.getName(), "SVMLinear"));
 
 			CrossValidationOutput nbcv = ev.crossValidateModel(nb, cp, 10, System.currentTimeMillis(), null);
 			System.out.println(nbcv);
-			result.add(new ClassificationExperimentReport(nbcv.precisionMean(), nbcv.recallMean(), nbcv.accuracyMean()
-					, nbcv.fmeasureMean(), cp.getName(), "NaiveBayes"));
+			result.add(new ClassificationExperimentReport(nbcv.metricMean(EClassificationMetric.PRECISION), nbcv.metricMean(EClassificationMetric.RECALL), nbcv.metricMean(EClassificationMetric.ACCURACY)
+					, nbcv.metricMean(EClassificationMetric.FSCORE), cp.getName(), "NaiveBayes"));
 
 
 		} catch (Exception e) {

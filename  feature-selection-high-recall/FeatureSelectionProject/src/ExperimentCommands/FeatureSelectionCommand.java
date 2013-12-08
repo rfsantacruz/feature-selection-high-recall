@@ -26,6 +26,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 
 import evaluation.CrossValidationOutput;
+import evaluation.EClassificationMetric;
 import evaluation.WekaEvaluationWrapper;
 import experiment.AbstractExperimentReport;
 import experiment.ExperimentExecutor;
@@ -120,15 +121,15 @@ public class FeatureSelectionCommand implements IExperimentCommand{
 						CrossValidationOutput outlr = eval.crossValidateModel(cl, filter,cp, 10, 10, param);
 						
 						//collect cross validation measurement
-						exp_acc.metricMeanAddValue(alg.name(), outlr.accuracyMean());
-						exp_pre.metricMeanAddValue(alg.name(), outlr.precisionMean());
-						exp_rec.metricMeanAddValue(alg.name(), outlr.recallMean());
-						exp_fm.metricMeanAddValue(alg.name(), outlr.fmeasureMean());
+						exp_acc.metricMeanAddValue(alg.name(), outlr.metricMean(EClassificationMetric.ACCURACY));
+						exp_pre.metricMeanAddValue(alg.name(), outlr.metricMean(EClassificationMetric.PRECISION));
+						exp_rec.metricMeanAddValue(alg.name(), outlr.metricMean(EClassificationMetric.RECALL));
+						exp_fm.metricMeanAddValue(alg.name(), outlr.metricMean(EClassificationMetric.FSCORE));
 						
-						exp_acc.metricStdAddValue(alg.name(), outlr.accuracyStd());
-						exp_pre.metricStdAddValue(alg.name(), outlr.precisionStd());
-						exp_rec.metricStdAddValue(alg.name(), outlr.recallyStd());
-						exp_fm.metricStdAddValue(alg.name(), outlr.fmeasureStd());
+						exp_acc.metricStdAddValue(alg.name(), outlr.metricSTD(EClassificationMetric.ACCURACY));
+						exp_pre.metricStdAddValue(alg.name(), outlr.metricSTD(EClassificationMetric.PRECISION));
+						exp_rec.metricStdAddValue(alg.name(), outlr.metricSTD(EClassificationMetric.RECALL));
+						exp_fm.metricStdAddValue(alg.name(), outlr.metricSTD(EClassificationMetric.FSCORE));
 						
 					}
 					System.out.println("Simulation: " +ecl.name() + " and " + alg.name() + " done!" );
