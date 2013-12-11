@@ -24,6 +24,8 @@ public class FSSimulation {
 		String dataSetFolderpath = "./data";
 		String graphOutPutFolderPath = "./results/graphs";
 		String csvResultsPath = "./results/featureSelection.csv";
+		int folds = 10;
+		int kFeatures = 50;
 
 		//classifiers
 		List<ELinearClassifier> classifiers = Lists.newArrayList(
@@ -34,26 +36,26 @@ public class FSSimulation {
 
 		//feature selection algorithms
 		List<EFeatureSelectionAlgorithm> selectionAlgs = Lists.newArrayList(
-				EFeatureSelectionAlgorithm.CONDITIONAL_ENTROPY_RANK
-				,EFeatureSelectionAlgorithm.CORRELATION_BASED_RANK
-				,EFeatureSelectionAlgorithm.GAINRATIO_RANK
-				,EFeatureSelectionAlgorithm.INFORMATIONGAIN_RANK
-				,EFeatureSelectionAlgorithm.SYMMETRICAL_UNCERT_RANK
+				//EFeatureSelectionAlgorithm.CONDITIONAL_ENTROPY_RANK
+				//,EFeatureSelectionAlgorithm.CORRELATION_BASED_RANK
+				//,EFeatureSelectionAlgorithm.GAINRATIO_RANK
+				EFeatureSelectionAlgorithm.INFORMATIONGAIN_RANK
+				//,EFeatureSelectionAlgorithm.SYMMETRICAL_UNCERT_RANK
 				//,EFeatureSelectionAlgorithm.CORRELATION_BASED_SUBSET
-				,EFeatureSelectionAlgorithm.MRMR_MI_BASED_SUBSET
+				//,EFeatureSelectionAlgorithm.MRMR_MI_BASED_SUBSET
 				//,EFeatureSelectionAlgorithm.FCBF
-				,EFeatureSelectionAlgorithm.RELIFF
+				//,EFeatureSelectionAlgorithm.RELIFF
 				//,EFeatureSelectionAlgorithm.SVMRFE
 				//,EFeatureSelectionAlgorithm.BACKWARD_SELECTION_WRAPPER
 				//,EFeatureSelectionAlgorithm.FORWARD_SELECTION_WRAPPER
-				,EFeatureSelectionAlgorithm.HIGH_PRE_EXPECT_APP
-				,EFeatureSelectionAlgorithm.HIGH_PRE_LOGLIK_APP
-				,EFeatureSelectionAlgorithm.HIGH_REC_EXPECT_APP
-				,EFeatureSelectionAlgorithm.HIGH_REC_LOG_APP
+				//,EFeatureSelectionAlgorithm.HIGH_PRE_EXPECT_APP
+				//,EFeatureSelectionAlgorithm.HIGH_PRE_LOGLIK_APP
+				//,EFeatureSelectionAlgorithm.HIGH_REC_EXPECT_APP
+				//,EFeatureSelectionAlgorithm.HIGH_REC_LOG_APP
 				);
 
 		//Normal feature selection command
-		IExperimentCommand cmd = new FeatureSelectionCommand(classifiers ,selectionAlgs, graphOutPutFolderPath);
+		IExperimentCommand cmd = new FeatureSelectionCommand(classifiers ,selectionAlgs, graphOutPutFolderPath, kFeatures, folds);
 		
 		//get the results
 		List<AbstractExperimentReport> result = ExperimentExecutor.getInstance().executeCommandInFiles(cmd, dataSetFolderpath);

@@ -35,6 +35,79 @@ public class WekaEvaluationWrapper{
 		this.problem = cp;
 	}
 
+	//fast cross validation tuning the model with different metrics and reproting these metrics
+	public CrossValidationOutput fastCrossValidationTuneByMetric(AbstractClassifier c, Instances randData, int numOfFeaturesToSelect, 
+			EFeatureSelectionAlgorithm efsa, int folds, Map<String,Set<String>> params, int[][] previousFeature)throws Exception{
+		
+		//output
+		CrossValidationOutput cvo = new CrossValidationOutput(folds);
+
+		//for each fold
+		for (int n = 0; n < folds; n++) {
+
+			//fold results
+			FoldResult fr = new FoldResult();
+
+			//split: (train + validation) and test
+			Instances trainAndValid = randData.trainCV(folds, n);
+			Instances test = randData.testCV(folds, n);
+
+
+			//split: train and validation
+			int trainSize = trainAndValid.size() - test.size(); //(int)Math.round(trainAndValid.size() * 0.8);
+			Instances train = new Instances(trainAndValid, 0, trainSize);
+			Instances valid = new Instances(trainAndValid, trainSize , trainAndValid.size() - train.size());
+
+			//perform the feature selection in the train data
+			AttributeSelection FeatureSelector = FeatureSelectionFilterFactory.
+					getInstance().createFilter(efsa, new FeatureSelectionFactoryParameters(numOfFeaturesToSelect, c, randData ,previousFeature[n]));
+
+			//select feature algorithm invocation
+			FeatureSelector.SelectAttributes(train);
+			//get attributes indexes
+			int[] selectedFeatures = FeatureSelector.selectedAttributes();
+
+			//save selected folds
+			fr.addSelectedFeature(ArrayUtils.remove(selectedFeatures,selectedFeatures.length -1));
+
+			//build a filter to remove not selected features
+			Remove rm = new Remove();
+			rm.setInvertSelection(true);
+			rm.setAttributeIndicesArray(selectedFeatures);
+			rm.setInputFormat(train);
+
+			//remove not selected features
+			train = Filter.useFilter(train, rm);
+			valid = Filter.useFilter(valid, rm);
+			test = Filter.useFilter(test, rm);
+			trainAndValid  = Filter.useFilter(trainAndValid, rm);
+
+			for (EClassificationMetric metric : EClassificationMetric.values()) {
+				
+				//tune the model
+				String optimumSetting = tuneClassifier(c, params, metric,
+						train, valid);
+				
+				//train with optimum parameters
+				c.setOptions(Utils.splitOptions(optimumSetting));
+				c.buildClassifier(trainAndValid);
+				
+				this.evaluateModel(c, test);
+				double metricReportValue = this.computeTunableMetric(metric);
+				
+				///workaround to save all metrics
+				fr.setOptimalSetting( metric +": " + optimumSetting + " " + (fr.getOptimalSetting() != null ? fr.getOptimalSetting():""));
+				fr.setMetricReported(metric, metricReportValue);
+				
+			}
+
+			cvo.addFoldResult(fr);
+		}
+
+		return cvo;
+
+	}
+
 	//this method is the fast cross validation where we just tune the model for one metric and report it
 	public CrossValidationOutput fastCrossValidationByMetric(AbstractClassifier c, Instances randData, int numOfFeaturesToSelect, EFeatureSelectionAlgorithm efsa, int folds, Map<String,Set<String>> params, int[][] previousFeature, EClassificationMetric metric)throws Exception{
 		//output
@@ -91,8 +164,8 @@ public class WekaEvaluationWrapper{
 			this.evaluateModel(c, test);
 			double metricReportValue = this.computeTunableMetric(metric);
 
-			FoldResult foldResult = new FoldResult();
-			foldResult.setMetricReported(metric, metricReportValue);
+			fr.setMetricReported(metric, metricReportValue);
+			fr.setOptimalSetting(optimumSetting);
 
 			cvo.addFoldResult(fr);
 		}
@@ -170,11 +243,6 @@ public class WekaEvaluationWrapper{
 
 	}
 
-	//this method tune the model for one metric and report the performance of this metric WITHOUT FEATURE SELECTION
-	public CrossValidationOutput crossValidateModelByMetric(AbstractClassifier c,ClassificationProblem cp, int folds, long seed, Map<String,Set<String>> params, EClassificationMetric metric )throws Exception{
-		return this.crossValidateModelByMetric(c, null, cp, folds, seed, params, metric);
-	}
-
 	//this method tune the model for one metric and report the performance of this metric USING FEATURE SELECTION
 	public CrossValidationOutput crossValidateModelByMetric(AbstractClassifier c, AttributeSelection FeatureSelector,ClassificationProblem cp, int folds, long seed, Map<String,Set<String>> params, EClassificationMetric metric )throws Exception{
 
@@ -246,7 +314,7 @@ public class WekaEvaluationWrapper{
 		return this.crossValidateModel(c, null, cp, folds, seed, params);
 	}
 
-	//This is a cross validation of a the model in the metric accuraccy and rport the perfomance in accuracy, precision, recall and fscore USING use FEATURE SELECTION
+	//This is a cross validation of a model in the metric accuraccy and report the perfomance in accuracy, precision, recall and fscore USING use FEATURE SELECTION
 	public CrossValidationOutput crossValidateModel(AbstractClassifier c, AttributeSelection FeatureSelector,ClassificationProblem cp, int folds, long seed, Map<String,Set<String>> params ) throws Exception{
 
 
@@ -344,11 +412,11 @@ public class WekaEvaluationWrapper{
 	private String tuneClassifier(AbstractClassifier classifier,
 			Map<String, Set<String>> params, EClassificationMetric metric,
 			Instances trainData, Instances validationData) throws Exception {
-		
+
 		//tune the model parameters
 		String optimumSetting = "";
 		if(params != null && !params.isEmpty()){
-			
+
 			List<String> modelSettings = Util.generateModels(Lists.newArrayList(params.values()));
 
 			double maxMetric = Double.MIN_VALUE;
@@ -368,7 +436,7 @@ public class WekaEvaluationWrapper{
 		}
 		return optimumSetting;
 	}
-	
+
 	//wrraped metrics
 	public double accuracy() throws Exception {
 		if(this.wekaEvaluation == null)

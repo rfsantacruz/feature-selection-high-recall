@@ -49,18 +49,20 @@ public class FeatureSelectionCommand implements IExperimentCommand{
 	private Logger log = Util.getFileLogger(FeatureSelectionCommand.class.getName(), "./results/logs/log.txt");
 	private int KmaxFeatures;
 	private StopWatch timer;
+	private int folds;
 
 	public FeatureSelectionCommand(List<ELinearClassifier> classifiers, List<EFeatureSelectionAlgorithm> FetSelectionAlgs, String graphPath){
-		this(classifiers,FetSelectionAlgs,graphPath,Integer.MAX_VALUE);
+		this(classifiers,FetSelectionAlgs,graphPath,Integer.MAX_VALUE, 10);
 	}
 	
-	public FeatureSelectionCommand(List<ELinearClassifier> classifiers, List<EFeatureSelectionAlgorithm> FetSelectionAlgs, String graphPath, int kMaxFeatures){
+	public FeatureSelectionCommand(List<ELinearClassifier> classifiers, List<EFeatureSelectionAlgorithm> FetSelectionAlgs, String graphPath, int kMaxFeatures, int folds ){
 
 		this.GraphsPath = graphPath;
 		this.selectionAlgs = FetSelectionAlgs;
 		this.classifiers = classifiers;
 		this.KmaxFeatures = kMaxFeatures;
 		timer = new StopWatch();timer.start();
+		this.folds = folds;
 	}
 
 
@@ -85,10 +87,10 @@ public class FeatureSelectionCommand implements IExperimentCommand{
 
 			//instatiate reports
 			int maxNumFeatures = KmaxFeatures < cp.getNumAttributes() - 1 ? KmaxFeatures : cp.getNumAttributes() - 1;
-			FeatureSelectionExperimentReport exp_acc = new FeatureSelectionExperimentReport(ecl.name(), cp.getName(), maxNumFeatures, "Accuracy");
-			FeatureSelectionExperimentReport exp_pre = new FeatureSelectionExperimentReport(ecl.name(), cp.getName(), maxNumFeatures, "Precision");
-			FeatureSelectionExperimentReport exp_rec = new FeatureSelectionExperimentReport(ecl.name(), cp.getName(), maxNumFeatures, "Recall");
-			FeatureSelectionExperimentReport exp_fm = new FeatureSelectionExperimentReport(ecl.name(), cp.getName(), maxNumFeatures, "FMeasure");
+			FeatureSelectionExperimentReport exp_acc = new FeatureSelectionExperimentReport(ecl.name(), cp.getName(), maxNumFeatures, folds, EClassificationMetric.ACCURACY.name());
+			FeatureSelectionExperimentReport exp_pre = new FeatureSelectionExperimentReport(ecl.name(), cp.getName(), maxNumFeatures, folds, EClassificationMetric.PRECISION.name());
+			FeatureSelectionExperimentReport exp_rec = new FeatureSelectionExperimentReport(ecl.name(), cp.getName(), maxNumFeatures,  folds, EClassificationMetric.RECALL.name());
+			FeatureSelectionExperimentReport exp_fm = new FeatureSelectionExperimentReport(ecl.name(), cp.getName(), maxNumFeatures,  folds, EClassificationMetric.FSCORE.name());
 			
 			//run all selected feature selection algorithm
 			for (EFeatureSelectionAlgorithm alg : this.selectionAlgs) {
@@ -106,7 +108,7 @@ public class FeatureSelectionCommand implements IExperimentCommand{
 								.createFilter(alg, new FeatureSelectionFactoryParameters(n_features, cl, cp.getData()));
 
 						//cross validate
-						CrossValidationOutput outlr = eval.crossValidateModel(cl, filter,cp, 10, 10, param);
+						CrossValidationOutput outlr = eval.crossValidateModel(cl, filter,cp, folds, System.currentTimeMillis(), param);
 						
 						//collect cross validation measurement
 						exp_acc.metricMeanAddValue(alg.name(), outlr.metricMean(EClassificationMetric.ACCURACY));
