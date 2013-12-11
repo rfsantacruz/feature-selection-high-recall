@@ -118,4 +118,16 @@ public class Util {
 		
 		return Logger.getLogger(logName);
 	}
+	
+	public static String[] transformStringArray(int[] idxs){
+		
+		if(idxs == null | idxs.length <= 0)
+			return null;
+		
+		String[] s = new String[idxs.length];
+		for (int i = 0; i < s.length; i++) {
+			s[i] = Integer.toString(idxs[i]);
+		}
+		return s;
+	}
 }

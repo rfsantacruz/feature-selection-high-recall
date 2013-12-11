@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import problems.ClassificationProblem;
 import utils.Util;
 import weka.attributeSelection.AttributeSelection;
@@ -20,6 +22,10 @@ import weka.filters.unsupervised.attribute.Remove;
 
 import com.google.common.collect.Lists;
 
+import featureSelection.EFeatureSelectionAlgorithm;
+import featureSelection.FeatureSelectionFactoryParameters;
+import featureSelection.FeatureSelectionFilterFactory;
+
 public class WekaEvaluationWrapper{
 
 	private Evaluation wekaEvaluation ;
@@ -29,14 +35,149 @@ public class WekaEvaluationWrapper{
 		this.problem = cp;
 	}
 
+	//this method is the fast cross validation where we just tune the model for one metric and report it
+	public CrossValidationOutput fastCrossValidationByMetric(AbstractClassifier c, Instances randData, int numOfFeaturesToSelect, EFeatureSelectionAlgorithm efsa, int folds, Map<String,Set<String>> params, int[][] previousFeature, EClassificationMetric metric)throws Exception{
+		//output
+		CrossValidationOutput cvo = new CrossValidationOutput(folds);
+
+		//for each fold
+		for (int n = 0; n < folds; n++) {
+
+			//fold results
+			FoldResult fr = new FoldResult();
+
+			//split: (train + validation) and test
+			Instances trainAndValid = randData.trainCV(folds, n);
+			Instances test = randData.testCV(folds, n);
+
+
+			//split: train and validation
+			int trainSize = trainAndValid.size() - test.size(); //(int)Math.round(trainAndValid.size() * 0.8);
+			Instances train = new Instances(trainAndValid, 0, trainSize);
+			Instances valid = new Instances(trainAndValid, trainSize , trainAndValid.size() - train.size());
+
+			//perform the feature selection in the train data
+			AttributeSelection FeatureSelector = FeatureSelectionFilterFactory.
+					getInstance().createFilter(efsa, new FeatureSelectionFactoryParameters(numOfFeaturesToSelect, c, randData ,previousFeature[n]));
+
+			//select feature algorithm invocation
+			FeatureSelector.SelectAttributes(train);
+			//get attributes indexes
+			int[] selectedFeatures = FeatureSelector.selectedAttributes();
+
+			//save selected folds
+			fr.addSelectedFeature(ArrayUtils.remove(selectedFeatures,selectedFeatures.length -1));
+
+			//build a filter to remove not selected features
+			Remove rm = new Remove();
+			rm.setInvertSelection(true);
+			rm.setAttributeIndicesArray(selectedFeatures);
+			rm.setInputFormat(train);
+
+			//remove not selected features
+			train = Filter.useFilter(train, rm);
+			valid = Filter.useFilter(valid, rm);
+			test = Filter.useFilter(test, rm);
+			trainAndValid  = Filter.useFilter(trainAndValid, rm);
+
+			//tune the model
+			String optimumSetting = tuneClassifier(c, params, metric,
+					train, valid);
+
+			//train with optimum parameters
+			c.setOptions(Utils.splitOptions(optimumSetting));
+			c.buildClassifier(trainAndValid);
+
+			this.evaluateModel(c, test);
+			double metricReportValue = this.computeTunableMetric(metric);
+
+			FoldResult foldResult = new FoldResult();
+			foldResult.setMetricReported(metric, metricReportValue);
+
+			cvo.addFoldResult(fr);
+		}
+
+		return cvo;
+	}
+
+	//this cross validation is to speed up simulations. it resuses the folds and the selected attributes to reduce the search time
+	public CrossValidationOutput fastCrossValidation(AbstractClassifier c, Instances randData, int numOfFeaturesToSelect, EFeatureSelectionAlgorithm efsa, int folds, Map<String,Set<String>> params, int[][] previousFeature)throws Exception{
+
+		//output
+		CrossValidationOutput cvo = new CrossValidationOutput(folds);
+
+		//for each fold
+		for (int n = 0; n < folds; n++) {
+
+			//fold results
+			FoldResult fr = new FoldResult();
+
+			//split: (train + validation) and test
+			Instances trainAndValid = randData.trainCV(folds, n);
+			Instances test = randData.testCV(folds, n);
+
+
+			//split: train and validation
+			int trainSize = trainAndValid.size() - test.size(); //(int)Math.round(trainAndValid.size() * 0.8);
+			Instances train = new Instances(trainAndValid, 0, trainSize);
+			Instances valid = new Instances(trainAndValid, trainSize , trainAndValid.size() - train.size());
+
+			//perform the feature selection in the train data
+			AttributeSelection FeatureSelector = FeatureSelectionFilterFactory.
+					getInstance().createFilter(efsa, new FeatureSelectionFactoryParameters(numOfFeaturesToSelect, c, randData ,previousFeature[n]));
+
+			//select feature algorithm invocation
+			FeatureSelector.SelectAttributes(train);
+			//get attributes indexes
+			int[] selectedFeatures = FeatureSelector.selectedAttributes();
+
+			//save selected folds
+			fr.addSelectedFeature(ArrayUtils.remove(selectedFeatures,selectedFeatures.length -1));
+
+			//build a filter to remove not selected features
+			Remove rm = new Remove();
+			rm.setInvertSelection(true);
+			rm.setAttributeIndicesArray(selectedFeatures);
+			rm.setInputFormat(train);
+
+			//remove not selected features
+			train = Filter.useFilter(train, rm);
+			valid = Filter.useFilter(valid, rm);
+			test = Filter.useFilter(test, rm);
+			trainAndValid  = Filter.useFilter(trainAndValid, rm);
+
+
+			//tune the model to find the optimal parameters given a metric
+			String optimumSetting = tuneClassifier(c, params, EClassificationMetric.ACCURACY, train, valid);
+
+			//train with optimum parameters
+			c.setOptions(Utils.splitOptions(optimumSetting));
+			c.buildClassifier(trainAndValid);
+
+			//test and report the performance
+			this.evaluateModel(c, test);
+
+			fr.setOptimalSetting(optimumSetting);
+			fr.setMetricReported(EClassificationMetric.ACCURACY, this.computeTunableMetric(EClassificationMetric.ACCURACY));
+			fr.setMetricReported(EClassificationMetric.PRECISION, this.computeTunableMetric(EClassificationMetric.PRECISION));
+			fr.setMetricReported(EClassificationMetric.RECALL, this.computeTunableMetric(EClassificationMetric.RECALL));
+			fr.setMetricReported(EClassificationMetric.FSCORE, this.computeTunableMetric(EClassificationMetric.FSCORE));
+
+			cvo.addFoldResult(fr);
+		}
+
+		return cvo;
+
+	}
+
 	//this method tune the model for one metric and report the performance of this metric WITHOUT FEATURE SELECTION
 	public CrossValidationOutput crossValidateModelByMetric(AbstractClassifier c,ClassificationProblem cp, int folds, long seed, Map<String,Set<String>> params, EClassificationMetric metric )throws Exception{
 		return this.crossValidateModelByMetric(c, null, cp, folds, seed, params, metric);
 	}
-	
+
 	//this method tune the model for one metric and report the performance of this metric USING FEATURE SELECTION
 	public CrossValidationOutput crossValidateModelByMetric(AbstractClassifier c, AttributeSelection FeatureSelector,ClassificationProblem cp, int folds, long seed, Map<String,Set<String>> params, EClassificationMetric metric )throws Exception{
-		
+
 
 		CrossValidationOutput cvo = new CrossValidationOutput(seed, folds);
 
@@ -80,26 +221,8 @@ public class WekaEvaluationWrapper{
 				trainAndValid  = Filter.useFilter(trainAndValid, rm);
 			}	
 
-
-
-			String optimumSetting = "";
-			if(params != null && !params.isEmpty()){
-				List<String> modelSettings = Util.generateModels(Lists.newArrayList(params.values()));
-
-				double maxMetric = Double.MIN_VALUE;
-				for (String setting : modelSettings) {
-					//set parameter, train and evaluate
-					c.setOptions(Utils.splitOptions(setting));
-					c.buildClassifier(train);
-					this.evaluateModel(c, valid);
-					double currentMetric = this.computeTunableMetric(metric);
-
-					if(currentMetric  > maxMetric){
-						maxMetric = currentMetric;
-						optimumSetting = setting;
-					}
-				}
-			}
+			//tune the model to find the optimal parameters given a metric
+			String optimumSetting = tuneClassifier(c, params, metric, train, valid);
 
 			//train with optimum parameters
 			c.setOptions(Utils.splitOptions(optimumSetting));
@@ -108,10 +231,10 @@ public class WekaEvaluationWrapper{
 			//test and report the performance
 			this.evaluateModel(c, test);
 			double metricReportValue = this.computeTunableMetric(metric);
-			
+
 			FoldResult foldResult = new FoldResult();
 			foldResult.setMetricReported(metric, metricReportValue);
-	
+
 			cvo.addFoldResult(foldResult);
 		}
 
@@ -169,26 +292,8 @@ public class WekaEvaluationWrapper{
 				trainAndValid  = Filter.useFilter(trainAndValid, rm);
 			}	
 
-
-
-			String optimumSetting = "";
-			if(params != null && !params.isEmpty()){
-				List<String> modelSettings = Util.generateModels(Lists.newArrayList(params.values()));
-
-				double erroRate = Double.MAX_VALUE;
-				for (String setting : modelSettings) {
-					//set parameter, train and evaluate
-					c.setOptions(Utils.splitOptions(setting));
-					c.buildClassifier(train);
-					this.evaluateModel(c, valid);
-					double currentErrorRate = errorRate();
-
-					if(currentErrorRate  < erroRate){
-						erroRate = currentErrorRate;
-						optimumSetting = setting;
-					}
-				}
-			}
+			//tune the model to find the optimal parameters given a metric
+			String optimumSetting = tuneClassifier(c, params, EClassificationMetric.ACCURACY, train, valid);
 
 			//train with optimum parameters
 			c.setOptions(Utils.splitOptions(optimumSetting));
@@ -201,7 +306,7 @@ public class WekaEvaluationWrapper{
 			fr.setMetricReported(EClassificationMetric.PRECISION, this.computeTunableMetric(EClassificationMetric.PRECISION));
 			fr.setMetricReported(EClassificationMetric.RECALL, this.computeTunableMetric(EClassificationMetric.RECALL));
 			fr.setMetricReported(EClassificationMetric.FSCORE, this.computeTunableMetric(EClassificationMetric.FSCORE));
-			
+
 			cvo.addFoldResult(fr);
 		}
 
@@ -209,7 +314,7 @@ public class WekaEvaluationWrapper{
 
 	}
 
-	
+
 	//compute metric to tune the model to achieve the highest performance in this metric
 	//these metrics are tunable to find the model that maximizes it
 	private double computeTunableMetric(EClassificationMetric metric) throws Exception {
@@ -235,6 +340,35 @@ public class WekaEvaluationWrapper{
 		return metricValue;
 	}
 
+	//method to tune the model
+	private String tuneClassifier(AbstractClassifier classifier,
+			Map<String, Set<String>> params, EClassificationMetric metric,
+			Instances trainData, Instances validationData) throws Exception {
+		
+		//tune the model parameters
+		String optimumSetting = "";
+		if(params != null && !params.isEmpty()){
+			
+			List<String> modelSettings = Util.generateModels(Lists.newArrayList(params.values()));
+
+			double maxMetric = Double.MIN_VALUE;
+			for (String setting : modelSettings) {
+				//set parameter, train and evaluate
+				classifier.setOptions(Utils.splitOptions(setting));
+				classifier.buildClassifier(trainData);
+				this.evaluateModel(classifier, validationData);
+				double currentMetric = this.computeTunableMetric(metric);
+
+				if(currentMetric  > maxMetric){
+					maxMetric = currentMetric;
+					optimumSetting = setting;
+				}
+			}
+
+		}
+		return optimumSetting;
+	}
+	
 	//wrraped metrics
 	public double accuracy() throws Exception {
 		if(this.wekaEvaluation == null)

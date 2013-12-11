@@ -116,17 +116,11 @@ public class HighPrecExpectationEvaluator  extends ASEvaluation implements Subse
 			//main probability of the equations
 			double p = 1;
 			//productory of P(y_i=1|x_i, f_i) for this datum. obs these probs were precomputed
-			
-			for (int i = 0; i < this.dataBinarized.numAttributes() - 1; i++) {
-				try{
-				if(subSet.get(i)){
-					int xdi = (int)datum.toDoubleArray()[i];
-					//P(y_i = 1|x_i, f_i)
-					p = p * this.probs[i][1][xdi];
-				}
-				}catch(Exception e){
-					e.printStackTrace();
-				}
+			//run features in the subset
+			for (int i = subSet.nextSetBit(0); i >= 0; i = subSet.nextSetBit(i + 1)) {
+				int xdi = (int)datum.toDoubleArray()[i];
+				//P(y_i = 1|x_i, f_i)
+				p = p * this.probs[i][1][xdi];
 			}
 			
 			//indexers in the equation

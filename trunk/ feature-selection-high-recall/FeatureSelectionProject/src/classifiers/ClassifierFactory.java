@@ -41,4 +41,27 @@ public class ClassifierFactory {
 		return ret;
 	}
 	
+	public Map<String,Set<String>> getDefaultClassifiersParameters(ELinearClassifier etype){
+		Map<String,Set<String>> param = new HashMap<String,Set<String>>();
+
+		switch (etype) {
+		case LOGISTIC_REGRESSION :
+			param.put("-C",Sets.newHashSet("-C 0.1", "-C 0.3", "-C 1.0"));
+			param.put("-B",Sets.newHashSet("-B 0.1", "-B 0.3", "-B 1.0"));
+			break;
+
+		case SVM_LINEAR :
+			param.put("-C",Sets.newHashSet("-C 0.1", "-C 0.3", "-C 1.0"));
+			param.put("-B",Sets.newHashSet("-B 0.1", "-B 0.3", "-B 1.0"));
+			break;
+
+		case NAIVE_BAYES :
+			param = null;
+			break;
+		}
+
+		return param;
+
+	}
+	
 }

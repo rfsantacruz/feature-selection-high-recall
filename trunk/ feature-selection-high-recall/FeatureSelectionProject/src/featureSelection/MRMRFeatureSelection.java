@@ -58,15 +58,12 @@ public class MRMRFeatureSelection extends ASEvaluation implements SubsetEvaluato
 		double redundancy = 0.0;
 		double[] classATT = this.dataDiscretized.attributeToDoubleArray(this.dataDiscretized.classIndex());
 		
-		for (int i = 0; i < this.dataDiscretized.numAttributes() - 1; i++) {
-			if(subSet.get(i)){
-				relevance += this.relevance[i];
-				for (int j = 0; j < this.dataDiscretized.numAttributes() - 1; j++) {
-					if(i != j && subSet.get(j)){
-						redundancy += this.redundancy[i][j];
-					}
+		for (int i = subSet.nextSetBit(0); i >= 0; i = subSet.nextSetBit(i + 1)) {
+			relevance += this.relevance[i];
+			for (int j = subSet.nextSetBit(0); j >= 0; j = subSet.nextSetBit(j + 1)) {
+				if(i != j){
+					redundancy += this.redundancy[i][j];
 				}
-				
 			}
 		}
 		

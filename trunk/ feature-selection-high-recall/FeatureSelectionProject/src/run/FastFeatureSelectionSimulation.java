@@ -2,6 +2,9 @@ package run;
 
 import java.util.List;
 
+import org.apache.commons.lang3.time.StopWatch;
+
+import ExperimentCommands.FastFeatureSelectionCommand;
 import ExperimentCommands.FeatureSelectionCommand;
 import classifiers.ELinearClassifier;
 
@@ -12,33 +15,39 @@ import experiment.ExperimentExecutor;
 import experiment.IExperimentCommand;
 import featureSelection.EFeatureSelectionAlgorithm;
 
-public class FSSimulationInBinaryDataSet {
+public class FastFeatureSelectionSimulation {
 	public static void main(String[] args) {
 
-		double start = System.currentTimeMillis();
+		StopWatch stp = new StopWatch();stp.start();
 
-		//parameters of simulation
-		String dataSetFolderpath = "./binary_data";
-		String graphOutPutFolderPath = "./results/SimulatioWithBinaryData";
-		String csvResultsPath = "./results/SimulatioWithBinaryData/featureSelection.csv";
-
+		//parameters of simulation***********
+		
+		//Paths
+		String dataSetFolderpath = "./data";
+		String graphOutPutFolderPath = "./results/graphs";
+		String csvResultsPath = "./results/featureSelection.csv";
+		
+		//limit of features to select eg 50 -> run from 0 to 50 features
+		int KFeatures = 50; 
+				
+		//clasifiers
 		List<ELinearClassifier> classifiers = Lists.newArrayList(
 				ELinearClassifier.LOGISTIC_REGRESSION
 				,ELinearClassifier.SVM_LINEAR
 				,ELinearClassifier.NAIVE_BAYES
 				);
 
-
+		// feature selection algorithms
 		List<EFeatureSelectionAlgorithm> selectionAlgs = Lists.newArrayList(
 				EFeatureSelectionAlgorithm.CONDITIONAL_ENTROPY_RANK
 				,EFeatureSelectionAlgorithm.CORRELATION_BASED_RANK
 				,EFeatureSelectionAlgorithm.GAINRATIO_RANK
 				,EFeatureSelectionAlgorithm.INFORMATIONGAIN_RANK
 				,EFeatureSelectionAlgorithm.SYMMETRICAL_UNCERT_RANK
-				,EFeatureSelectionAlgorithm.CORRELATION_BASED_SUBSET
+				//,EFeatureSelectionAlgorithm.CORRELATION_BASED_SUBSET
 				,EFeatureSelectionAlgorithm.MRMR_MI_BASED_SUBSET
 				//,EFeatureSelectionAlgorithm.FCBF
-				//,EFeatureSelectionAlgorithm.RELIFF
+				,EFeatureSelectionAlgorithm.RELIFF
 				//,EFeatureSelectionAlgorithm.SVMRFE
 				//,EFeatureSelectionAlgorithm.BACKWARD_SELECTION_WRAPPER
 				//,EFeatureSelectionAlgorithm.FORWARD_SELECTION_WRAPPER
@@ -48,14 +57,18 @@ public class FSSimulationInBinaryDataSet {
 				,EFeatureSelectionAlgorithm.HIGH_REC_LOG_APP
 				);
 
-		//settinf the simulation
-		IExperimentCommand cmd = new FeatureSelectionCommand(classifiers ,selectionAlgs, graphOutPutFolderPath);
+		//create a simulation command -> fast simulation
+		IExperimentCommand cmd = new FastFeatureSelectionCommand(classifiers ,selectionAlgs, graphOutPutFolderPath, KFeatures);
+		
+		//execute the simulation
 		List<AbstractExperimentReport> result = ExperimentExecutor.getInstance().executeCommandInFiles(cmd, dataSetFolderpath);
 
 		//save results in csv
 		AbstractExperimentReport.saveAll(result, csvResultsPath);
 
 		//time elapsed computation
-		System.out.println("elapsed time: " + (System.currentTimeMillis() - start));
+		stp.stop();
+		
+		System.out.println("Total simulation time: (Hours:Minutes:Second.Milisecond): " + stp.toString());
 	}
 }

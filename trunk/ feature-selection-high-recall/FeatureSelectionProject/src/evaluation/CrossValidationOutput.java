@@ -24,6 +24,11 @@ public class CrossValidationOutput {
 		this.folds = folds;
 	}
 	
+	public CrossValidationOutput(
+			int folds) {
+		this(0,folds);
+	}
+	
 	public double metricMean(EClassificationMetric metric){
 		double[] metricVector = new double[this.foldsResults.size()]; 
 		for (int idx = 0 ; idx < metricVector.length ; idx++) {

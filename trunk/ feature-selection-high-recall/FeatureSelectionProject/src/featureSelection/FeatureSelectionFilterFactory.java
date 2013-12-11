@@ -1,12 +1,22 @@
 package featureSelection;
 
+import java.util.Arrays;
+
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.text.StrBuilder;
+
+import com.google.common.base.Function;
+import com.google.common.base.Joiner;
+import com.google.common.collect.Collections2;
+
 import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.ASSearch;
+import weka.attributeSelection.AttributeSelection;
 import weka.attributeSelection.CfsSubsetEval;
 import weka.attributeSelection.CorrelationAttributeEval;
 import weka.attributeSelection.FCBFSearch;
 import weka.attributeSelection.GainRatioAttributeEval;
-import weka.attributeSelection.GreedyStepwise;
 import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.Ranker;
 import weka.attributeSelection.ReliefFAttributeEval;
@@ -15,10 +25,11 @@ import weka.attributeSelection.SymmetricalUncertAttributeEval;
 import weka.attributeSelection.SymmetricalUncertAttributeSetEval;
 import weka.attributeSelection.WrapperSubsetEval;
 import weka.core.SelectedTag;
-import weka.attributeSelection.AttributeSelection;
+import weka.core.Utils;
 
 public class FeatureSelectionFilterFactory {
 
+	
 	//singleton impl
 	private static FeatureSelectionFilterFactory instance;
 	public synchronized static FeatureSelectionFilterFactory getInstance(){
@@ -93,18 +104,22 @@ public class FeatureSelectionFilterFactory {
 			//correlation based evaluator
 			evaluator = new CfsSubsetEval();
 			//choose based on a graddy search 
-			search = new GreedyStepwise();
-			((GreedyStepwise)search).setGenerateRanking(true);
-			((GreedyStepwise)search).setNumToSelect(parameter.getNumberOfFeature());
+			search = new MyGreedySearch();
+			((MyGreedySearch)search).setNumToSelect(parameter.getNumberOfFeature());
+			if(parameter.getFeatureStartSet() != null && parameter.getFeatureStartSet().length > 0 ){
+				((MyGreedySearch)search).setStartSet(parameter.featuresSelected2WekaRangeRepresentation());
+			}
 			break;
 			
 		case MRMR_MI_BASED_SUBSET:
 			//correlation based evaluator
 			evaluator = new MRMRFeatureSelection();
 			//choose based on a graddy search 
-			search = new GreedyStepwise();
-			((GreedyStepwise)search).setGenerateRanking(true);
-			((GreedyStepwise)search).setNumToSelect(parameter.getNumberOfFeature());
+			search = new MyGreedySearch();
+			((MyGreedySearch)search).setNumToSelect(parameter.getNumberOfFeature());
+			if(parameter.getFeatureStartSet() != null && parameter.getFeatureStartSet().length > 0 ){
+				((MyGreedySearch)search).setStartSet(parameter.featuresSelected2WekaRangeRepresentation());
+			}
 			break;
 			
 		case FCBF:
@@ -134,9 +149,11 @@ public class FeatureSelectionFilterFactory {
 			evaluator = wrraperEvaluator;
 			
 			//greedy search algorithm
-			search = new GreedyStepwise();
-			((GreedyStepwise)search).setGenerateRanking(true);
-			((GreedyStepwise)search).setNumToSelect(parameter.getNumberOfFeature());
+			search = new MyGreedySearch();
+			((MyGreedySearch)search).setNumToSelect(parameter.getNumberOfFeature());
+			if(parameter.getFeatureStartSet() != null && parameter.getFeatureStartSet().length > 0 ){
+				((MyGreedySearch)search).setStartSet(parameter.featuresSelected2WekaRangeRepresentation());
+			}
 			break;
 			
 		case BACKWARD_SELECTION_WRAPPER:
@@ -148,44 +165,56 @@ public class FeatureSelectionFilterFactory {
 			evaluator = BCKwrraperEvaluator;
 			
 			//greedy search algorithm
-			search = new GreedyStepwise();
-			((GreedyStepwise)search).setSearchBackwards(true);
-			((GreedyStepwise)search).setGenerateRanking(true);
-			((GreedyStepwise)search).setNumToSelect(parameter.getNumberOfFeature());
+			search = new MyGreedySearch();
+			((MyGreedySearch)search).setSearchBackwards(true);			
+			((MyGreedySearch)search).setNumToSelect(parameter.getNumberOfFeature());
+			if(parameter.getFeatureStartSet() != null && parameter.getFeatureStartSet().length > 0 ){
+				((MyGreedySearch)search).setStartSet(parameter.featuresSelected2WekaRangeRepresentation());
+			}
 			break;
 			
 		case HIGH_PRE_EXPECT_APP:
 			//high precision evaluator derived from the maximization of the expectation 
 			evaluator = new HighPrecExpectationEvaluator();
 			//choose based on a graddy search 
-			search = new GreedyStepwise();
-			((GreedyStepwise)search).setGenerateRanking(true);
-			((GreedyStepwise)search).setNumToSelect(parameter.getNumberOfFeature());
+			search = new MyGreedySearch();
+			((MyGreedySearch)search).setNumToSelect(parameter.getNumberOfFeature());
+			if(parameter.getFeatureStartSet() != null && parameter.getFeatureStartSet().length > 0 ){
+				((MyGreedySearch)search).setStartSet(parameter.featuresSelected2WekaRangeRepresentation());
+			}
 			break;
+
 		case HIGH_PRE_LOGLIK_APP:
 			//high precision evaluator derived from the maximization of the expectation 
 			evaluator = new HighPreLogLikelihoodEvaluator();
 			//choose based on a graddy search 
-			search = new GreedyStepwise();
-			((GreedyStepwise)search).setGenerateRanking(true);
-			((GreedyStepwise)search).setNumToSelect(parameter.getNumberOfFeature());
+			search = new MyGreedySearch();
+			((MyGreedySearch)search).setNumToSelect(parameter.getNumberOfFeature());
+			if(parameter.getFeatureStartSet() != null && parameter.getFeatureStartSet().length > 0 ){
+				((MyGreedySearch)search).setStartSet(parameter.featuresSelected2WekaRangeRepresentation());
+			}
 			break;
 		
 		case HIGH_REC_EXPECT_APP:
 			//high precision evaluator derived from the maximization of the expectation 
 			evaluator = new HighRecExpectationEvaluator();
 			//choose based on a graddy search 
-			search = new GreedyStepwise();
-			((GreedyStepwise)search).setGenerateRanking(true);
-			((GreedyStepwise)search).setNumToSelect(parameter.getNumberOfFeature());
+			search = new MyGreedySearch();
+			((MyGreedySearch)search).setNumToSelect(parameter.getNumberOfFeature());
+			if(parameter.getFeatureStartSet() != null && parameter.getFeatureStartSet().length > 0 ){
+				((MyGreedySearch)search).setStartSet(parameter.featuresSelected2WekaRangeRepresentation());
+			}
 			break;
+		
 		case HIGH_REC_LOG_APP:
 			//high precision evaluator derived from the maximization of the expectation 
 			evaluator = new HighRecLogLikelihoodEvaluator();
 			//choose based on a graddy search 
-			search = new GreedyStepwise();
-			((GreedyStepwise)search).setGenerateRanking(true);
-			((GreedyStepwise)search).setNumToSelect(parameter.getNumberOfFeature());
+			search = new MyGreedySearch();
+			((MyGreedySearch)search).setNumToSelect(parameter.getNumberOfFeature());
+			if(parameter.getFeatureStartSet() != null && parameter.getFeatureStartSet().length > 0 ){
+				((MyGreedySearch)search).setStartSet(parameter.featuresSelected2WekaRangeRepresentation());
+			}
 			break;
 		}
 		
