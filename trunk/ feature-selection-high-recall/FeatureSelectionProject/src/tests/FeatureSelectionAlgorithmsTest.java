@@ -5,18 +5,21 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.text.DecimalFormat;
+import java.util.Arrays;
+
+import junit.framework.Assert;
 
 import org.junit.Test;
 
 import problems.ClassificationProblem;
 import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.ASSearch;
-import weka.attributeSelection.AttributeEvaluator;
 import weka.attributeSelection.AttributeSelection;
-import weka.attributeSelection.BestFirst;
+import weka.attributeSelection.CfsSubsetEval;
 import weka.attributeSelection.GreedyStepwise;
 import weka.attributeSelection.Ranker;
 import weka.attributeSelection.ReliefFAttributeEval;
+import weka.attributeSelection.WrapperSubsetEval;
 import JavaMI.Entropy;
 import JavaMI.MutualInformation;
 import classifiers.NaiveBayesClassifier;
@@ -24,9 +27,60 @@ import classifiers.SVMLinearClassifier;
 import featureSelection.EFeatureSelectionAlgorithm;
 import featureSelection.FeatureSelectionFactoryParameters;
 import featureSelection.FeatureSelectionFilterFactory;
+import featureSelection.HighPreLogLikelihoodEvaluator;
+import featureSelection.HighPrecExpectationEvaluator;
+import featureSelection.HighRecExpectationEvaluator;
+import featureSelection.HighRecLogLikelihoodEvaluator;
+import featureSelection.MRMRFeatureSelection;
+import featureSelection.MyGreedySearch;
 
 
 public class FeatureSelectionAlgorithmsTest {
+
+	@Test
+	public void TestGreedyAlgorithmModification(){
+		String dataset = "./TestDataSets/heart-statlog.arff";
+		try {
+			ClassificationProblem cp = new ClassificationProblem(dataset);
+
+			
+			ASEvaluation ev1 = new MRMRFeatureSelection();
+			ASEvaluation ev2 = new MRMRFeatureSelection();
+
+			GreedyStepwise s1 = new GreedyStepwise();
+			//s1.setSearchBackwards(true);
+			s1.setGenerateRanking(true);
+			s1.setNumToSelect(1);
+
+			MyGreedySearch s2 = new MyGreedySearch();
+			//s2.setSearchBackwards(true);
+			s2.setNumToSelect(1);
+
+			AttributeSelection f1 = new AttributeSelection();
+			f1.setEvaluator(ev1);
+			f1.setSearch(s1);
+
+			AttributeSelection f2 = new AttributeSelection();
+			f2.setEvaluator(ev2);
+			f2.setSearch(s2);
+			
+			
+			f1.SelectAttributes(cp.getData());
+			int[] f1idx = f1.selectedAttributes();
+			
+			f2.SelectAttributes(cp.getData());
+			int[] f2idx = f2.selectedAttributes();
+		
+			
+			Assert.assertTrue("The Results were different", Arrays.equals(f1idx, f2idx));
+
+		} catch (IOException e) {
+			fail("problems to read the data set: " + e.getMessage());
+		} catch (Exception e) {
+			fail("problems in the feature selection engine: " + e.getMessage());
+		}
+
+	}
 
 	@Test
 	public void testJavaMIAPI() {
@@ -55,7 +109,7 @@ public class FeatureSelectionAlgorithmsTest {
 		assertTrue("MI(Y,X) = MI(X,Y) = H(X) - H(X|Y), therefore the result is wrong", Double.valueOf(formatter.format(mi)) == mi2);
 
 	}
-	
+
 	@Test
 	public void testInformationGainFeatureSelection() {
 		String dataset = "./TestDataSets/heart-statlog.arff";
@@ -266,7 +320,7 @@ public class FeatureSelectionAlgorithmsTest {
 		}
 
 	}
-	
+
 	@Test
 	public void testForwardFeatureSelectionAlgorithm(){
 
@@ -276,7 +330,7 @@ public class FeatureSelectionAlgorithmsTest {
 
 			//filter parameters
 			FeatureSelectionFactoryParameters parameter = 
-					new FeatureSelectionFactoryParameters(5, new NaiveBayesClassifier(), cp.getData());
+					new FeatureSelectionFactoryParameters(2, new NaiveBayesClassifier(), cp.getData());
 
 			//filter application
 			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
@@ -307,7 +361,7 @@ public class FeatureSelectionAlgorithmsTest {
 
 			//filter parameters
 			FeatureSelectionFactoryParameters parameter = 
-					new FeatureSelectionFactoryParameters(5, new NaiveBayesClassifier(), cp.getData());
+					new FeatureSelectionFactoryParameters(2, new NaiveBayesClassifier(), cp.getData());
 
 			//filter application
 			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
@@ -340,7 +394,7 @@ public class FeatureSelectionAlgorithmsTest {
 			//rank by evaluator values
 			ASSearch search  = new Ranker();
 			((Ranker) search).setNumToSelect(5);
-			
+
 
 			filter.setEvaluator(evaluator);
 			filter.setSearch(search);
@@ -387,7 +441,7 @@ public class FeatureSelectionAlgorithmsTest {
 			fail("problems in the feature selection engine: " + e.getMessage());
 		}
 	}
-	
+
 	@Test
 	public void testSVMRFE(){
 		String dataset = "./TestDataSets/heart-statlog.arff";
@@ -416,11 +470,11 @@ public class FeatureSelectionAlgorithmsTest {
 			fail("problems in the feature selection engine: " + e.getMessage());
 		}
 	}
-	
+
 	@Test
 	public void testHighPrecEpctApp(){
 		String dataset = "./binary_data/vote.arff";
-		//dataset = "./binary_data/newsgroupstest.arff";
+		dataset = "./binary_data/newsgroupstest.arff";
 		try {
 			ClassificationProblem cp = new ClassificationProblem(dataset);
 
@@ -431,6 +485,7 @@ public class FeatureSelectionAlgorithmsTest {
 			//filter application
 			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
 					.createFilter(EFeatureSelectionAlgorithm.HIGH_PRE_EXPECT_APP, parameter);
+
 
 			//exeute
 			filter.SelectAttributes(cp.getData());
@@ -449,7 +504,7 @@ public class FeatureSelectionAlgorithmsTest {
 	@Test
 	public void testHighPrecLogLApp(){
 		String dataset = "./binary_data/vote.arff";
-		//dataset = "./binary_data/newsgroupstest.arff";
+		dataset = "./binary_data/newsgroupstest.arff";
 		try {
 			ClassificationProblem cp = new ClassificationProblem(dataset);
 
@@ -478,7 +533,7 @@ public class FeatureSelectionAlgorithmsTest {
 	@Test
 	public void testHighRecEpctApp(){
 		String dataset = "./binary_data/vote.arff";
-		//dataset = "./binary_data/newsgroupstest.arff";
+		dataset = "./binary_data/newsgroupstest.arff";
 		try {
 			ClassificationProblem cp = new ClassificationProblem(dataset);
 
@@ -507,7 +562,7 @@ public class FeatureSelectionAlgorithmsTest {
 	@Test
 	public void testHighRecLogLApp(){
 		String dataset = "./binary_data/vote.arff";
-		//dataset = "./binary_data/newsgroupstest.arff";
+		dataset = "./binary_data/newsgroupstest.arff";
 		try {
 			ClassificationProblem cp = new ClassificationProblem(dataset);
 
