@@ -28,6 +28,7 @@ public class FeatureSelectionExperimentReport extends AbstractExperimentReport {
 	private String problem;
 	private int maxNumFeatures;
 	private String metricName;
+	private int folds;
 
 	@Override
 	public void saveInFile(String path) {
@@ -86,12 +87,12 @@ public class FeatureSelectionExperimentReport extends AbstractExperimentReport {
 		StrBuilder sb = new StrBuilder();
 
 		Iterator<String> plotSymbols =   Iterables.cycle(
-				"'-yo'","'-mo'","'-co'","'-ro'","'-go'","'-bo'","'-ko'",
-				"'-y+'","'-m+'","'-c+'","'-r+'","'-g+'","'-b+'","'-k+'",
-				"'-y*'","'-m*'","'-c*'","'-r*'","'-g*'","'-b*'","'-k*'",
-				"'-yx'","'-mx'","'-cx'","'-rx'","'-gx'","'-bx'","'-kx'",
-				"'-ys'","'-ms'","'-cs'","'-rs'","'-gs'","'-bs'","'-ks'",
-				"'-yd'","'-md'","'-cd'","'-rd'","'-gd'","'-bd'","'-kd'").iterator();
+				"'-yo'","'-m+'","'-c*'","'-rx'","'-gs'","'-bd'","'-kp'",
+				"'-y.'","'-m^'","'-cv'","'-r>'","'-g<'","'-bh'","'-ko'",
+				"'-y+'","'-m*'","'-cx'","'-rs'","'-gd'","'-bp'","'-k.'",
+				"'-y^'","'-mv'","'-c>'","'-r<'","'-gh'","'-bo'","'-k+'",
+				"'-y*'","'-mx'","'-cs'","'-rd'","'-gp'","'-b.'","'-k^'",
+				"'-yv'","'-m>'","'-c<'","'-rh'","'-go'","'-b+'","'-k*'").iterator();
 
 
 
@@ -114,7 +115,7 @@ public class FeatureSelectionExperimentReport extends AbstractExperimentReport {
 				String symbol = plotSymbols.next();
 
 				sb.appendln(metric + " = ["+ Joiner.on(", ").skipNulls().join(featureSelection2MetricMean.get(alg)) + "];");
-				sb.appendln(error + " = 2.262 .* (1/"+Math.sqrt(10)+") .* ["+ Joiner.on(", ").skipNulls().join(featureSelection2MetricStd.get(alg)) + "];");
+				sb.appendln(error + " = 2.262 .* (1/"+Math.sqrt(folds)+") .* ["+ Joiner.on(", ").skipNulls().join(featureSelection2MetricStd.get(alg)) + "];");
 				sb.appendln("errorbar(n_features, "+ metric + "," + error + ","+ symbol +")");
 				sb.appendln("");
 			}
@@ -137,7 +138,7 @@ public class FeatureSelectionExperimentReport extends AbstractExperimentReport {
 
 	public FeatureSelectionExperimentReport(
 			Map<String, List<Double>> featureSelection2metric, Map<String, List<Double>> featureSelection2metricStd,
-			String classifier, String problem, int maxNumFeatures,
+			String classifier, String problem, int maxNumFeatures,int folds,
 			String metricName) {
 		super();
 		this.featureSelection2MetricMean = featureSelection2metric;
@@ -146,16 +147,18 @@ public class FeatureSelectionExperimentReport extends AbstractExperimentReport {
 		this.problem = problem;
 		this.maxNumFeatures = maxNumFeatures;
 		this.metricName = metricName;
+		this.folds = folds;
 	}
 
 	public FeatureSelectionExperimentReport(String classifierName, String problemName,
-			int maxNumFeatures, String metricName) {
+			int maxNumFeatures, int folds,String metricName) {
 		this.classifier = classifierName;
 		this.problem = problemName;
 		this.maxNumFeatures = maxNumFeatures;
 		this.featureSelection2MetricMean = new HashMap<String, List<Double>>();
 		this.featureSelection2MetricStd = new HashMap<String, List<Double>>();
 		this.metricName = metricName;
+		this.folds = folds;
 	}
 
 	public Map<String, List<Double>> getFeatureSelection2metric() {

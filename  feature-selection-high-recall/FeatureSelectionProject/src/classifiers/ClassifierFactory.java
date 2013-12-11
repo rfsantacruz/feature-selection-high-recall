@@ -46,13 +46,13 @@ public class ClassifierFactory {
 
 		switch (etype) {
 		case LOGISTIC_REGRESSION :
-			param.put("-C",Sets.newHashSet("-C 0.1", "-C 0.3", "-C 1.0"));
-			param.put("-B",Sets.newHashSet("-B 0.1", "-B 0.3", "-B 1.0"));
+			param.put("-C",Sets.newHashSet(" -C 0.01" ,"-C 0.1", "-C 1.0", "-C 10", "-C 100"));
+			param.put("-B",Sets.newHashSet(" -B 0.01" ,"-B 0.1", "-B 1.0", "-B 10", "-B 100"));
 			break;
 
 		case SVM_LINEAR :
-			param.put("-C",Sets.newHashSet("-C 0.1", "-C 0.3", "-C 1.0"));
-			param.put("-B",Sets.newHashSet("-B 0.1", "-B 0.3", "-B 1.0"));
+			param.put("-C",Sets.newHashSet(" -C 0.01" ,"-C 0.1", "-C 1.0", "-C 10", "-C 100"));
+			param.put("-B",Sets.newHashSet(" -B 0.01" ,"-B 0.1", "-B 1.0", "-B 10", "-B 100"));
 			break;
 
 		case NAIVE_BAYES :

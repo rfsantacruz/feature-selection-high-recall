@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,7 +19,6 @@ import classifiers.ClassifierFactory;
 import classifiers.ELinearClassifier;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Stopwatch;
 
 import evaluation.CrossValidationOutput;
 import evaluation.EClassificationMetric;
@@ -31,7 +29,7 @@ import experiment.FeatureSelectionExperimentReport;
 import experiment.IExperimentCommand;
 import featureSelection.EFeatureSelectionAlgorithm;
 
-public class FastFeatureSelectionCommand implements IExperimentCommand{
+public class FastSimulationTuneByDifferentMetrics implements IExperimentCommand{
 
 	private String GraphsPath;
 	private  List<EFeatureSelectionAlgorithm> selectionAlgs = null;
@@ -39,21 +37,21 @@ public class FastFeatureSelectionCommand implements IExperimentCommand{
 	private Logger log = Util.getFileLogger(FeatureSelectionCommand.class.getName(), "./results/logs/log.txt");
 	private int kMaxFeatures = Integer.MAX_VALUE;
 	private StopWatch timer;
-	private int folds = 10;
+	private int folds;
 
-	public FastFeatureSelectionCommand(List<ELinearClassifier> classifiers, List<EFeatureSelectionAlgorithm> FetSelectionAlgs, String graphPath){
+	public FastSimulationTuneByDifferentMetrics(List<ELinearClassifier> classifiers, List<EFeatureSelectionAlgorithm> FetSelectionAlgs, String graphPath){
 
-		this(classifiers,FetSelectionAlgs,graphPath, Integer.MAX_VALUE, 10);
+		this(classifiers,FetSelectionAlgs,graphPath ,Integer.MAX_VALUE,10);
 
 	}
-	public FastFeatureSelectionCommand(List<ELinearClassifier> classifiers, List<EFeatureSelectionAlgorithm> FetSelectionAlgs, String graphPath, int kMaxFeatures, int folds){
+	public FastSimulationTuneByDifferentMetrics(List<ELinearClassifier> classifiers, List<EFeatureSelectionAlgorithm> FetSelectionAlgs, String graphPath,int kMaxFeatures, int folds){
 
 		this.GraphsPath = graphPath;
 		this.selectionAlgs = FetSelectionAlgs;
 		this.classifiers = classifiers;
 		this.kMaxFeatures = kMaxFeatures;
 		this.timer = new StopWatch(); this.timer.start();
-		this.folds = 10;
+		this.folds = folds;
 	}
 
 	@Override
@@ -79,8 +77,8 @@ public class FastFeatureSelectionCommand implements IExperimentCommand{
 			int maxNumFeatures = kMaxFeatures < cp.getNumAttributes() - 1 ? kMaxFeatures : cp.getNumAttributes() - 1;
 			FeatureSelectionExperimentReport exp_acc = new FeatureSelectionExperimentReport(ecl.name(), cp.getName(), maxNumFeatures, folds, EClassificationMetric.ACCURACY.name());
 			FeatureSelectionExperimentReport exp_pre = new FeatureSelectionExperimentReport(ecl.name(), cp.getName(), maxNumFeatures, folds, EClassificationMetric.PRECISION.name());
-			FeatureSelectionExperimentReport exp_rec = new FeatureSelectionExperimentReport(ecl.name(), cp.getName(), maxNumFeatures, folds,  EClassificationMetric.RECALL.name());
-			FeatureSelectionExperimentReport exp_fm = new FeatureSelectionExperimentReport(ecl.name(), cp.getName(),  maxNumFeatures, folds, EClassificationMetric.FSCORE.name());
+			FeatureSelectionExperimentReport exp_rec = new FeatureSelectionExperimentReport(ecl.name(), cp.getName(), maxNumFeatures, folds, EClassificationMetric.RECALL.name());
+			FeatureSelectionExperimentReport exp_fm = new FeatureSelectionExperimentReport(ecl.name(), cp.getName(), maxNumFeatures, folds, EClassificationMetric.FSCORE.name());
 			
 			
 			//run all selected feature selection algorithm
@@ -105,7 +103,7 @@ public class FastFeatureSelectionCommand implements IExperimentCommand{
 						//long featureTime = timer.getTime();
 						
 						//cross validate - the feature algorithm is created inside to speed up the simulation
-						CrossValidationOutput outlr = eval.fastCrossValidation(cl, randData, n_features, alg, folds, param, fold2PreviousSelectedFeature);
+						CrossValidationOutput outlr = eval.fastCrossValidationTuneByMetric(cl, randData, n_features, alg, folds, param, fold2PreviousSelectedFeature);
 						
 						//restrieve the previous selected features by fold
 						for (int foldNumber = 0; foldNumber < outlr.getFolds(); foldNumber++) {
@@ -127,7 +125,7 @@ public class FastFeatureSelectionCommand implements IExperimentCommand{
 						exp_fm.metricStdAddValue(alg.name(), outlr.metricSTD(EClassificationMetric.FSCORE));
 						
 						//debug
-						//System.out.println("elapsed time to select the " + n_features + " (th) feature: " + DurationFormatUtils.formatDuration(timer.getTime() - featureTime, "HH:mm:ss.S"));
+						//System.out.println("elapsed time to select the " + n_features + " (th) feature: " + (timer.getTime() - featureSelectionAlgTime));
 						
 					}
 					
