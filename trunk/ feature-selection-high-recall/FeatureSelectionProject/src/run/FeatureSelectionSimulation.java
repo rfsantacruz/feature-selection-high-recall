@@ -14,7 +14,7 @@ import experiment.ExperimentExecutor;
 import experiment.IExperimentCommand;
 import featureSelection.EFeatureSelectionAlgorithm;
 
-public class FSSimulation {
+public class FeatureSelectionSimulation {
 	public static void main(String[] args) {
 
 		StopWatch stp = new StopWatch();
