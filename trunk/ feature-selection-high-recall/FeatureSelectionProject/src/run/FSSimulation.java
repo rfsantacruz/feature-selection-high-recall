@@ -25,7 +25,9 @@ public class FSSimulation {
 		String graphOutPutFolderPath = "./results/graphs";
 		String csvResultsPath = "./results/featureSelection.csv";
 		int folds = 10;
-		int kFeatures = 50;
+		int kFeatures = 30;
+		//boolean to say if is to tune the model in each metric or just in accuracy.
+		boolean tuneJustInAccuracy = false;
 
 		//classifiers
 		List<ELinearClassifier> classifiers = Lists.newArrayList(
@@ -42,7 +44,7 @@ public class FSSimulation {
 				EFeatureSelectionAlgorithm.INFORMATIONGAIN_RANK
 				//,EFeatureSelectionAlgorithm.SYMMETRICAL_UNCERT_RANK
 				//,EFeatureSelectionAlgorithm.CORRELATION_BASED_SUBSET
-				//,EFeatureSelectionAlgorithm.MRMR_MI_BASED_SUBSET
+				,EFeatureSelectionAlgorithm.MRMR_MI_BASED_SUBSET
 				//,EFeatureSelectionAlgorithm.FCBF
 				//,EFeatureSelectionAlgorithm.RELIFF
 				//,EFeatureSelectionAlgorithm.SVMRFE
@@ -55,7 +57,7 @@ public class FSSimulation {
 				);
 
 		//Normal feature selection command
-		IExperimentCommand cmd = new FeatureSelectionCommand(classifiers ,selectionAlgs, graphOutPutFolderPath, kFeatures, folds);
+		IExperimentCommand cmd = new FeatureSelectionCommand(classifiers ,selectionAlgs, graphOutPutFolderPath, kFeatures, folds, tuneJustInAccuracy);
 		
 		//get the results
 		List<AbstractExperimentReport> result = ExperimentExecutor.getInstance().executeCommandInFiles(cmd, dataSetFolderpath);

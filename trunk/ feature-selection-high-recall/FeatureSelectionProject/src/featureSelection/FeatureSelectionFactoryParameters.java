@@ -8,6 +8,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Collections2;
 import com.google.common.primitives.Ints;
 
+import weka.attributeSelection.ASEvaluation;
 import weka.classifiers.AbstractClassifier;
 import weka.core.Instances;
 
@@ -24,19 +25,27 @@ public class FeatureSelectionFactoryParameters {
 	
 	//Start set of attributes to optimize the search
 	private int[] featureStartSet;
-
+	
+	//this is to speed up the code
+	private ASEvaluation prebuiltEvaluator;
 
 	public FeatureSelectionFactoryParameters(int numberOfFeature,
 			AbstractClassifier classifier, Instances formatData) {
-		this(numberOfFeature, classifier,formatData,null);
+		this(numberOfFeature, classifier,formatData,null,null);
+	}
+	
+	public FeatureSelectionFactoryParameters(int numberOfFeature,
+			AbstractClassifier classifier, Instances formatData, int[] featureStartSet ) {
+		this(numberOfFeature, classifier,formatData, featureStartSet ,null);
 	}
 	public FeatureSelectionFactoryParameters(int numberOfFeature,
-			AbstractClassifier classifier, Instances formatData, int[] featureStartSet) {
+			AbstractClassifier classifier, Instances formatData, int[] featureStartSet, ASEvaluation preBuiltEvaluator) {
 		super();
 		this.numberOfFeature = numberOfFeature;
 		this.classifier = classifier;
 		this.formatData = formatData;
 		this.featureStartSet = featureStartSet;
+		this.prebuiltEvaluator = preBuiltEvaluator;
 	}
 
 	//getter and setter 
@@ -80,6 +89,13 @@ public class FeatureSelectionFactoryParameters {
 		}
 		
 		return stringRep;
+	}
+	//this is a property to store evaluators built in order to avoid calculate each time that it is necessary
+	public ASEvaluation getPrebuiltEvaluator() {
+		return prebuiltEvaluator;
+	}
+	public void setPrebuiltEvaluator(ASEvaluation prebuiltEvaluator) {
+		this.prebuiltEvaluator = prebuiltEvaluator;
 	}
 	
 	

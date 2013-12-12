@@ -13,12 +13,14 @@ import org.apache.commons.lang3.time.StopWatch;
 
 import problems.ClassificationProblem;
 import utils.Util;
+import weka.attributeSelection.ASEvaluation;
 import weka.classifiers.AbstractClassifier;
 import weka.core.Instances;
 import classifiers.ClassifierFactory;
 import classifiers.ELinearClassifier;
 
 import com.google.common.base.Joiner;
+import com.google.common.collect.Lists;
 
 import evaluation.CrossValidationOutput;
 import evaluation.EClassificationMetric;
@@ -90,6 +92,7 @@ public class FastSimulationTuneByDifferentMetrics implements IExperimentCommand{
 				try {
 					//variable to speedup the simulation [foldNumber] -> previous selected[]
 					int[][] fold2PreviousSelectedFeature = new int[folds][];
+					ASEvaluation[] fold2evaluatior = new ASEvaluation[folds];
 					
 					//randomize the samples
 					Random rand = new Random(System.currentTimeMillis()); 
@@ -103,13 +106,14 @@ public class FastSimulationTuneByDifferentMetrics implements IExperimentCommand{
 						//long featureTime = timer.getTime();
 						
 						//cross validate - the feature algorithm is created inside to speed up the simulation
-						CrossValidationOutput outlr = eval.fastCrossValidationTuneByMetric(cl, randData, n_features, alg, folds, param, fold2PreviousSelectedFeature);
+						CrossValidationOutput outlr = eval.fastCrossValidation(cl, randData, n_features, alg, folds, param, fold2PreviousSelectedFeature, fold2evaluatior,Lists.newArrayList(EClassificationMetric.values()));
 						
 						//restrieve the previous selected features by fold
 						for (int foldNumber = 0; foldNumber < outlr.getFolds(); foldNumber++) {
 							FoldResult fr = outlr.getFoldResult(foldNumber);
 							if(fr != null){
 								fold2PreviousSelectedFeature[foldNumber] = fr.getFeatureSelected();
+								fold2evaluatior[foldNumber] = fr.getEvaluatorBuilt();
 							}
 						}
 						

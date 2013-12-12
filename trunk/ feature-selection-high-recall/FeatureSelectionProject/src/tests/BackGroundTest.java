@@ -109,20 +109,20 @@ public class BackGroundTest {
 
 			WekaEvaluationWrapper eval = new WekaEvaluationWrapper(cp);
 
-			eval.crossValidateModel(nb, cp, 10, 10, null);
+			eval.crossValidateModelTuneInAccuraccy(nb, null,cp, 10, 10, null);
 			//Assert.assertTrue("Naive Bayes performance not expected", Math.abs(eval.accuracy()-0.75) < 0.05);
 
 			HashMap<String,Set<String>> paramLR = new HashMap<String,Set<String>>();
 			paramLR.put("-C",utils.Util.generateModelsStringSettings("-C", 0.01, 0.03, 0.1, 0.3, 1, 1.3));
 			paramLR.put("-B",utils.Util.generateModelsStringSettings("-B", 0.01, 0.03, 0.1, 0.3, 1, 1.3));
-			eval.crossValidateModel(lr, cp, 10, 10, paramLR);
+			eval.crossValidateModelTuneInAccuraccy(lr, null,cp, 10, 10, paramLR);
 			Assert.assertTrue("Logistic Regression performance not expected", Math.abs(eval.accuracy()-0.85) < 0.05);
 
 
 			HashMap<String,Set<String>> paramSVM = new HashMap<String,Set<String>>();
 			paramSVM.put("-C",utils.Util.generateModelsStringSettings("-C", 0.01, 0.03, 0.1, 0.3, 1, 1.3));
 			paramSVM.put("-B",utils.Util.generateModelsStringSettings("-B", 0.01, 0.03, 0.1, 0.3, 1, 1.3));
-			eval.crossValidateModel(svm, cp, 10, 10, paramSVM);
+			eval.crossValidateModelTuneInAccuraccy(svm, null,cp, 10, 10, paramSVM);
 			Assert.assertTrue("SVM performance not expected", Math.abs(eval.accuracy() - 0.86) < 0.05);
 
 
@@ -189,7 +189,7 @@ public class BackGroundTest {
 			WekaEvaluationWrapper ev = new WekaEvaluationWrapper(p);
 
 			//cross validation with default parameters
-			CrossValidationOutput cvo = ev.crossValidateModel(lr, p, 10, 10, null);
+			CrossValidationOutput cvo = ev.crossValidateModelTuneInAccuraccy(lr, null,p, 10, 10, null);
 			double accuracy = cvo.metricMean(EClassificationMetric.ACCURACY);
 			double precision = cvo.metricMean(EClassificationMetric.PRECISION);
 			double recall = cvo.metricMean(EClassificationMetric.RECALL);
@@ -200,7 +200,7 @@ public class BackGroundTest {
 			paramLR.put("-B",Sets.newHashSet("-B 0.1", "-B 0.3", "-B 1.0"));
 
 			//return the classifier already tuned with cross validation with parameters
-			CrossValidationOutput cvo2 = ev.crossValidateModel(lr, p, 10, 10, paramLR);
+			CrossValidationOutput cvo2 = ev.crossValidateModelTuneInAccuraccy(lr, null,p, 10, 10, paramLR);
 			double accuracy_aftercv = cvo2.metricMean(EClassificationMetric.ACCURACY);
 			double precision_aftercv = cvo2.metricMean(EClassificationMetric.PRECISION);
 			double recall_aftercv = cvo2.metricMean(EClassificationMetric.RECALL);

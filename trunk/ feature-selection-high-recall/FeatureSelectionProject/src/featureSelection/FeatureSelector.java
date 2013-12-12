@@ -1,26 +1,16 @@
 package featureSelection;
 
-import java.util.Arrays;
-
 import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.StrBuilder;
 
-import com.google.common.base.Function;
-import com.google.common.base.Joiner;
-import com.google.common.collect.Collections2;
-
+import weka.attributeSelection.ASEvaluation;
+import weka.attributeSelection.ASSearch;
+import featureSelection.*;
 import featureSelection.Evaluators.ConditionalEntropyFeatureSelection;
 import featureSelection.Evaluators.HighPreLogLikelihoodEvaluator;
 import featureSelection.Evaluators.HighPrecExpectationEvaluator;
 import featureSelection.Evaluators.HighRecExpectationEvaluator;
 import featureSelection.Evaluators.HighRecLogLikelihoodEvaluator;
 import featureSelection.Evaluators.MRMRFeatureSelection;
-
-
-import weka.attributeSelection.ASEvaluation;
-import weka.attributeSelection.ASSearch;
-import weka.attributeSelection.AttributeSelection;
 import weka.attributeSelection.CfsSubsetEval;
 import weka.attributeSelection.CorrelationAttributeEval;
 import weka.attributeSelection.FCBFSearch;
@@ -32,30 +22,69 @@ import weka.attributeSelection.SVMAttributeEval;
 import weka.attributeSelection.SymmetricalUncertAttributeEval;
 import weka.attributeSelection.SymmetricalUncertAttributeSetEval;
 import weka.attributeSelection.WrapperSubsetEval;
+import weka.core.Instances;
 import weka.core.SelectedTag;
-import weka.core.Utils;
 
-public class FeatureSelectionFilterFactory {
+public class FeatureSelector {
 
-	
-	//singleton impl
-	private static FeatureSelectionFilterFactory instance;
-	public synchronized static FeatureSelectionFilterFactory getInstance(){
-		if(instance == null)
-			instance = new FeatureSelectionFilterFactory();
+	private ASEvaluation evaluator;
+	private ASSearch search;
+	private boolean isPrebuilt = false;
 
-		return instance;
-	}
-	public FeatureSelectionFilterFactory(){}
 
-	//create filter to be used in the simulations 
-	public AttributeSelection createFilter(EFeatureSelectionAlgorithm EType,FeatureSelectionFactoryParameters parameter) throws Exception{
+
+	public int[] selectAttributes(Instances data) throws Exception{
+		int[] selectedAtributes;
+
+		if(!isPrebuilt)
+			evaluator.buildEvaluator(data);
+
+		selectedAtributes = search.search(evaluator, data);
 		
+		if(search instanceof Ranker){
+			Ranker r = (Ranker)search;
+			int numToSelect = r.getCalculatedNumToSelect();
+			selectedAtributes = ArrayUtils.subarray(selectedAtributes, 0, numToSelect);
+	
+		}
+			
+		selectedAtributes = ArrayUtils.add(selectedAtributes, data.classIndex());
+		
+		return selectedAtributes;
+	}
+
+	public boolean isPrebuilt() {
+		return isPrebuilt;
+	}
+
+	public void setPrebuilt(boolean isPrebuilt) {
+		this.isPrebuilt = isPrebuilt;
+	}
+	
+	public ASEvaluation getEvaluator() {
+		return evaluator;
+	}
+
+	public void setEvaluator(ASEvaluation evaluator) {
+		this.evaluator = evaluator;
+
+	}
+
+	public ASSearch getSearch() {
+		return search;
+	}
+
+	public void setSearch(ASSearch search) {
+		this.search = search;
+	}
+
+	public static FeatureSelector create(EFeatureSelectionAlgorithm EType, 
+			FeatureSelectionFactoryParameters parameter) throws Exception{
 		//base classes
-		AttributeSelection attributeSelection = new AttributeSelection();
+		FeatureSelector attributeSelection = new FeatureSelector();
 		ASEvaluation evaluator = null;
 		ASSearch search = null;
-		
+
 		//set the evaluator and searcher for each algorithm
 		switch (EType) {
 		//rank attributes
@@ -66,7 +95,7 @@ public class FeatureSelectionFilterFactory {
 			search = new Ranker();
 			((Ranker) search).setNumToSelect(parameter.getNumberOfFeature());
 			break;
-			
+
 		case CONDITIONAL_ENTROPY_RANK:
 			//conditional entropy evaluator
 			evaluator = new ConditionalEntropyFeatureSelection();
@@ -74,7 +103,7 @@ public class FeatureSelectionFilterFactory {
 			search = new Ranker();
 			((Ranker) search).setNumToSelect(parameter.getNumberOfFeature());
 			break;
-			
+
 		case CORRELATION_BASED_RANK:
 			//Pearson Correlation by attribute
 			evaluator = new CorrelationAttributeEval();
@@ -82,7 +111,7 @@ public class FeatureSelectionFilterFactory {
 			search = new Ranker();
 			((Ranker) search).setNumToSelect(parameter.getNumberOfFeature());
 			break;
-			
+
 		case GAINRATIO_RANK:
 			//conditional entropy evaluator
 			evaluator = new GainRatioAttributeEval();
@@ -90,7 +119,7 @@ public class FeatureSelectionFilterFactory {
 			search = new Ranker();
 			((Ranker) search).setNumToSelect(parameter.getNumberOfFeature());
 			break;
-			
+
 		case SYMMETRICAL_UNCERT_RANK:
 			//conditional entropy evaluator
 			evaluator = new SymmetricalUncertAttributeEval();
@@ -98,7 +127,7 @@ public class FeatureSelectionFilterFactory {
 			search = new Ranker();
 			((Ranker) search).setNumToSelect(parameter.getNumberOfFeature());
 			break;
-			
+
 		case RELIFF:
 			//reliff evaluator
 			evaluator = new ReliefFAttributeEval();
@@ -106,8 +135,8 @@ public class FeatureSelectionFilterFactory {
 			search = new Ranker();
 			((Ranker) search).setNumToSelect(parameter.getNumberOfFeature());
 			break;
-			
-		//subset search
+
+			//subset search
 		case CORRELATION_BASED_SUBSET:
 			//correlation based evaluator
 			evaluator = new CfsSubsetEval();
@@ -118,7 +147,7 @@ public class FeatureSelectionFilterFactory {
 				((MyGreedySearch)search).setStartSet(parameter.featuresSelected2WekaRangeRepresentation());
 			}
 			break;
-			
+
 		case MRMR_MI_BASED_SUBSET:
 			//correlation based evaluator
 			evaluator = new MRMRFeatureSelection();
@@ -129,7 +158,7 @@ public class FeatureSelectionFilterFactory {
 				((MyGreedySearch)search).setStartSet(parameter.featuresSelected2WekaRangeRepresentation());
 			}
 			break;
-			
+
 		case FCBF:
 			//correlation based evaluaton
 			evaluator = new SymmetricalUncertAttributeSetEval();
@@ -137,9 +166,9 @@ public class FeatureSelectionFilterFactory {
 			search = new FCBFSearch();
 			((FCBFSearch)search).setNumToSelect(parameter.getNumberOfFeature());
 			break;
-		
-			
-		//wrapper approaches
+
+
+			//wrapper approaches
 		case SVMRFE:
 			//svmrfe evaluator
 			evaluator = new SVMAttributeEval();
@@ -147,7 +176,7 @@ public class FeatureSelectionFilterFactory {
 			search = new Ranker();
 			((Ranker) search).setNumToSelect(parameter.getNumberOfFeature());
 			break;
-			
+
 		case FORWARD_SELECTION_WRAPPER:
 			//wrraper method with the classifier
 			WrapperSubsetEval wrraperEvaluator = new WrapperSubsetEval();
@@ -155,7 +184,7 @@ public class FeatureSelectionFilterFactory {
 			wrraperEvaluator.setEvaluationMeasure(new SelectedTag(WrapperSubsetEval.EVAL_AUC,WrapperSubsetEval.TAGS_EVALUATION));
 			wrraperEvaluator.setFolds(10);
 			evaluator = wrraperEvaluator;
-			
+
 			//greedy search algorithm
 			search = new MyGreedySearch();
 			((MyGreedySearch)search).setNumToSelect(parameter.getNumberOfFeature());
@@ -163,7 +192,7 @@ public class FeatureSelectionFilterFactory {
 				((MyGreedySearch)search).setStartSet(parameter.featuresSelected2WekaRangeRepresentation());
 			}
 			break;
-			
+
 		case BACKWARD_SELECTION_WRAPPER:
 			//wrraper method with the classifier
 			WrapperSubsetEval BCKwrraperEvaluator = new WrapperSubsetEval();
@@ -171,7 +200,7 @@ public class FeatureSelectionFilterFactory {
 			BCKwrraperEvaluator.setEvaluationMeasure(new SelectedTag(WrapperSubsetEval.EVAL_AUC,WrapperSubsetEval.TAGS_EVALUATION));
 			BCKwrraperEvaluator.setFolds(10);
 			evaluator = BCKwrraperEvaluator;
-			
+
 			//greedy search algorithm
 			search = new MyGreedySearch();
 			((MyGreedySearch)search).setSearchBackwards(true);			
@@ -180,7 +209,7 @@ public class FeatureSelectionFilterFactory {
 				((MyGreedySearch)search).setStartSet(parameter.featuresSelected2WekaRangeRepresentation());
 			}
 			break;
-			
+
 		case HIGH_PRE_EXPECT_APP:
 			//high precision evaluator derived from the maximization of the expectation 
 			evaluator = new HighPrecExpectationEvaluator();
@@ -202,7 +231,7 @@ public class FeatureSelectionFilterFactory {
 				((MyGreedySearch)search).setStartSet(parameter.featuresSelected2WekaRangeRepresentation());
 			}
 			break;
-		
+
 		case HIGH_REC_EXPECT_APP:
 			//high precision evaluator derived from the maximization of the expectation 
 			evaluator = new HighRecExpectationEvaluator();
@@ -213,7 +242,7 @@ public class FeatureSelectionFilterFactory {
 				((MyGreedySearch)search).setStartSet(parameter.featuresSelected2WekaRangeRepresentation());
 			}
 			break;
-		
+
 		case HIGH_REC_LOG_APP:
 			//high precision evaluator derived from the maximization of the expectation 
 			evaluator = new HighRecLogLikelihoodEvaluator();
@@ -225,7 +254,13 @@ public class FeatureSelectionFilterFactory {
 			}
 			break;
 		}
-		
+
+		//code to reuse the evaluators
+		if(parameter.getPrebuiltEvaluator() != null){
+			evaluator = parameter.getPrebuiltEvaluator();
+			attributeSelection.setPrebuilt(true);
+		}
+
 		//wrap the evaluator and the search algorithm
 		attributeSelection.setEvaluator(evaluator);
 		attributeSelection.setSearch(search);
@@ -234,6 +269,13 @@ public class FeatureSelectionFilterFactory {
 		//return the filter
 		return attributeSelection;
 	}
+
+	
+
+
+
+
+
+
+
 }
-
-

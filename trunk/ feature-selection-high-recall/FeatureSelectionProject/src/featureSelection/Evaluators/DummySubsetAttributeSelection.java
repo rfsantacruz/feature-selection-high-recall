@@ -1,4 +1,4 @@
-package featureSelection;
+package featureSelection.Evaluators;
 
 import java.util.BitSet;
 
