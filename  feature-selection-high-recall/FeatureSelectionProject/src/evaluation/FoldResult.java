@@ -5,11 +5,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import weka.attributeSelection.ASEvaluation;
+
 public class FoldResult {
 
 	private Map<EClassificationMetric, Double> metricsReported;
 	private String optimalSetting;
 	private int[] selectedFeatures;
+	//if the fold is reused we have already the code to evaluate it;
+	private ASEvaluation evaluatorBuilt;
 	
 	public FoldResult( ) {
 		this.metricsReported = new HashMap<EClassificationMetric, Double>();
@@ -40,6 +44,12 @@ public class FoldResult {
 
 	public void setOptimalSetting(String optimalSetting) {
 		this.optimalSetting = optimalSetting;
+	}
+	public ASEvaluation getEvaluatorBuilt() {
+		return evaluatorBuilt;
+	}
+	public void setEvaluatorBuilt(ASEvaluation evaluatorBuilt) {
+		this.evaluatorBuilt = evaluatorBuilt;
 	}
 	
 }
