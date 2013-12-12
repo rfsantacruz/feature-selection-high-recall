@@ -45,30 +45,27 @@ public class FastFeatureSelectionSimulation {
 
 		// feature selection algorithms
 		List<EFeatureSelectionAlgorithm> selectionAlgs = Lists.newArrayList(
-				//EFeatureSelectionAlgorithm.CONDITIONAL_ENTROPY_RANK
-				//,EFeatureSelectionAlgorithm.CORRELATION_BASED_RANK
-				//,EFeatureSelectionAlgorithm.GAINRATIO_RANK
-				//,EFeatureSelectionAlgorithm.INFORMATIONGAIN_RANK
-				//,EFeatureSelectionAlgorithm.SYMMETRICAL_UNCERT_RANK
-				//,EFeatureSelectionAlgorithm.CORRELATION_BASED_SUBSET
-				//,EFeatureSelectionAlgorithm.MRMR_MI_BASED_SUBSET
+				EFeatureSelectionAlgorithm.CONDITIONAL_ENTROPY_RANK
+				,EFeatureSelectionAlgorithm.CORRELATION_BASED_RANK
+				,EFeatureSelectionAlgorithm.GAINRATIO_RANK
+				,EFeatureSelectionAlgorithm.INFORMATIONGAIN_RANK
+				,EFeatureSelectionAlgorithm.SYMMETRICAL_UNCERT_RANK
+				,EFeatureSelectionAlgorithm.CORRELATION_BASED_SUBSET
+				,EFeatureSelectionAlgorithm.MRMR_MI_BASED_SUBSET
 				//,EFeatureSelectionAlgorithm.FCBF
-				//,EFeatureSelectionAlgorithm.RELIFF
+				,EFeatureSelectionAlgorithm.RELIFF
 				//,EFeatureSelectionAlgorithm.SVMRFE
 				//,EFeatureSelectionAlgorithm.BACKWARD_SELECTION_WRAPPER
 				//,EFeatureSelectionAlgorithm.FORWARD_SELECTION_WRAPPER
-				EFeatureSelectionAlgorithm.HIGH_PRE_EXPECT_APP
-				//,EFeatureSelectionAlgorithm.HIGH_PRE_LOGLIK_APP
-				//,EFeatureSelectionAlgorithm.HIGH_REC_EXPECT_APP
-				//,EFeatureSelectionAlgorithm.HIGH_REC_LOG_APP
+				,EFeatureSelectionAlgorithm.HIGH_PRE_EXPECT_APP
+				,EFeatureSelectionAlgorithm.HIGH_PRE_LOGLIK_APP
+				,EFeatureSelectionAlgorithm.HIGH_REC_EXPECT_APP
+				,EFeatureSelectionAlgorithm.HIGH_REC_LOG_APP
 				);
 		
 
-		//Simulations type:
-		//Fast simulation tuning parameters in accuracy and report in accuracy, precision, fmeasure and recall
+		//Fast simulation
 		IExperimentCommand cmd = new FastFeatureSelectionCommand(classifiers ,selectionAlgs, graphOutPutFolderPath, KFeatures, folds,tuneJustInAccuracy);
-		//create a fast simulation but to tune a model in different metrics
-		//IExperimentCommand cmd = new FastSimulationTuneByDifferentMetrics(classifiers ,selectionAlgs, graphOutPutFolderPath, KFeatures, folds);
 		
 		//execute the simulation
 		List<AbstractExperimentReport> result = ExperimentExecutor.getInstance().executeCommandInFiles(cmd, dataSetFolderpath);
