@@ -5,13 +5,10 @@ import java.util.List;
 import org.apache.commons.lang3.time.StopWatch;
 
 import ExperimentCommands.FastFeatureSelectionCommand;
-import ExperimentCommands.FastSimulationTuneByDifferentMetrics;
-import ExperimentCommands.FeatureSelectionCommand;
 import classifiers.ELinearClassifier;
 
 import com.google.common.collect.Lists;
 
-import evaluation.EClassificationMetric;
 import experiment.AbstractExperimentReport;
 import experiment.ExperimentExecutor;
 import experiment.IExperimentCommand;
@@ -25,7 +22,7 @@ public class FastFeatureSelectionSimulation {
 		//parameters of simulation***********
 		
 		//Paths
-		String dataSetFolderpath = "./binary_data";
+		String dataSetFolderpath = "./data";
 		String graphOutPutFolderPath = "./results/graphs";
 		String csvResultsPath = "./results/featureSelection.csv";
 		

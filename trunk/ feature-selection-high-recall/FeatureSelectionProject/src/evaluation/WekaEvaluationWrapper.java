@@ -25,7 +25,7 @@ import com.google.common.collect.Lists;
 
 import featureSelection.EFeatureSelectionAlgorithm;
 import featureSelection.FeatureSelectionFactoryParameters;
-import featureSelection.FeatureSelectionFilterFactory;
+import featureSelection.FeatureSelector;
 
 public class WekaEvaluationWrapper{
 
@@ -144,7 +144,7 @@ public class WekaEvaluationWrapper{
 	
 	//*******slow cross validation
 	//this method tune the model in each metric and report each metric
-	public CrossValidationOutput CrossValidation(AbstractClassifier c, AttributeSelection FeatureSelector,ClassificationProblem cp, int folds, long seed, Map<String,Set<String>> params, List<EClassificationMetric> metrics )throws Exception{
+	public CrossValidationOutput CrossValidation(AbstractClassifier c, FeatureSelector FeatureSelector,ClassificationProblem cp, int folds, long seed, Map<String,Set<String>> params, List<EClassificationMetric> metrics )throws Exception{
 
 
 		CrossValidationOutput cvo = new CrossValidationOutput(seed, folds);
@@ -173,10 +173,8 @@ public class WekaEvaluationWrapper{
 
 			//perform the feature selection in the train data
 			if (FeatureSelector != null) {
-				//select feature algorithm invocation
-				FeatureSelector.SelectAttributes(train);
 				//get attributes indexes
-				int[] selectedFeatures = FeatureSelector.selectedAttributes();
+				int[] selectedFeatures = FeatureSelector.selectAttributes(train);
 				//build a filter to remove not selected features
 				Remove rm = new Remove();
 				rm.setInvertSelection(true);
@@ -232,12 +230,12 @@ public class WekaEvaluationWrapper{
 	}
 
 	//this method tune the model for one metric and report it
-	public CrossValidationOutput CrossValidationJustOneMetric(AbstractClassifier c, AttributeSelection FeatureSelector,ClassificationProblem cp, int folds, long seed, Map<String,Set<String>> params, EClassificationMetric metric )throws Exception{
+	public CrossValidationOutput CrossValidationJustOneMetric(AbstractClassifier c, FeatureSelector FeatureSelector,ClassificationProblem cp, int folds, long seed, Map<String,Set<String>> params, EClassificationMetric metric )throws Exception{
 		return CrossValidation(c, FeatureSelector, cp, folds, seed, params, Lists.newArrayList(metric));
 	}
 	
 	//This method tune the model in accuracy and report other metrics
-	public CrossValidationOutput crossValidateModelTuneInAccuraccy(AbstractClassifier c, AttributeSelection FeatureSelector,ClassificationProblem cp, int folds, long seed, Map<String,Set<String>> params ) throws Exception{
+	public CrossValidationOutput crossValidateModelTuneInAccuraccy(AbstractClassifier c, FeatureSelector FeatureSelector,ClassificationProblem cp, int folds, long seed, Map<String,Set<String>> params ) throws Exception{
 		return CrossValidation(c, FeatureSelector, cp, folds, seed, params, null);
 
 	}
