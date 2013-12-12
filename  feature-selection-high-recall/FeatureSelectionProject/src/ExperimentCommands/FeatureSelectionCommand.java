@@ -1,44 +1,33 @@
 package ExperimentCommands;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import org.apache.commons.collections.ListUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.apache.commons.lang3.time.StopWatch;
 
 import problems.ClassificationProblem;
 import utils.Util;
-import weka.attributeSelection.AttributeSelection;
 import weka.classifiers.AbstractClassifier;
-import weka.classifiers.bayes.NaiveBayes;
 import classifiers.ClassifierFactory;
 import classifiers.ELinearClassifier;
-import classifiers.LogisticRegressionClassifier;
-import classifiers.NaiveBayesClassifier;
-import classifiers.SVMLinearClassifier;
 
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 
 import evaluation.CrossValidationOutput;
 import evaluation.EClassificationMetric;
 import evaluation.WekaEvaluationWrapper;
 import experiment.AbstractExperimentReport;
-import experiment.ExperimentExecutor;
 import experiment.FeatureSelectionExperimentReport;
 import experiment.IExperimentCommand;
 import featureSelection.EFeatureSelectionAlgorithm;
 import featureSelection.FeatureSelectionFactoryParameters;
-import featureSelection.FeatureSelectionFilterFactory;
+import featureSelection.FeatureSelector;
 
 
 public class FeatureSelectionCommand implements IExperimentCommand{
@@ -106,8 +95,7 @@ public class FeatureSelectionCommand implements IExperimentCommand{
 
 
 						//get the filter
-						AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
-								.createFilter(alg, new FeatureSelectionFactoryParameters(n_features, cl, cp.getData()));
+						FeatureSelector filter = FeatureSelector.create(alg, new FeatureSelectionFactoryParameters(n_features, cl, cp.getData()));
 
 						//cross validate
 						CrossValidationOutput outlr;

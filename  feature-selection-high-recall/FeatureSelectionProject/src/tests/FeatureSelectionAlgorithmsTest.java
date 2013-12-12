@@ -15,27 +15,17 @@ import problems.ClassificationProblem;
 import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.ASSearch;
 import weka.attributeSelection.AttributeSelection;
-import weka.attributeSelection.CfsSubsetEval;
-import weka.attributeSelection.CorrelationAttributeEval;
-import weka.attributeSelection.GainRatioAttributeEval;
 import weka.attributeSelection.GreedyStepwise;
-import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.Ranker;
 import weka.attributeSelection.ReliefFAttributeEval;
-import weka.attributeSelection.SymmetricalUncertAttributeEval;
 import JavaMI.Entropy;
 import JavaMI.MutualInformation;
 import classifiers.NaiveBayesClassifier;
 import classifiers.SVMLinearClassifier;
 import featureSelection.EFeatureSelectionAlgorithm;
 import featureSelection.FeatureSelectionFactoryParameters;
-import featureSelection.FeatureSelectionFilterFactory;
+import featureSelection.FeatureSelector;
 import featureSelection.MyGreedySearch;
-import featureSelection.Evaluators.ConditionalEntropyFeatureSelection;
-import featureSelection.Evaluators.HighPreLogLikelihoodEvaluator;
-import featureSelection.Evaluators.HighPrecExpectationEvaluator;
-import featureSelection.Evaluators.HighRecExpectationEvaluator;
-import featureSelection.Evaluators.HighRecLogLikelihoodEvaluator;
 import featureSelection.Evaluators.MRMRFeatureSelection;
 
 
@@ -176,12 +166,11 @@ public class FeatureSelectionAlgorithmsTest {
 			FeatureSelectionFactoryParameters parameter = 
 					new FeatureSelectionFactoryParameters(5, null, cp.getData());
 
-			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
-					.createFilter(EFeatureSelectionAlgorithm.INFORMATIONGAIN_RANK, parameter);
+			FeatureSelector filter = FeatureSelector.create(EFeatureSelectionAlgorithm.INFORMATIONGAIN_RANK, parameter);
 
 			//exeute
-			filter.SelectAttributes(cp.getData());
-			int[] idxs = filter.selectedAttributes();
+			
+			int[] idxs = filter.selectAttributes(cp.getData());
 			System.out.println(EFeatureSelectionAlgorithm.INFORMATIONGAIN_RANK.name());
 			for (int id : idxs) {
 				System.out.println(cp.getData().attribute(id));
@@ -208,12 +197,10 @@ public class FeatureSelectionAlgorithmsTest {
 					new FeatureSelectionFactoryParameters(5, null, cp.getData());
 
 			//filter application
-			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
-					.createFilter(EFeatureSelectionAlgorithm.CONDITIONAL_ENTROPY_RANK, parameter);
+			FeatureSelector filter = FeatureSelector.create(EFeatureSelectionAlgorithm.CONDITIONAL_ENTROPY_RANK, parameter);
 
 			//exeute
-			filter.SelectAttributes(cp.getData());
-			int[] idxs = filter.selectedAttributes();
+			int[] idxs = filter.selectAttributes(cp.getData());
 			System.out.println(EFeatureSelectionAlgorithm.CONDITIONAL_ENTROPY_RANK.name());
 			for (int id : idxs) {
 				System.out.println(cp.getData().attribute(id));
@@ -238,12 +225,10 @@ public class FeatureSelectionAlgorithmsTest {
 					new FeatureSelectionFactoryParameters(5, null, cp.getData());
 
 			//filter application
-			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
-					.createFilter(EFeatureSelectionAlgorithm.GAINRATIO_RANK, parameter);
+			FeatureSelector filter = FeatureSelector.create(EFeatureSelectionAlgorithm.GAINRATIO_RANK, parameter);
 
 			//exeute
-			filter.SelectAttributes(cp.getData());
-			int[] idxs = filter.selectedAttributes();
+			int[] idxs = filter.selectAttributes(cp.getData());
 			System.out.println(EFeatureSelectionAlgorithm.GAINRATIO_RANK.name());
 			for (int id : idxs) {
 				System.out.println(cp.getData().attribute(id));
@@ -268,12 +253,10 @@ public class FeatureSelectionAlgorithmsTest {
 					new FeatureSelectionFactoryParameters(5, null, cp.getData());
 
 			//filter application
-			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
-					.createFilter(EFeatureSelectionAlgorithm.SYMMETRICAL_UNCERT_RANK, parameter);
+			FeatureSelector filter = FeatureSelector.create(EFeatureSelectionAlgorithm.SYMMETRICAL_UNCERT_RANK, parameter);
 
 			//exeute
-			filter.SelectAttributes(cp.getData());
-			int[] idxs = filter.selectedAttributes();
+			int[] idxs = filter.selectAttributes(cp.getData());
 			System.out.println(EFeatureSelectionAlgorithm.SYMMETRICAL_UNCERT_RANK.name());
 			for (int id : idxs) {
 				System.out.println(cp.getData().attribute(id));
@@ -298,12 +281,11 @@ public class FeatureSelectionAlgorithmsTest {
 					new FeatureSelectionFactoryParameters(5, null, cp.getData());
 
 			//filter application
-			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
-					.createFilter(EFeatureSelectionAlgorithm.CORRELATION_BASED_RANK, parameter);
+			FeatureSelector filter = FeatureSelector.create(EFeatureSelectionAlgorithm.CORRELATION_BASED_RANK, parameter);
 
 			//exeute
-			filter.SelectAttributes(cp.getData());
-			int[] idxs = filter.selectedAttributes();
+			
+			int[] idxs = filter.selectAttributes(cp.getData());
 			System.out.println(EFeatureSelectionAlgorithm.CORRELATION_BASED_SUBSET.name());
 			for (int id : idxs) {
 				System.out.println(cp.getData().attribute(id));
@@ -328,12 +310,11 @@ public class FeatureSelectionAlgorithmsTest {
 					new FeatureSelectionFactoryParameters(5, null, cp.getData());
 
 			//filter application
-			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
-					.createFilter(EFeatureSelectionAlgorithm.CORRELATION_BASED_SUBSET, parameter);
+			FeatureSelector filter = FeatureSelector.create(EFeatureSelectionAlgorithm.CORRELATION_BASED_SUBSET, parameter);
 
 			//exeute
-			filter.SelectAttributes(cp.getData());
-			int[] idxs = filter.selectedAttributes();
+			
+			int[] idxs = filter.selectAttributes(cp.getData());
 			System.out.println(EFeatureSelectionAlgorithm.CORRELATION_BASED_SUBSET.name());
 			for (int id : idxs) {
 				System.out.println(cp.getData().attribute(id));
@@ -358,13 +339,11 @@ public class FeatureSelectionAlgorithmsTest {
 					new FeatureSelectionFactoryParameters(5, null, cp.getData());
 
 			//filter application
-			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
-					.createFilter(EFeatureSelectionAlgorithm.MRMR_MI_BASED_SUBSET, parameter);
+			FeatureSelector filter = FeatureSelector.create(EFeatureSelectionAlgorithm.MRMR_MI_BASED_SUBSET, parameter);
 
 			//exeute
-			filter.SelectAttributes(cp.getData());
 			System.out.println(EFeatureSelectionAlgorithm.MRMR_MI_BASED_SUBSET.name());
-			int[] idxs = filter.selectedAttributes();
+			int[] idxs = filter.selectAttributes(cp.getData());
 			for (int id : idxs) {
 				System.out.println(cp.getData().attribute(id));
 			}
@@ -389,12 +368,11 @@ public class FeatureSelectionAlgorithmsTest {
 					new FeatureSelectionFactoryParameters(2, new NaiveBayesClassifier(), cp.getData());
 
 			//filter application
-			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
-					.createFilter(EFeatureSelectionAlgorithm.FORWARD_SELECTION_WRAPPER, parameter);
+			FeatureSelector filter = FeatureSelector.create(EFeatureSelectionAlgorithm.FORWARD_SELECTION_WRAPPER, parameter);
 
 			//exeute
-			filter.SelectAttributes(cp.getData());
-			int[] idxs = filter.selectedAttributes();
+			
+			int[] idxs = filter.selectAttributes(cp.getData());
 			System.out.println(EFeatureSelectionAlgorithm.FORWARD_SELECTION_WRAPPER.name());
 			for (int id : idxs) {
 				System.out.println(cp.getData().attribute(id));
@@ -420,12 +398,11 @@ public class FeatureSelectionAlgorithmsTest {
 					new FeatureSelectionFactoryParameters(2, new NaiveBayesClassifier(), cp.getData());
 
 			//filter application
-			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
-					.createFilter(EFeatureSelectionAlgorithm.BACKWARD_SELECTION_WRAPPER, parameter);
+			FeatureSelector filter = FeatureSelector.create(EFeatureSelectionAlgorithm.BACKWARD_SELECTION_WRAPPER, parameter);
 
 			//exeute
-			filter.SelectAttributes(cp.getData());
-			int[] idxs = filter.selectedAttributes();
+			
+			int[] idxs = filter.selectAttributes(cp.getData());
 			System.out.println(EFeatureSelectionAlgorithm.BACKWARD_SELECTION_WRAPPER.name());
 			for (int id : idxs) {
 				System.out.println(cp.getData().attribute(id));
@@ -480,12 +457,10 @@ public class FeatureSelectionAlgorithmsTest {
 					new FeatureSelectionFactoryParameters(5, new NaiveBayesClassifier(), cp.getData());
 
 			//filter application
-			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
-					.createFilter(EFeatureSelectionAlgorithm.FCBF, parameter);
+			FeatureSelector filter = FeatureSelector.create(EFeatureSelectionAlgorithm.FCBF, parameter);
 
 			//exeute
-			filter.SelectAttributes(cp.getData());
-			int[] idxs = filter.selectedAttributes();
+			int[] idxs = filter.selectAttributes(cp.getData());
 			System.out.println(EFeatureSelectionAlgorithm.FCBF.name());
 			for (int id : idxs) {
 				System.out.println(cp.getData().attribute(id));
@@ -509,12 +484,11 @@ public class FeatureSelectionAlgorithmsTest {
 					new FeatureSelectionFactoryParameters(5, new SVMLinearClassifier(), cp.getData());
 
 			//filter application
-			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
-					.createFilter(EFeatureSelectionAlgorithm.SVMRFE, parameter);
+			FeatureSelector filter = FeatureSelector.create(EFeatureSelectionAlgorithm.SVMRFE, parameter);
 
 			//exeute
-			filter.SelectAttributes(cp.getData());
-			int[] idxs = filter.selectedAttributes();
+			
+			int[] idxs = filter.selectAttributes(cp.getData());
 			System.out.println(EFeatureSelectionAlgorithm.SVMRFE.name());
 			for (int id : idxs) {
 				System.out.println(cp.getData().attribute(id));
@@ -539,13 +513,11 @@ public class FeatureSelectionAlgorithmsTest {
 					new FeatureSelectionFactoryParameters(5, null, cp.getData());
 
 			//filter application
-			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
-					.createFilter(EFeatureSelectionAlgorithm.HIGH_PRE_EXPECT_APP, parameter);
+			FeatureSelector filter = FeatureSelector.create(EFeatureSelectionAlgorithm.HIGH_PRE_EXPECT_APP, parameter);
 
 
 			//exeute
-			filter.SelectAttributes(cp.getData());
-			int[] idxs = filter.selectedAttributes();
+			int[] idxs = filter.selectAttributes(cp.getData());
 			System.out.println(EFeatureSelectionAlgorithm.HIGH_PRE_EXPECT_APP.name());
 			for (int id : idxs) {
 				System.out.println(cp.getData().attribute(id));
@@ -569,12 +541,10 @@ public class FeatureSelectionAlgorithmsTest {
 					new FeatureSelectionFactoryParameters(5, null, cp.getData());
 
 			//filter application
-			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
-					.createFilter(EFeatureSelectionAlgorithm.HIGH_PRE_LOGLIK_APP, parameter);
+			FeatureSelector filter = FeatureSelector.create(EFeatureSelectionAlgorithm.HIGH_PRE_LOGLIK_APP, parameter);
 
 			//exeute
-			filter.SelectAttributes(cp.getData());
-			int[] idxs = filter.selectedAttributes();
+			int[] idxs = filter.selectAttributes(cp.getData());
 			System.out.println(EFeatureSelectionAlgorithm.HIGH_PRE_LOGLIK_APP.name());
 			for (int id : idxs) {
 				System.out.println(cp.getData().attribute(id));
@@ -598,12 +568,11 @@ public class FeatureSelectionAlgorithmsTest {
 					new FeatureSelectionFactoryParameters(5, null, cp.getData());
 
 			//filter application
-			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
-					.createFilter(EFeatureSelectionAlgorithm.HIGH_REC_EXPECT_APP, parameter);
+			FeatureSelector filter = FeatureSelector.create(EFeatureSelectionAlgorithm.HIGH_REC_EXPECT_APP, parameter);
 
 			//exeute
-			filter.SelectAttributes(cp.getData());
-			int[] idxs = filter.selectedAttributes();
+			
+			int[] idxs = filter.selectAttributes(cp.getData());
 			System.out.println(EFeatureSelectionAlgorithm.HIGH_REC_EXPECT_APP.name());
 			for (int id : idxs) {
 				System.out.println(cp.getData().attribute(id));
@@ -627,12 +596,10 @@ public class FeatureSelectionAlgorithmsTest {
 					new FeatureSelectionFactoryParameters(5, null, cp.getData());
 
 			//filter application
-			AttributeSelection filter = FeatureSelectionFilterFactory.getInstance()
-					.createFilter(EFeatureSelectionAlgorithm.HIGH_REC_LOG_APP, parameter);
+			FeatureSelector filter = FeatureSelector.create(EFeatureSelectionAlgorithm.HIGH_REC_LOG_APP, parameter);
 
 			//exeute
-			filter.SelectAttributes(cp.getData());
-			int[] idxs = filter.selectedAttributes();
+			int[] idxs = filter.selectAttributes(cp.getData());
 			System.out.println(EFeatureSelectionAlgorithm.HIGH_REC_LOG_APP.name());
 			for (int id : idxs) {
 				System.out.println(cp.getData().attribute(id));

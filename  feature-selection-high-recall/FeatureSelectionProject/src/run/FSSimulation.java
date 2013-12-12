@@ -44,7 +44,7 @@ public class FSSimulation {
 				EFeatureSelectionAlgorithm.INFORMATIONGAIN_RANK
 				//,EFeatureSelectionAlgorithm.SYMMETRICAL_UNCERT_RANK
 				//,EFeatureSelectionAlgorithm.CORRELATION_BASED_SUBSET
-				,EFeatureSelectionAlgorithm.MRMR_MI_BASED_SUBSET
+				//,EFeatureSelectionAlgorithm.MRMR_MI_BASED_SUBSET
 				//,EFeatureSelectionAlgorithm.FCBF
 				//,EFeatureSelectionAlgorithm.RELIFF
 				//,EFeatureSelectionAlgorithm.SVMRFE
