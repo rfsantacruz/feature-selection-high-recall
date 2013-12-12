@@ -16,10 +16,13 @@ import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.ASSearch;
 import weka.attributeSelection.AttributeSelection;
 import weka.attributeSelection.CfsSubsetEval;
+import weka.attributeSelection.CorrelationAttributeEval;
+import weka.attributeSelection.GainRatioAttributeEval;
 import weka.attributeSelection.GreedyStepwise;
+import weka.attributeSelection.InfoGainAttributeEval;
 import weka.attributeSelection.Ranker;
 import weka.attributeSelection.ReliefFAttributeEval;
-import weka.attributeSelection.WrapperSubsetEval;
+import weka.attributeSelection.SymmetricalUncertAttributeEval;
 import JavaMI.Entropy;
 import JavaMI.MutualInformation;
 import classifiers.NaiveBayesClassifier;
@@ -27,16 +30,69 @@ import classifiers.SVMLinearClassifier;
 import featureSelection.EFeatureSelectionAlgorithm;
 import featureSelection.FeatureSelectionFactoryParameters;
 import featureSelection.FeatureSelectionFilterFactory;
-import featureSelection.HighPreLogLikelihoodEvaluator;
-import featureSelection.HighPrecExpectationEvaluator;
-import featureSelection.HighRecExpectationEvaluator;
-import featureSelection.HighRecLogLikelihoodEvaluator;
-import featureSelection.MRMRFeatureSelection;
 import featureSelection.MyGreedySearch;
+import featureSelection.Evaluators.ConditionalEntropyFeatureSelection;
+import featureSelection.Evaluators.HighPreLogLikelihoodEvaluator;
+import featureSelection.Evaluators.HighPrecExpectationEvaluator;
+import featureSelection.Evaluators.HighRecExpectationEvaluator;
+import featureSelection.Evaluators.HighRecLogLikelihoodEvaluator;
+import featureSelection.Evaluators.MRMRFeatureSelection;
 
 
 public class FeatureSelectionAlgorithmsTest {
 
+	@Test
+	public void TestNewAttributeSelection(){
+		String dataset = "./TestDataSets/heart-statlog.arff";
+		//this test work for all evaluator unless cfs but the error is the weka code because it adds more feature than requested
+		try {
+			ClassificationProblem cp = new ClassificationProblem(dataset);
+
+			ASEvaluation ev1 = new MRMRFeatureSelection();
+			ev1.buildEvaluator(cp.getData());
+			
+			ASEvaluation ev2 = new MRMRFeatureSelection();
+			ev2.buildEvaluator(cp.getData());
+
+			MyGreedySearch s = new MyGreedySearch();
+			s.setNumToSelect(3);
+
+			featureSelection.FeatureSelector f1 = new featureSelection.FeatureSelector();
+			f1.setEvaluator(ev1);
+			f1.setPrebuilt(true);
+			f1.setSearch(s);
+
+			AttributeSelection f2 = new AttributeSelection();
+			f2.setEvaluator(ev2);
+			f2.setSearch(s);
+			
+			
+			
+			int[] f1idx = f1.selectAttributes(cp.getData());
+			
+			f2.SelectAttributes(cp.getData());
+			int[] f2idx = f2.selectedAttributes();
+		
+			
+			Assert.assertTrue("The Results were different", Arrays.equals(f1idx, f2idx));
+			
+			s.setNumToSelect(5);
+			 f1idx = f1.selectAttributes(cp.getData());
+			
+			f2.SelectAttributes(cp.getData());
+			f2idx = f2.selectedAttributes();
+			
+			
+			Assert.assertTrue("The Results were different", Arrays.equals(f1idx, f2idx));
+
+		} catch (IOException e) {
+			fail("problems to read the data set: " + e.getMessage());
+		} catch (Exception e) {
+			fail("problems in the feature selection engine: " + e.getMessage());
+		}
+
+	}
+	
 	@Test
 	public void TestGreedyAlgorithmModification(){
 		String dataset = "./TestDataSets/heart-statlog.arff";
@@ -474,7 +530,7 @@ public class FeatureSelectionAlgorithmsTest {
 	@Test
 	public void testHighPrecEpctApp(){
 		String dataset = "./binary_data/vote.arff";
-		dataset = "./binary_data/newsgroupstest.arff";
+		dataset = "./data/autos.arff";
 		try {
 			ClassificationProblem cp = new ClassificationProblem(dataset);
 
@@ -504,7 +560,7 @@ public class FeatureSelectionAlgorithmsTest {
 	@Test
 	public void testHighPrecLogLApp(){
 		String dataset = "./binary_data/vote.arff";
-		dataset = "./binary_data/newsgroupstest.arff";
+		dataset = "./data/autos.arff";
 		try {
 			ClassificationProblem cp = new ClassificationProblem(dataset);
 

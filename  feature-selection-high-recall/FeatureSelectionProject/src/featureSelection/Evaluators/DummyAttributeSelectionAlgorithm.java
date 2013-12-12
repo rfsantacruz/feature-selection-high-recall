@@ -1,4 +1,4 @@
-package featureSelection;
+package featureSelection.Evaluators;
 
 import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.AttributeEvaluator;

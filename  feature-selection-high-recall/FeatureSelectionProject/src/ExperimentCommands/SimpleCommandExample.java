@@ -25,7 +25,7 @@ import experiment.AbstractExperimentReport;
 import experiment.ClassificationExperimentReport;
 import experiment.ExperimentExecutor;
 import experiment.IExperimentCommand;
-import featureSelection.DummySubsetAttributeSelection;
+import featureSelection.Evaluators.DummySubsetAttributeSelection;
 
 public class SimpleCommandExample implements IExperimentCommand {
 
@@ -59,17 +59,17 @@ public class SimpleCommandExample implements IExperimentCommand {
 			WekaEvaluationWrapper ev = new WekaEvaluationWrapper(cp);
 
 			//cross validate the models
-			CrossValidationOutput lrcv = ev.crossValidateModel(lr, cp, 10, System.currentTimeMillis(), paramLR);
+			CrossValidationOutput lrcv = ev.crossValidateModelTuneInAccuraccy(lr, null,cp,10, System.currentTimeMillis(), paramLR);
 			System.out.println(lrcv);
 			result.add(new ClassificationExperimentReport(lrcv.metricMean(EClassificationMetric.PRECISION), lrcv.metricMean(EClassificationMetric.RECALL), lrcv.metricMean(EClassificationMetric.ACCURACY)
 					, lrcv.metricMean(EClassificationMetric.FSCORE), cp.getName(), "LogisticRegression"));
 
-			CrossValidationOutput svmcv = ev.crossValidateModel(svm, cp, 10, System.currentTimeMillis(), paramSVM);
+			CrossValidationOutput svmcv = ev.crossValidateModelTuneInAccuraccy(svm, null,cp, 10, System.currentTimeMillis(), paramSVM);
 			System.out.println(svmcv);
 			result.add(new ClassificationExperimentReport(svmcv.metricMean(EClassificationMetric.PRECISION), svmcv.metricMean(EClassificationMetric.RECALL), svmcv.metricMean(EClassificationMetric.ACCURACY)
 					, svmcv.metricMean(EClassificationMetric.FSCORE), cp.getName(), "SVMLinear"));
 
-			CrossValidationOutput nbcv = ev.crossValidateModel(nb, cp, 10, System.currentTimeMillis(), null);
+			CrossValidationOutput nbcv = ev.crossValidateModelTuneInAccuraccy(nb, null,cp, 10, System.currentTimeMillis(), null);
 			System.out.println(nbcv);
 			result.add(new ClassificationExperimentReport(nbcv.metricMean(EClassificationMetric.PRECISION), nbcv.metricMean(EClassificationMetric.RECALL), nbcv.metricMean(EClassificationMetric.ACCURACY)
 					, nbcv.metricMean(EClassificationMetric.FSCORE), cp.getName(), "NaiveBayes"));

@@ -1,4 +1,4 @@
-package featureSelection;
+package featureSelection.Evaluators;
 
 import JavaMI.Entropy;
 import JavaMI.MutualInformation;
