@@ -41,8 +41,8 @@ public class ConditionalEntropyFeatureSelection extends ASEvaluation implements 
 	@Override
 	public double evaluateAttribute(int idx) throws Exception {
 		
-		//H(Y|X)
-		return feature2entropy[idx];
+		//minimize the entropy
+		return -feature2entropy[idx];
 
 	}
 
