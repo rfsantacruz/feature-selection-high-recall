@@ -1,5 +1,6 @@
 package run;
 
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.lang3.time.StopWatch;
@@ -8,6 +9,7 @@ import ExperimentCommands.FastFeatureSelectionCommand;
 import classifiers.ELinearClassifier;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 import experiment.AbstractExperimentReport;
 import experiment.ExperimentExecutor;
@@ -22,7 +24,7 @@ public class FastFeatureSelectionSimulation {
 		//parameters of simulation***********
 		
 		//Paths
-		String dataSetFolderpath = "./data";
+		String dataSetFolderpath = "./binary_data";
 		String graphOutPutFolderPath = "./results/graphs";
 		String csvResultsPath = "./results/featureSelection.csv";
 		
@@ -35,7 +37,6 @@ public class FastFeatureSelectionSimulation {
 		//boolean to say if is to tune the model in each metric or just in accuracy.
 		boolean tuneJustInAccuracy = false;
 		
-		
 		//clasifiers
 		List<ELinearClassifier> classifiers = Lists.newArrayList(
 				ELinearClassifier.LOGISTIC_REGRESSION
@@ -45,7 +46,7 @@ public class FastFeatureSelectionSimulation {
 
 		// feature selection algorithms
 		List<EFeatureSelectionAlgorithm> selectionAlgs = Lists.newArrayList(
-				EFeatureSelectionAlgorithm.CONDITIONAL_ENTROPY_RANK
+				/*EFeatureSelectionAlgorithm.CONDITIONAL_ENTROPY_RANK
 				,EFeatureSelectionAlgorithm.CORRELATION_BASED_RANK
 				,EFeatureSelectionAlgorithm.GAINRATIO_RANK
 				,EFeatureSelectionAlgorithm.INFORMATIONGAIN_RANK
@@ -56,14 +57,17 @@ public class FastFeatureSelectionSimulation {
 				,EFeatureSelectionAlgorithm.RELIFF
 				//,EFeatureSelectionAlgorithm.SVMRFE
 				//,EFeatureSelectionAlgorithm.BACKWARD_SELECTION_WRAPPER
-				//,EFeatureSelectionAlgorithm.FORWARD_SELECTION_WRAPPER
-				,EFeatureSelectionAlgorithm.HIGH_PRE_EXPECT_APP
-				,EFeatureSelectionAlgorithm.HIGH_PRE_LOGLIK_APP
-				,EFeatureSelectionAlgorithm.HIGH_REC_EXPECT_APP
-				,EFeatureSelectionAlgorithm.HIGH_REC_LOG_APP
+				*///,EFeatureSelectionAlgorithm.FORWARD_SELECTION_WRAPPER
+				//EFeatureSelectionAlgorithm.HIGH_PRE_EXPECT_APP
+				//,EFeatureSelectionAlgorithm.HIGH_PRE_LOGLIK_APP
+				//,EFeatureSelectionAlgorithm.HIGH_REC_EXPECT_APP
+				//,EFeatureSelectionAlgorithm.HIGH_REC_LOG_APP
+				EFeatureSelectionAlgorithm.EXPECTATION_GENERAL
 				);
 		
 
+		
+		
 		//Fast simulation
 		IExperimentCommand cmd = new FastFeatureSelectionCommand(classifiers ,selectionAlgs, graphOutPutFolderPath, KFeatures, folds,tuneJustInAccuracy);
 		

@@ -10,6 +10,7 @@ import java.util.Set;
 import org.apache.commons.lang3.ArrayUtils;
 
 import problems.ClassificationProblem;
+import utils.IConstants;
 import utils.Util;
 import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.AttributeSelection;
@@ -351,7 +352,7 @@ public class WekaEvaluationWrapper{
 		if(this.wekaEvaluation == null)
 			throw new Exception("The evaluate model was not called before");
 
-		double retValue = 0.0;
+		/*double retValue = 0.0;
 		int numOfLabels = 0;
 		int classIndex = this.wekaEvaluation.getHeader().classIndex();
 		Attribute att  = this.wekaEvaluation.getHeader().attribute(classIndex);
@@ -364,6 +365,14 @@ public class WekaEvaluationWrapper{
 		}
 
 		return retValue/numOfLabels;
+*/		
+		if( this.wekaEvaluation.getHeader().numClasses()>2 )
+			throw new IllegalArgumentException( "Binary classification only." );
+		
+		if(!IConstants.getInstance().getDataSet2TrueLabels().containsKey(this.wekaEvaluation.getHeader().relationName()))
+			throw new IllegalArgumentException( "True label of the data set was not indicated" );
+			
+		return this.wekaEvaluation.fMeasure(IConstants.getInstance().getDataSet2TrueLabels().get(this.wekaEvaluation.getHeader().relationName()));
 	}
 
 	//overload for overrall precision
@@ -371,7 +380,7 @@ public class WekaEvaluationWrapper{
 		if(this.wekaEvaluation == null)
 			throw new Exception("The evaluate model was not called before");
 
-		double retValue = 0.0;
+		/*double retValue = 0.0;
 		int numOfLabels = 0;
 		int classIndex = this.wekaEvaluation.getHeader().classIndex();
 		Attribute att  = this.wekaEvaluation.getHeader().attribute(classIndex);
@@ -383,7 +392,16 @@ public class WekaEvaluationWrapper{
 			retValue += this.wekaEvaluation.precision(classValue);
 		}
 
-		return retValue/numOfLabels;
+		return retValue/numOfLabels;*/
+		
+
+		if( this.wekaEvaluation.getHeader().numClasses()>2 )
+			throw new IllegalArgumentException( "Binary classification only." );
+		
+		if(!IConstants.getInstance().getDataSet2TrueLabels().containsKey(this.wekaEvaluation.getHeader().relationName()))
+			throw new IllegalArgumentException( "True label of the data set was not indicated" );
+			
+		return this.wekaEvaluation.precision(IConstants.getInstance().getDataSet2TrueLabels().get(this.wekaEvaluation.getHeader().relationName()));
 	}
 
 	//overload for overrall recall
@@ -391,7 +409,7 @@ public class WekaEvaluationWrapper{
 		if(this.wekaEvaluation == null)
 			throw new Exception("The evaluate model was not called before");
 
-		double retValue = 0.0;
+		/*double retValue = 0.0;
 		int numOfLabels = 0;
 
 		int classIndex = this.wekaEvaluation.getHeader().classIndex();
@@ -405,7 +423,16 @@ public class WekaEvaluationWrapper{
 			retValue += this.wekaEvaluation.recall(classValue);
 		}
 
-		return retValue/numOfLabels;
+		return retValue/numOfLabels;*/
+		
+
+		if( this.wekaEvaluation.getHeader().numClasses()>2 )
+			throw new IllegalArgumentException( "Binary classification only." );
+		
+		if(!IConstants.getInstance().getDataSet2TrueLabels().containsKey(this.wekaEvaluation.getHeader().relationName()))
+			throw new IllegalArgumentException( "True label of the data set was not indicated" );
+			
+		return this.wekaEvaluation.recall(IConstants.getInstance().getDataSet2TrueLabels().get(this.wekaEvaluation.getHeader().relationName()));
 	}
 
 	public ClassificationProblem getProblem() {

@@ -12,71 +12,44 @@ import weka.filters.supervised.attribute.Discretize;
 
 public class MRMRFeatureSelection extends ASEvaluation implements SubsetEvaluator   {
 	
-	private Instances dataDiscretized;
+	private static final long serialVersionUID = -2202158496041221332L;
 	private double[] relevance;
 	private double[][] redundancy;
+	private Instances dataDiscretized; // don't work with the data directly use a copy
 	
-	//intialize the evaluator
 	@Override
-	public void buildEvaluator(Instances data) throws Exception {
+	public void buildEvaluator( Instances data ) throws Exception
+	{
+		// discretize data
+		Discretize disc=new Discretize();
+		disc.setUseBetterEncoding( true );
+		disc.setInputFormat( data );
+		dataDiscretized = Filter.useFilter( data, disc );
 		
-		Discretize disTransform = new Discretize();
-		disTransform.setUseBetterEncoding(true);
-		disTransform.setInputFormat(data);
-		this.dataDiscretized = Filter.useFilter(data, disTransform);
-		
-		//relevance precomputing mutual information feature-label
-		this.relevance = new double[this.dataDiscretized.numAttributes() - 1];
-		double[] classATT = this.dataDiscretized.attributeToDoubleArray(this.dataDiscretized.classIndex());
-		for (int i = 0; i < this.relevance.length; i++) {
-			double[] featureI = this.dataDiscretized.attributeToDoubleArray(i);
-			relevance[i] = MutualInformation.calculateMutualInformation(classATT, featureI);
+		// calculate relevance & redundancy
+		int numFeatures = dataDiscretized.numAttributes()-1; // output class is an attribute in weka
+		relevance=new double[numFeatures];
+		redundancy=new double[numFeatures][numFeatures];
+		double[] out=dataDiscretized.attributeToDoubleArray( dataDiscretized.classIndex() );
+		for( int i=0 ; i<numFeatures ; i++ )
+		{
+			relevance[i]=MutualInformation.calculateMutualInformation( out, dataDiscretized.attributeToDoubleArray( i ) );
+			double[] arr=dataDiscretized.attributeToDoubleArray( i );
+			for( int j=0 ; j<redundancy[i].length ; j++ )
+				redundancy[i][j]=MutualInformation.calculateMutualInformation( arr, dataDiscretized.attributeToDoubleArray( j ) );
 		}
-		
-		//redundancy precomputing mutual information feature-feature
-		this.redundancy = new double[this.dataDiscretized.numAttributes() - 1][this.dataDiscretized.numAttributes() - 1];
-		for (int i = 0; i < redundancy.length; i++) {
-			double[] featureI = this.dataDiscretized.attributeToDoubleArray(i);
-			for (int j = 0; j < redundancy[i].length; j++) {
-				double[] featureJ = this.dataDiscretized.attributeToDoubleArray(j);
-				redundancy[i][j] = MutualInformation.calculateMutualInformation(featureI,featureJ);
-			}
-		}
-		
-		
-
 	}
-
-	//analyse subsets of attributes
+	
 	@Override
-	public double evaluateSubset(BitSet subSet) throws Exception {
-
-		if(subSet.cardinality() == 0)
-			return 0;
-		
-		double relevance = 0.0;
-		double redundancy = 0.0;
-		double[] classATT = this.dataDiscretized.attributeToDoubleArray(this.dataDiscretized.classIndex());
-		
-		for (int i = subSet.nextSetBit(0); i >= 0; i = subSet.nextSetBit(i + 1)) {
-			relevance += this.relevance[i];
-			for (int j = subSet.nextSetBit(0); j >= 0; j = subSet.nextSetBit(j + 1)) {
-				if(i != j){
-					redundancy += this.redundancy[i][j];
-				}
-			}
+	public double evaluateSubset( BitSet bs )
+	{
+		double rel=0.0, red=0.0; // @rel=relavence, @red=redundancy
+		for( int i=bs.nextSetBit( 0 ) ; i>=0 ; i=bs.nextSetBit( i+1 ) )
+		{
+			rel+=relevance[i];
+			for( int j=bs.nextSetBit( 0 ) ; j>=0 ; j=bs.nextSetBit( j+1 ) )
+				red+=redundancy[i][j];
 		}
-		
-		relevance = relevance / subSet.cardinality(); 
-		redundancy = redundancy / Math.pow(subSet.cardinality(), 2);
-		
-		return relevance - redundancy;
+		return (rel/bs.cardinality())-(red/( bs.cardinality()*bs.cardinality() ));
 	}
-
-	//make some processing in the attributes using the index of the attributes sorted
-	@Override
-	public int[] postProcess(int[] attributeSet) throws Exception {
-		return super.postProcess(attributeSet);
-	}
-
 }

@@ -1,14 +1,12 @@
 package featureSelection.Evaluators;
 
-import java.util.ArrayList;
-import java.util.BitSet;
+import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
+import utils.IConstants;
 import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.SubsetEvaluator;
-import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.Filter;
 import weka.filters.supervised.attribute.Discretize;
@@ -19,7 +17,9 @@ import com.google.common.base.Joiner;
 public abstract class OurBaseFeatureSelectionEvaluator extends ASEvaluation implements SubsetEvaluator  {
 
 
-	protected Instances dataBinarized;
+	private static final long serialVersionUID = 4689739357973531768L;
+
+	protected Instances dataDiscretized;
 
 	//probs[i][yd][xi] = P(y_i| xi, fi)
 	protected double[][][] probs;
@@ -33,23 +33,43 @@ public abstract class OurBaseFeatureSelectionEvaluator extends ASEvaluation impl
 	//laplace smoth paramter
 	protected double lspValue = 1;
 
+	//true label of the data set
+	protected Integer trueLabel = null;
+
+	//negative label
+	protected Integer negLabel = null;
+
 
 	//intialize the evaluator
 	@Override
 	public void buildEvaluator(Instances data) throws Exception {
 
+		if( data.numClasses()>2 )
+			throw new IllegalArgumentException( "Binary classification only." );
+
+		if(!IConstants.getInstance().getDataSet2TrueLabels().containsKey(data.relationName()))
+			throw new IllegalArgumentException( "True label of the data set was not indicated" );
+		else
+			this.trueLabel = IConstants.getInstance().getDataSet2TrueLabels().get(data.relationName());
+
+		for(int yindex = 0 ; yindex < data.numClasses(); yindex++){
+			if(yindex != this.trueLabel){
+				negLabel = yindex;
+				break;
+			}
+		}
 
 		//discretize the data set
 		Discretize disTransform = new Discretize();
 		disTransform.setUseBetterEncoding(true);
 		disTransform.setInputFormat(data);
-		this.dataBinarized = Filter.useFilter(data, disTransform);
+		this.dataDiscretized = Filter.useFilter(data, disTransform);
 
 		//dealling with missing values
 		Set<Integer> attibutesToAddMissing = new HashSet<Integer>();
-		for (int attIndex = 0; attIndex < this.dataBinarized.numAttributes() - 1 ; attIndex++) {
-			double[] attributeValues = this.dataBinarized.attributeToDoubleArray(attIndex);
-			for (int d = 0; d < this.dataBinarized.numInstances(); d++) {
+		for (int attIndex = 0; attIndex < this.dataDiscretized.numAttributes() - 1 ; attIndex++) {
+			double[] attributeValues = this.dataDiscretized.attributeToDoubleArray(attIndex);
+			for (int d = 0; d < this.dataDiscretized.numInstances(); d++) {
 				if(Double.isNaN(attributeValues[d])){
 					attibutesToAddMissing.add(attIndex + 1);
 					break;
@@ -61,13 +81,13 @@ public abstract class OurBaseFeatureSelectionEvaluator extends ASEvaluation impl
 		String t =  Joiner.on(", ").skipNulls().join(attibutesToAddMissing);
 		filter.setAttributes(t);
 		filter.setNominalStringReplacementValue("'?'");
-		filter.setInputFormat(this.dataBinarized);
-		this.dataBinarized = Filter.useFilter(dataBinarized, filter);
+		filter.setInputFormat(this.dataDiscretized);
+		this.dataDiscretized = Filter.useFilter(dataDiscretized, filter);
 
 
 		//variables to help in the vector instatiations
-		int numberOfAttributes = this.dataBinarized.numAttributes() - 1;
-		int numberOfClasses = this.dataBinarized.numClasses();
+		int numberOfAttributes = this.dataDiscretized.numAttributes() - 1;
+		int numberOfClasses = this.dataDiscretized.numClasses();
 		int multplier = numberOfClasses;
 
 		//instatiation
@@ -76,7 +96,7 @@ public abstract class OurBaseFeatureSelectionEvaluator extends ASEvaluation impl
 		this.count_fix = new double[numberOfAttributes][];
 
 		for (int fi = 0; fi < numberOfAttributes; fi++) {	
-			int xvalue = this.dataBinarized.attribute(fi).numValues();
+			int xvalue = this.dataDiscretized.attribute(fi).numValues();
 			this.count_fix[fi] = new double[xvalue]; 
 
 			for(int yvalue = 0 ; yvalue < numberOfClasses; yvalue++){
@@ -89,8 +109,8 @@ public abstract class OurBaseFeatureSelectionEvaluator extends ASEvaluation impl
 		for(int fi = 0; fi < this.count_fiyx.length; fi++){
 
 			//Gets the value of all instances for the attribute f  
-			double[]  fAttibuteValues = this.dataBinarized.attributeToDoubleArray(fi);
-			double[] ydLabels = this.dataBinarized.attributeToDoubleArray(this.dataBinarized.classIndex());
+			double[]  fAttibuteValues = this.dataDiscretized.attributeToDoubleArray(fi);
+			double[] ydLabels = this.dataDiscretized.attributeToDoubleArray(this.dataDiscretized.classIndex());
 
 			for (int d = 0; d < fAttibuteValues.length; d++ ) {
 				int xdi = (int)fAttibuteValues[d];
