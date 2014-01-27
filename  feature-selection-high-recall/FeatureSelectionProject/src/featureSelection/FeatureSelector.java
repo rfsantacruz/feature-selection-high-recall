@@ -6,6 +6,7 @@ import weka.attributeSelection.ASEvaluation;
 import weka.attributeSelection.ASSearch;
 import featureSelection.*;
 import featureSelection.Evaluators.ConditionalEntropyFeatureSelection;
+import featureSelection.Evaluators.ExpectationGeneral;
 import featureSelection.Evaluators.HighPreLogLikelihoodEvaluator;
 import featureSelection.Evaluators.HighPrecExpectationEvaluator;
 import featureSelection.Evaluators.HighRecExpectationEvaluator;
@@ -246,6 +247,17 @@ public class FeatureSelector {
 		case HIGH_REC_LOG_APP:
 			//high precision evaluator derived from the maximization of the expectation 
 			evaluator = new HighRecLogLikelihoodEvaluator();
+			//choose based on a graddy search 
+			search = new MyGreedySearch();
+			((MyGreedySearch)search).setNumToSelect(parameter.getNumberOfFeature());
+			if(parameter.getFeatureStartSet() != null && parameter.getFeatureStartSet().length > 0 ){
+				((MyGreedySearch)search).setStartSet(parameter.featuresSelected2WekaRangeRepresentation());
+			}
+			break;
+			
+		case EXPECTATION_GENERAL:
+			//n out of k approach
+			evaluator = new ExpectationGeneral();
 			//choose based on a graddy search 
 			search = new MyGreedySearch();
 			((MyGreedySearch)search).setNumToSelect(parameter.getNumberOfFeature());

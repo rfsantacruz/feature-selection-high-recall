@@ -8,6 +8,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.file.Paths;
+import java.util.HashMap;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -27,11 +28,16 @@ public class ClassificationProblem {
 	private Instances data;
 	//file path of the arff file
 	private String filePath;
-
-
+	//true label
+	private Integer trueLabelValue;
+	
+	
 	//constructor
 	public ClassificationProblem(String filePath) throws IOException{
 		this(filePath, new FileReader(filePath));
+		
+		if(IConstants.getInstance().getDataSet2TrueLabels().containsKey(this.getName()))
+			this.trueLabelValue = IConstants.getInstance().getDataSet2TrueLabels().get(this.getName());
 	}
 
 	//contructor
@@ -105,6 +111,14 @@ public class ClassificationProblem {
 
 
 
+	}
+
+	public Integer getTrueLabelValue() {
+		return trueLabelValue;
+	}
+
+	public void setTrueLabelValue(Integer trueLabelValue) {
+		this.trueLabelValue = trueLabelValue;
 	}
 
 
