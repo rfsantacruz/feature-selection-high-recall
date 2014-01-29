@@ -5,10 +5,10 @@ import java.util.BitSet;
 
 import weka.core.Instance;
 
-public class ExpectationGeneral extends OurBaseFeatureSelectionEvaluator
+public class LogLikelihoodGeneral extends OurBaseFeatureSelectionEvaluator
 {
 
-	private static final long serialVersionUID = 53438806275094317L;
+	private static final long serialVersionUID = 7958789732385678394L;
 	private int k, n;
 	private double[][] cache;
 	private BitSet bs;
@@ -31,7 +31,7 @@ public class ExpectationGeneral extends OurBaseFeatureSelectionEvaluator
 				Arrays.fill( cache[j], -1 );
 
 			// log version would use: score+= Math.log( query( 1, n, bs.nextSetBit( 0 ) ) );
-			score+=query( 1, n, bs.nextSetBit( 0 ) );
+			score+=Math.log(query( 1, n, bs.nextSetBit( 0 ) ));
 		}
 		return score;
 	}
