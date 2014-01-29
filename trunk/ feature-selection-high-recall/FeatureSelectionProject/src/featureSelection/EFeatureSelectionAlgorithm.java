@@ -72,6 +72,10 @@ public enum EFeatureSelectionAlgorithm {
 	HIGH_REC_LOG_APP,
 	//our model to optimize the log likelihood and to provide high recall
 
-	EXPECTATION_GENERAL
-	//Expectation general
+	EXPECTATION_GENERAL,
+	//n out of k expectation 
+	
+	LOGLIKELIHOOD_GENERAL
+	// n out of k loglikelihood
+	
 }

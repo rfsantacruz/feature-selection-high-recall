@@ -11,6 +11,7 @@ import featureSelection.Evaluators.HighPreLogLikelihoodEvaluator;
 import featureSelection.Evaluators.HighPrecExpectationEvaluator;
 import featureSelection.Evaluators.HighRecExpectationEvaluator;
 import featureSelection.Evaluators.HighRecLogLikelihoodEvaluator;
+import featureSelection.Evaluators.LogLikelihoodGeneral;
 import featureSelection.Evaluators.MRMRFeatureSelection;
 import weka.attributeSelection.CfsSubsetEval;
 import weka.attributeSelection.CorrelationAttributeEval;
@@ -256,8 +257,19 @@ public class FeatureSelector {
 			break;
 			
 		case EXPECTATION_GENERAL:
-			//n out of k approach
+			//n out of k approach using expectation
 			evaluator = new ExpectationGeneral();
+			//choose based on a graddy search 
+			search = new MyGreedySearch();
+			((MyGreedySearch)search).setNumToSelect(parameter.getNumberOfFeature());
+			if(parameter.getFeatureStartSet() != null && parameter.getFeatureStartSet().length > 0 ){
+				((MyGreedySearch)search).setStartSet(parameter.featuresSelected2WekaRangeRepresentation());
+			}
+			break;
+			
+		case LOGLIKELIHOOD_GENERAL:
+			//n out of k approach using loglikelihood
+			evaluator = new LogLikelihoodGeneral();
 			//choose based on a graddy search 
 			search = new MyGreedySearch();
 			((MyGreedySearch)search).setNumToSelect(parameter.getNumberOfFeature());

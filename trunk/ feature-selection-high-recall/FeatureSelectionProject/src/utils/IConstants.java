@@ -21,12 +21,13 @@ public class IConstants {
 
 	protected IConstants(){
 		if(dataSet2TrueLabels == null){
+			//attention to choose the true labels
 			dataSet2TrueLabels = new HashMap<String, Integer>();
 			dataSet2TrueLabels.put("wisconsin-breast-cancer", 1);
 			dataSet2TrueLabels.put("pima_diabetes", 1);
 			dataSet2TrueLabels.put("heart-statlog", 1);
 			dataSet2TrueLabels.put("spect", 1);
-			dataSet2TrueLabels.put("vote", 0);
+			dataSet2TrueLabels.put("vote", 1);
 			dataSet2TrueLabels.put("newsgroup", 0);
 		}
 	}
