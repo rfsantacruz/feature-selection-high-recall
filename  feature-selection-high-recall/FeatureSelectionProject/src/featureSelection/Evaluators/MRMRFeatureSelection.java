@@ -47,7 +47,7 @@ public class MRMRFeatureSelection extends ASEvaluation implements SubsetEvaluato
 		for( int i=bs.nextSetBit( 0 ) ; i>=0 ; i=bs.nextSetBit( i+1 ) )
 		{
 			rel+=relevance[i];
-			for( int j=bs.nextSetBit( 0 ) ; j>=0 ; j=bs.nextSetBit( j+1 ) )
+			for( int j=bs.nextSetBit( i ) ; j>=0 ; j=bs.nextSetBit( j+1 ) )
 				red+=redundancy[i][j];
 		}
 		return (rel/bs.cardinality())-(red/( bs.cardinality()*bs.cardinality() ));

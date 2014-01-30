@@ -24,7 +24,7 @@ public class FastFeatureSelectionSimulation {
 		//parameters of simulation***********
 		
 		//Paths
-		String dataSetFolderpath = "./binary_data";
+		String dataSetFolderpath = "./data";
 		String graphOutPutFolderPath = "./results/graphs";
 		String csvResultsPath = "./results/featureSelection.csv";
 		
@@ -52,7 +52,7 @@ public class FastFeatureSelectionSimulation {
 				//,EFeatureSelectionAlgorithm.INFORMATIONGAIN_RANK
 				//,EFeatureSelectionAlgorithm.SYMMETRICAL_UNCERT_RANK
 				//,EFeatureSelectionAlgorithm.CORRELATION_BASED_SUBSET
-				//,EFeatureSelectionAlgorithm.MRMR_MI_BASED_SUBSET
+				//EFeatureSelectionAlgorithm.MRMR_MI_BASED_SUBSET
 				//,EFeatureSelectionAlgorithm.FCBF
 				//,EFeatureSelectionAlgorithm.RELIFF
 				//,EFeatureSelectionAlgorithm.SVMRFE

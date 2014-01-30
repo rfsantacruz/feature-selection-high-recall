@@ -22,12 +22,12 @@ public class LogLikelihoodGeneral extends OurBaseFeatureSelectionEvaluator
 		n=k/2; // SCOTT: for some experiments, we'll need n to range from 1..k, OK to hardcode for initial tests
 		this.bs=bs;
 		double score=0;
-		cache=new double[n+1][k+1]; // SCOTT: could move outside for loop, n and k never change within loop
+		cache=new double[k+1][n+1]; // SCOTT: could move outside for loop, n and k never change within loop
 		for( int i=0 ; i<dataDiscretized.size() ; i++ )
 		{
 			Instance datum=dataDiscretized.get( i );
 			this.datum=datum;
-			for( int j=0 ; j<n+1 ; j++ ) // SCOTT: actually n+1 not n according to initialization above, but not sure if it matters
+			for( int j=0 ; j< k+1 ; j++ ) // SCOTT: actually n+1 not n according to initialization above, but not sure if it matters
 				Arrays.fill( cache[j], -1 );
 
 			// log version would use: score+= Math.log( query( 1, n, bs.nextSetBit( 0 ) ) );
