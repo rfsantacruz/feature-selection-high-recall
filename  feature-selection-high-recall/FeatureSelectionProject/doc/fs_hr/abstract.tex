@@ -1,22 +1,32 @@
-A variety of conventional feature selection methods choose informative
-features or feature sets and empirically lead to good accuracy
-improvements, but few focus on feature selection w.r.t.\ specific loss
-functions; in particular, there seems to be little work on feature
-selection for classifiers if a secondary objective after accuracy is
-either precision or recall.  In this paper we propose a novel
-probabilistic model of feature selection based on a probabilistic
-voting model and argue that MAP inference w.r.t. to two extreme
-objectives in this model yield respective high precision and high
-recall feature selection approaches.  We derive an efficient formula
-for feature selection in this model using the filtering framework and
-empirically compare to a wide variety of existing filtering-based
-feature selection methods.  Results show that our high precision and
-high recall feature selection approaches do reliably improve these
-respective objectives.  Furthermore, our modeling framework provides
-us with a way to interpret existing feature selection methods and
-suggests that the use of greedy approaches (such as mutual
-information) appear to maximize precision while diversity-based
-approaches (such as MRMR) appear to maximize recall, hence providing
-us with a framework for reinterpreting the loss functions implicitly
-targeted by existing feature selection methods.
+Feature selection is important in many practical classification
+settings to address computational constraints or to prevent
+overfitting when the data may be high-dimensional but contain
+relatively few samples.  While a wide variety of feature selection
+methods have been proposed in the literature, little research seems to
+focus on feature selection specifically targeted for precision or
+recall.  In this paper we propose a novel probabilistic model of
+feature selection and argue that MAP inference w.r.t. to two extreme
+objectives in this model respectively yield high precision and high
+recall feature selection.  From each objective, we then derive an
+efficient formula for feature selection in the filtering framework
+(i.e., greedy forward selection) and we empirically compare the
+resulting feature selection criteria to a wide variety of existing
+methods.  Results show that our high precision and high recall feature
+selection approaches improve their intended objectives and more
+reliably than existing methods whose precision and recall performance
+may vary widely across datasets and classifiers.
 
+%Furthermore, our modeling framework provides us with a way to
+%interpret existing feature selection methods and suggests that the
+%use of greedy approaches (such as mutual information) appear to
+%maximize precision while diversity-based approaches (such as MRMR)
+%appear to maximize recall, hence providing us with a framework for
+%reinterpreting the loss functions implicitly targeted by existing
+%feature selection methods.
+
+% could look at class balance
+% what other feature properties?
+
+% may want to mention why P/R important... depends on what is
+% important (more costly for false positives or false negatives)
+% and accuracy easy to optimize in imbalanced cases

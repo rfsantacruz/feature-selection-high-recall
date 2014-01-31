@@ -1,3 +1,99 @@
 \section{Introduction}
 
-\cite{guyon_jmlr03}
+Feature selection~\cite{guyon_jmlr03} 
+
+While historically, feature selection 
+
+\COMMENT
+- Feature selection motivations
+** too little data (e.g., bioinformatics, or text with few labels)
+** features costly to evaluate
+** explainability
+** minimize feature elicitation for future data collection (questionnaires, medical tests -- blood tests)
+** computation / Big Data
+** mobile devices (RAM, computation)
+** linear speed (LibLinear 1000x faster than LibSVM)
+** poly kernels without kernelized approach without loss of evaluation efficiency
+** need to argue SVM/logistic L1 not always best... not always logistic regression/SVM problem, also eval efficient, but training not, so 
+inefficient for large-scale or resource-constrained training... show empirical better than L1, also more control over amount of feature 
+selection (need a tool that implements full regularization path -- constrains optimization method)
+
+
+Filtering-based feature selection methods ...
+
+
+"A Probabilistic Model for High Precision and Recall Feature Selection"
+"A Probabilistic Model/Perspective of Feature Selection for Trading off Precision and Recall"
+Conventional feature selection methods choose informative features or feature sets and empirically lead to good accuracy improvements, but 
+few focus directly on precision or recall (or mention that they're method is actually biased towards one vs. other).  In this paper we 
+propose a new probabilistic classification model based on a logical or weighted voting approach that directly encourages feature selection 
+according to the continuum between pure precision and pure recall.  Supports filter, wrapper, and embedded approaches (where we create a 
+new high precision/recall variant of Naive Bayes).  Suggests a way of analyzing existing approaches and identifying what they are 
+optimizing.  In fact, MI (or other independent greedy methods) appear to be maximizing precision while MRMR appears to maximizing recall.
+- Idea: we have a generative model... write down how we want features to generate the class... now the only leverage we have is to select 
+features to maximize expected (log) likelihood
+** if we use an aggregation function that allows any feature to falsify (noisy-and), we encourage agreement (precision)
+** if we use an aggregation function that allows any feature to tip the vote to true (noisy-or), we encourage coverage (recall)... noisy-
+max not multiclass unless we're ordinal (I think)
+** we can trade off precision and recall by requiring n-out-of-k features, n=k/2 is majority vote... does this correspond to F-score or 
+accuracy (can we compare beta & k, 3d plot showing F_beta for k?)
+** of course probabilistic since class predictions are latent so we get a soft version (noisy-or, noisy-and) ... clearer derivation of 
+noisy-or, noisy-max etc. than direct specification?  I think so.
+** maximizing overall likelihood so will try to get features that correctly classify more of the data (especially where votes of others are 
+weak)
+** can do a probabilistic analysis of the 4x4 contigency table
+** a new naive classifier, how do we do overall as a naive classifier?  accuracy will tell us this, can tune k though for whatever metric 
+we care about!  interesting as a classifier since we look at total probability mass of at least k votes... what does this buy us over 
+standard naive Bayes?  Should evaluate.
+==> is there a way to do DP for dynamic programming for Bayesian model averaging over all class inclusions/exclusions?
+... for each feature can leave in or leave out -- if leave out get 1, otherwise probability (sum over all models, probability of prediction 
+* normalized likelihood of that model vs. all others -- add in feature one at a time?)
+... would this also work for query expansion?  some sort of DP MAP query for jointly most useful retrieval set?
+** online learning... discrete parameter
+** spectrum/contiuum of tradeoffs for feature selection
+- To explore: correlated features, diversity of features (MRMR) -- good for recall
+- Filter method
+- Wrapper method
+- Embedded method - use a naive independence classifier
+  (do we unify view for embedded method?  we could maximize likelihood for voting classifier	
+- Computational tricks worth noting (extreme cases and 1- trick for probabilities, DP)
+- In general we want to optimize precision/recall tradeoff (extreme solutions are trivial), n-out-of-k interpolates F-score... really?  Can 
+we show a strong mathematical connection?
+- Intepretation as a voting classifier... then majority vote is k/2-call@k
+** precision, recall, what is f-score?  pure precision/recall not ideal
+** reinterpretation of existing methods as focusing more on precision (MI) or recall (MRMR)
+** does trade-off between precision and recall yield an F-Beta score
+** should probably write out a direct classification approach with y being I[y = y_1 v ... v y_k] and then maximize E[p(y*|...)] or 
+likelihood.  This model supports all view in the proposed paper.  Which is better?
+** will get the effect that optimization only matters when new feature can swing the vote... for recall this will be false negatives, for 
+recall this will be false positives, for majority vote, it will be borderline cases.
+** recall encourages diversity... explains why diverse feature selection methods don't always improve accuracy.  If we wanted precision, we 
+don't mind redundancy, in fact we encourage it.
+** start with and, or, generalize to weighted voting scheme
+** an information-theoretic intepretation?  expectation over data of log probability should yield this
+** what sort of similarity metrics do we get?
+** need to motivate directly that the logical/voting function encourages precision vs. recall... that with disjunction, new features will 
+only address correcting false negatives and likewise for precision and conjunction and correcting false positives
+** what sort of features do we select... analyze 2 newsgroups
+***
+- A new naive independence voting-based classifier with tunable objective and objective-oriented feature selection via a voting scheme
+- A new naive independence voting-based classifier for the precision/recall trade-off
+** feature selection for cases other than accuracy!
+** efficient, supports different objectives from precision to recall and in-between (F-score?)... is the objective just for feature 
+selection?
+** directly supports feature selection... important in independent classifiers
+** supports online computation... and online feature selection scoring
+** supports discrete and Gaussian models
+*** we could also modify the model to make the logical function (weighted voting explicit)... can marginalize this out... in this way the 
+prediction matches feature selection
+** learning parameters -- for directed model, as usual
+** how to work out argmax_y* P(y*|...) -- looks like its just going to multiply probabilities for each class -- is this another view of 
+Naive bayes
+** how to work out feature selection -- y* observed...
+*** could choose fb to maximize logical function in expectation... expected correctness?
+*** could choose fb to maximize likelihood -- would be log version of above with logical function for hidden variable
+*** after doing extreme cases, allow general voting, not just all-or-none
+
+*** training recall/precision directly a bad idea... hurts accuracy, but can select features so as to focus on one of these
+*** we focus on the filter method in this work
+\ENDCOMMENT
