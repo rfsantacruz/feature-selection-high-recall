@@ -24,9 +24,10 @@ public class FastFeatureSelectionSimulation {
 		//parameters of simulation***********
 		
 		//Paths
-		String dataSetFolderpath = "./data";
+		String dataSetFolderpath = "./binary_data";
 		String graphOutPutFolderPath = "./results/graphs";
 		String csvResultsPath = "./results/featureSelection.csv";
+		String xmlResultPath = "./results/featureSelection.xml";
 		
 		//limit of features to select eg 50 -> run from 0 to 50 features
 		int KFeatures = 50; 
@@ -40,16 +41,16 @@ public class FastFeatureSelectionSimulation {
 		//clasifiers
 		List<ELinearClassifier> classifiers = Lists.newArrayList(
 				ELinearClassifier.LOGISTIC_REGRESSION
-				,ELinearClassifier.SVM_LINEAR
+				//,ELinearClassifier.SVM_LINEAR
 				,ELinearClassifier.NAIVE_BAYES
 				);
 
 		// feature selection algorithms
 		List<EFeatureSelectionAlgorithm> selectionAlgs = Lists.newArrayList(
-				//EFeatureSelectionAlgorithm.CONDITIONAL_ENTROPY_RANK
-				//,EFeatureSelectionAlgorithm.CORRELATION_BASED_RANK
+				EFeatureSelectionAlgorithm.CONDITIONAL_ENTROPY_RANK
+				,EFeatureSelectionAlgorithm.CORRELATION_BASED_RANK
 				//,EFeatureSelectionAlgorithm.GAINRATIO_RANK
-				//,EFeatureSelectionAlgorithm.INFORMATIONGAIN_RANK
+				//EFeatureSelectionAlgorithm.INFORMATIONGAIN_RANK
 				//,EFeatureSelectionAlgorithm.SYMMETRICAL_UNCERT_RANK
 				//,EFeatureSelectionAlgorithm.CORRELATION_BASED_SUBSET
 				//EFeatureSelectionAlgorithm.MRMR_MI_BASED_SUBSET
@@ -62,8 +63,8 @@ public class FastFeatureSelectionSimulation {
 				//,EFeatureSelectionAlgorithm.HIGH_PRE_LOGLIK_APP
 				//,EFeatureSelectionAlgorithm.HIGH_REC_EXPECT_APP
 				//,EFeatureSelectionAlgorithm.HIGH_REC_LOG_APP
-				EFeatureSelectionAlgorithm.EXPECTATION_GENERAL
-				,EFeatureSelectionAlgorithm.LOGLIKELIHOOD_GENERAL
+				//EFeatureSelectionAlgorithm.EXPECTATION_GENERAL
+				//,EFeatureSelectionAlgorithm.LOGLIKELIHOOD_GENERAL
 				);
 		
 
@@ -75,6 +76,8 @@ public class FastFeatureSelectionSimulation {
 		//execute the simulation
 		List<AbstractExperimentReport> result = ExperimentExecutor.getInstance().executeCommandInFiles(cmd, dataSetFolderpath);
 
+		utils.Util.writeToXml(result,xmlResultPath);
+		
 		//save results in csv
 		AbstractExperimentReport.saveAll(result, csvResultsPath);
 
