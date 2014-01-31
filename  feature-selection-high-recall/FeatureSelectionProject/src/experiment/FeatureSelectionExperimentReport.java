@@ -223,5 +223,13 @@ public class FeatureSelectionExperimentReport extends AbstractExperimentReport {
 		this.featureSelection2MetricMean.get(alg).add(value);
 	}
 
+	public int getFolds() {
+		return folds;
+	}
+
+	public void setFolds(int folds) {
+		this.folds = folds;
+	}
+
 
 }
