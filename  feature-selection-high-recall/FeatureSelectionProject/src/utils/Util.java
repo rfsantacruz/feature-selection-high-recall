@@ -105,7 +105,6 @@ public class Util {
 
 				//algs elements
 				Element algorithms = doc.createElement("Algorithms");
-				algorithms.setAttribute("algsKeys", Joiner.on(", ").skipNulls().join(report.getFeatureSelection2metric().keySet()));
 				metric.appendChild(algorithms);
 
 
