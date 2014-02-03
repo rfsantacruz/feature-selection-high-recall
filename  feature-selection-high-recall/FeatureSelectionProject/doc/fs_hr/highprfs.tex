@@ -1,11 +1,10 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%% ICML 2014 EXAMPLE LATEX SUBMISSION FILE %%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-% Use the following line _only_ if you're still using LaTeX 2.09.
-%\documentstyle[icml2014,epsf,natbib]{article}
-% If you rely on Latex2e packages, like most moden people use this:
-\documentclass{article}
+%File: formatting-instruction.tex
+\documentclass[letterpaper]{article}
+\usepackage{aaai}
+\usepackage{times}
+\usepackage{helvet}
+\usepackage{courier}
+\frenchspacing
 
 % For figures
 \usepackage{graphicx} % more modern
@@ -20,24 +19,9 @@
 \usepackage{algorithmic}
 %\usepackage[noend]{algpseudocode}
 
-% As of 2011, we use the hyperref package to produce hyperlinks in the
-% resulting PDF.  If this breaks your system, please commend out the
-% following usepackage line and replace \usepackage{icml2014} with
-% \usepackage[nohyperref]{icml2014} above.
-\usepackage{hyperref}
-
 % Packages hyperref and algorithmic misbehave sometimes.  We can fix
 % this with the following command.
 \newcommand{\theHalgorithm}{\arabic{algorithm}}
-
-% Employ the following version of the ``usepackage'' statement for
-% submitting the draft version of the paper for review.  This will set
-% the note in the first column to ``Under review.  Do not distribute.''
-\usepackage{icml2014} 
-% Employ this version of the ``usepackage'' statement after the paper has
-% been accepted, when creating the final version.  This will set the
-% note in the first column to ``Proceedings of the...''
-% \usepackage[accepted]{icml2014}
 
 \usepackage{enumerate}
 \usepackage{amsmath}
@@ -68,37 +52,43 @@
 \def\argmax{\operatornamewithlimits{arg\,max}}
 \def\argmin{\operatornamewithlimits{arg\,min}}
 
-% The \icmltitle you define below is probably too long as a header.
-% Therefore, a short form for the running title is supplied here:
-\icmltitlerunning{A Probabilistic Model for High Precision and Recall Feature Selection}
+\setlength{\pdfpagewidth}{8.5in}
+\setlength{\pdfpageheight}{11in}
+\pdfinfo{
+/Title (Insert Your Title Here)
+/Author (Put All Your Authors Here, Separated by Commas)}
+\setcounter{secnumdepth}{0}  
+ \begin{document}
+% The file aaai.sty is the style file for AAAI Press 
+% proceedings, working notes, and technical reports.
+%
+\title{A Probabilistic Model for High Precision and Recall Feature Selection}
 
-\begin{document} 
+\author{Paper \# 1253}
 
-\twocolumn[
-\icmltitle{A Probabilistic Model for High Precision and Recall\\ Feature Selection}
+%\author{Rodridgo Santa Cruz\\
+%Federal University of Pernambuco\\
+%Recife, Brazil\\
+%rfsantacruz@gmail.com
+%\And
+%Scott Sanner\\
+%NICTA \& ANU\\
+%Canberra, Australia\\
+%ssanner@nicta.com.au
+%\And
+%Libo Yin\\
+%University of Western Australia\\
+%Perth, Australia\\
+%21164183@student.uwa.edu.au}
 
-% It is OKAY to include author information, even for blind
-% submissions: the style file will automatically remove it for you
-% unless you've provided the [accepted] option to the icml2014
-% package.
-\icmlauthor{Rodridgo Santa Cruz}{rfsantacruz@gmail.com}
-\icmladdress{???, Brazil}
-\icmlauthor{Scott Sanner}{ssanner@nicta.com.au}
-\icmladdress{NICTA \& ANU, Canberra, ACT 2601, Australia}
-\icmlauthor{Libo Yin}{21164183@student.uwa.edu.au}
-\icmladdress{???, Australia}
-
-% You may provide any keywords that you 
-% find helpful for describing your paper; these are used to populate 
-% the "keywords" metadata in the PDF but will not be shown in the document
-\icmlkeywords{classification, feature selection, graphical models}
-
-\vskip 0.3in
-]
-
-\begin{abstract} 
+\maketitle
+\begin{abstract}
+\begin{quote}
 \input abstract
-\end{abstract} 
+\end{quote}
+\end{abstract}
+
+%\keywords{classification, feature selection, graphical models}
 
 %% Main contents
 \input intro
@@ -117,7 +107,7 @@
 
 % Bibliography
 \bibliography{highprfs}
-\bibliographystyle{icml2014}
+\bibliographystyle{aaai}
 
 \end{document} 
 
