@@ -1,0 +1,84 @@
+%script to generate barGraph, major = feature selection, minor = classifier
+
+%clear
+clear all, close all;
+
+%xml file
+file = 'featureSelection.xml';
+
+%read the xml to struct
+data = xml2struct(file);
+
+
+
+%loop over metrics
+nM = size(data.Simulation.DataSet{1}.Classifier{1}.Metric,2);
+nCl = size(data.Simulation.DataSet{1}.Classifier,2);
+
+for m = 1:nM
+    MName = data.Simulation.DataSet{1}.Classifier{1}.Metric{m}.Attributes.name;
+    nAlg = size(data.Simulation.DataSet{1}.Classifier{1}.Metric{m}.Algorithms.Algorithm,2);
+    
+    Y = zeros(nAlg,nCl);
+    Error = zeros(nAlg,nCl);    
+    algLegend = {};
+    
+    for alg = 1:nAlg
+        algname = data.Simulation.DataSet{1}.Classifier{1}.Metric{m}.Algorithms.Algorithm{alg}.Attributes.name;
+        if(strcmpi(algname,'HIGH_REC_EXPECT_APP')|strcmpi(algname,'HIGH_REC_LOG_APP')|strcmpi(algname,'HIGH_PRE_EXPECT_APP')|strcmpi(algname,'HIGH_PRE_LOGLIK_APP'))
+            algLegend = [algLegend, cleanString(algname)];
+            classifiersLegends = {};
+            
+            %loop over classifiers
+            nCl = size(data.Simulation.DataSet{1}.Classifier,2);
+            for c = 1:nCl
+                CName = data.Simulation.DataSet{1}.Classifier{c}.Attributes.name;
+                classifiersLegends = [classifiersLegends, cleanString(CName)];
+                
+                % Iterate through the nodes that are returned. but it is just
+                % one node in each interation
+                acc = 0.0;
+                count = 0;
+                samples = [];
+                %number of data sets
+                nDS = size(data.Simulation.DataSet,2);
+                for d=1:nDS
+                    dSName = data.Simulation.DataSet{d}.Attributes.name;
+                    
+                    %xpath expression
+                    exp = strcat('//DataSet[@name="',dSName ,'"]/Classifier[@name="',CName,'"]/Metric[@name="',MName,'"]/Algorithms/Algorithm[@name="',algname,'"]/Mean');
+                    nodeList = queryXml(exp,file);
+                    
+                    
+                    for i = 1:nodeList.getLength
+                        node = nodeList.item(i-1);
+                        %convert text matrix to number matrix
+                        values = str2num( node.getFirstChild.getNodeValue);
+                        samples = [samples, values];
+                        acc = acc + sum(values);
+                        count = count + length(values);
+                        %disp(str2num( node.getFirstChild.getNodeValue))
+                    end;
+                end;
+                
+                Y(alg,c) = acc / count;
+                Error(alg,c) = 2 * (std(samples)/sqrt(length(samples)));                               
+            end;
+            
+             Y(alg,:) = Y(alg,:) ./ max(Y(alg,:));
+        end;
+    end;
+    
+    %use just initials
+    for i=1:length(algLegend)
+        algLegend{i} = strjoin(acronym(algLegend{i}),'');
+    end;
+    
+    %plot graph
+    %createBarGraph(Y,algLegend,classifiersLegends, cleanString(strjoin({dSName,MName},' ')), 'Average', 'Feature selection algorithm')
+    figure, barweb(Y(9:end,:), Error(9:end,:), 1, algLegend, cleanString(MName), 'Feature Selection Algorithms', 'Average', [], [],classifiersLegends , 2, 'plot')
+    %save as pdf
+    saveas(gcf, cleanString(MName), 'pdf')
+    
+end;
+
