@@ -31,11 +31,12 @@ Ionosphere (I)	& 34	& 351	& 0.097	& 36 \%	& All Numeric\\ \hline
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure*}[tbp!]
-\includegraphics[width=0.85\textwidth]{./figures/dataset_perf/Accuracy.pdf}\\
-\includegraphics[width=0.85\textwidth]{./figures/dataset_perf/Recall.pdf}
+$\qquad$\includegraphics[width=0.85\textwidth]{./figures/dataset_perf/Accuracy.pdf}\\
+
+\vspace{-4mm}$\qquad$\includegraphics[width=0.85\textwidth]{./figures/dataset_perf/Recall.pdf}
 \includegraphics[width=0.10\textwidth]{./figures/dataset_perf/legend.PNG}
 \vspace{-2mm}
-\caption{\footnotesize Performance of various feature selection algorithms per dataset, averaged across classifier type and each stage of feature selection.  Overall the newly proposed CVL method performs well on Recall on most datasets, while the Recall performance of other feature selection algorithms vary; interestingly the best performance is achieved for datasets a high ratio of features to data indicating that the strong conjunctive voting scheme of CVL may help reduce noise in feature selection for these datasets. }
+\caption{\footnotesize Performance (top -- Accuracy, bottom -- Recall) of various feature selection algorithms per dataset, averaged across classifier type and each stage of feature selection.  Overall the newly proposed CVL method performs well on Recall on most datasets, while the Recall performance of other feature selection algorithms vary; interestingly the best performance is achieved for datasets a high ratio of features to data indicating that the strong conjunctive voting scheme of CVL may help reduce noise in feature selection for these datasets. }
 \label{fig:perf_vs_dataset}
 \vspace{-3mm}
 \end{figure*}
@@ -48,7 +49,7 @@ Ionosphere (I)	& 34	& 351	& 0.097	& 36 \%	& All Numeric\\ \hline
 \includegraphics[width=0.42\textwidth]{./figures/class_perf/Recall.pdf}
 \includegraphics[width=0.15\textwidth]{./figures/class_perf/legend.PNG}
 \vspace{-6mm}
-\caption{\footnotesize Performance of various feature selection algorithms per classifier, averaged across dataset and each stage of feature selection.  DVE, DVL, CVE, and CVL align with the independence assumptions of Naive Bayes and the maximum (conditional) likelihood framework of Naive Bayes and Logistic Regression, which may explain the better excellent performance of these algorithms with these classifiers.}
+\caption{\footnotesize Performance (left -- Accuracy, right -- Recall) of feature selection algorithms per classifier, averaged across dataset and each stage of feature selection.  DVE, DVL, CVE, and CVL align with the independence assumptions of Naive Bayes and the maximum likelihood framework of Naive Bayes and Logistic Regression, which may explain the better performance of these algorithms with these classifiers.}
 \label{fig:perf_vs_classifier}
 \end{figure*}
 %\vspace{-6mm}
