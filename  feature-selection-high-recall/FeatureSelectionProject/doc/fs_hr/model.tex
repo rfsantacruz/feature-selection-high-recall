@@ -35,8 +35,8 @@ The only part of this model that we have not yet specified is
 $P(y^d|\{y^d_i\})$ which determines how an observed classification 
 prediction $y^d$ is made given the latent predictions $y^d_i$ of each 
 selected feature $f_i$.  We use a deterministic voting scheme
-to represent this conditional probability, which we will discuss
-in-depth shortly.  First we focus on selecting features which optimize
+to represent this conditional probability, which we discuss
+in-depth shortly, but first we focus on selecting features which optimize
 this model given some $P(y^d|\{y^d_i\})$.
 
 Since jointly optimizing this objective is NP-hard, we build
@@ -81,7 +81,7 @@ factorized the conditional probability in the joint probability
 divided by the marginal, marginalised over $\{y^d_i\}_{1\leq i\leq
   k}$, factorized joint probability in conditional and prior following
 the graphical model and exploited d-separation to remove irrelevant
-conditions and to cancel terms in the equation.
+conditions and to cancel factors in the equation.
 
 Now we can optimise our initial objective aiming three goals of classification tasks: Precision, Recall, and General n-out-of-k.
 \ENDCOMMENT
@@ -94,9 +94,9 @@ of the data given the model (i.e., features selected), i.e., $l(D|F_k^*)$ as fol
 
 {\small 
 \begin{align}
-f_k^*&=\argmax_{f_k} l(D|F^*_k) \nonumber
-\end{align}
-\begin{align}
+f_k^*&=\argmax_{f_k} l(D|F^*_k) \nonumber\\
+%\end{align}
+%\begin{align}
 &=\argmax_{f_k}\,\log\prod_{d\in D}P\left(y^d|\vec{x}^{\,d},F_k\right)\nonumber\\
 &=\argmax_{f_k}\sum_{d\in D}\log\left(\frac{P\left(y^d,\vec{x}^{\,d},F_k\right)}{P\left(\vec{x}^{\,d},F_k\right)}\right)\nonumber \\
 &=\argmax_{f_k}\sum_{d\in D}\log \!\!\! \sum_{\{y_i^d\}_{1\leq i\leq k}} \!\!\! \frac{P\left(y^d,\vec{x}^{\,d}, F_k,\{y_i^d\}_{1\leq i\leq k}\right)}{P\left(\vec{x}^{\,d},F_k\right)}\nonumber\\
@@ -109,7 +109,7 @@ factorized the conditional probability in the joint probability
 divided by the marginal, marginalized over $\{y^d_i\}_{1\leq i\leq
   k}$, factorized joint probability in conditional and prior following
 the graphical model and exploited D-separation to remove irrelevant
-conditions and to cancel terms in the equation.
+conditions and to cancel factors in the equation.
 
 \paragraph{Expected Likelihood (E)}
 
@@ -121,7 +121,7 @@ f_k^*&=\argmax_{f_k}E_D\left[P\left(y^d|\vec{x}^{\,d},F_k\right)\right]\nonumber
 &=\argmax_{f_k}\frac{1}{|D|}\sum_{d\in D} P\left(y^d | \vec{x}^{\,d},F_k\right)\nonumber\\
 &=\argmax_{f_k} \sum_{d\in D} P\left(y^d | \vec{x}^{\,d},F_k\right)\nonumber
 \end{align*}
-From here, we derive the result in~\eqref{eq:expect} without the $\log$.
+From here, we easily derive the result in~\eqref{eq:expect} without the $\log$.
 
 % We may argue for a paper that focuses on feature selection in the
 % case of high feature to data ratios, but we don't do so well on accuracy.
@@ -137,7 +137,8 @@ to target recall.
 
 With our two data-oriented feature selection objectives now defined,
 we need only plug in a suitable definition of $P(y^d|\{y^d_i\})$ to
-derive our novel feature evaluation criterion.
+derive our novel feature evaluation criterion.  
+%  We discuss this next.
 
 %Since $\sum_{d\in D}log\sum_{{\{y_i^d\}}_{1\leq i\leq
 %    k}}P\left(y^d|\{y^d_i\}_{1\leq i\leq
@@ -148,29 +149,37 @@ derive our novel feature evaluation criterion.
 
 \paragraph{Voting Schemes}
 
-Critically, while we believe the use of a log or expected likelihood
-metric should lead to coverage of the data (i.e., recall), our choice
-of model $P(y^d|\{y^d_i\})$ can help reduce noise in the selection
-process.  $P(y^d|\{y^d_i\})$ represents how the class prediction $y_d$
-is determined from the class prediction of each feature denoted as
-$y^d_i$.  Here we consider two different extreme voting schemes
+While we conjectured
+above that expected or log likelihood criteria should help encourage
+recall, we conjecture that our choice of a suitable aggregation or
+``voting'' definition for $P(y^d|\{y^d_i\})$ can help reduce noise in
+the feature selection process.
+%Critically, while we believe the use of a log or expected likelihood
+%metric should lead to coverage of the data (i.e., recall), our choice
+%of model $P(y^d|\{y^d_i\})$ can help reduce noise in the selection
+%process.  $P(y^d|\{y^d_i\})$ represents how the class prediction $y_d$
+%is determined from the class prediction of each feature denoted as
+%$y^d_i$.  
+Here we consider two different extreme voting schemes
 representing logical conjunction and disjunction of the feature
 ``votes'' $y^d_i$, respectively representing strong and weak
 agreement.  If we use conjunction, we require strong agreement among
 all features for a datum to be classified as true, while for the
 disjunctive case, only one feature need vote true for the
-classification to be true.  Overall, we conjecture that conjunctive
-voting is better in terms of reducing noise among features by
-selecting those which tend to agree more often on the true class, but
-we derive the results for both conjunction and disjunction since they
-are symmetric and will allow us to test this hypothesis.
+classification to be true.  
+
+Overall, we conjecture that conjunctive voting is better in terms of
+reducing noise among features by selecting those which tend to agree
+more often on the true class, but we derive the results for both
+conjunction and disjunction since they are symmetric and will allow us
+to test this hypothesis.
 
 \paragraph{Conjunctive Voting (CV)}
 In order to select the subset of features with conjunctive voting, 
 we need the agreement of all features predictors
 $y^d_i$ to predict true. That is, when $y^d$ is true we need all of
-the predictors $y^d_i$ equals to true, and if $y^d$ were false, just
-one of the predictors $y^d_i$ would have to be false. Then the
+the predictors $y^d_i$ equal to true, and when $y^d$ is false, any 
+one of the predictors $y^d_i$ could be false. Then the
 probability $P\left(y^d|\{y^d_i\}_{1\leq i\leq k}\right)$ can be
 expressed as follows:
 {\small 
@@ -181,9 +190,10 @@ P\left(y^d|\{y^d_i\}_{1\leq i\leq k}\right) & =I\left[y^d=\bigwedge_{i=1}^k y^d_
 	y^d=0 \text{ when } \{y_i^d\}_{1\leq i\leq k,\exists{y_j^d\|y_j^d=0}}
 \end{cases}\label{eq:expect_pre_1}
 \end{align}}
-Then, we combined equations \eqref{eq:expect} and
-\eqref{eq:expect_pre_1}, separated each term according to the actual
-label value $y^d$ and used the probability sum rule to rewrite the
+We can combine this with the non-log version of \eqref{eq:expect} to
+obtain CVE where we  
+separate each term according to the actual
+label value $y^d$ and use the probability sum rule to rewrite the
 second term as follows:
 \begin{align}
 f_k^*&=\argmax_{f_k}\sum_{d\in D}I\left[y^d=\bigwedge_{i=1}^k y^d_i\right]\prod_{i=1}^kP\left(y_i^d|\vec{x}^{\,d},f_i\right)\nonumber\\[0.5em]
@@ -203,15 +213,15 @@ f_k^*&=\argmax_{f_k}\sum_{d\in D}I\left[y^d=\bigwedge_{i=1}^k y^d_i\right]\prod_
 %	y^d=0: 1-\prod_{i=1}^kP\left(y^d = 1|\vec{x}_i^{\,d},f_i\right)\nonumber
 %\end{cases}
 \end{align}
-From \eqref{eq:expect_pre_2} we can intuitively describe how this
-equation is related to the precision metric. In the confusion matrix,
-Precision is calculated dividing the numbers of true positives by the
-number of all examples predicted as positive (true positives and false
-positives). When $y^d$ is true, \eqref{eq:expect_pre_2} gives higher
-score to feature that have higher probability to predict true,
-encouraging true positives. Meanwhile, if $y^d$ is false,
-\eqref{eq:expect_pre_2} gives lower score to features that have higher
-probability to predict true, penalising false positives.
+Under this scheme, we note that when $y^d$ is true,
+\eqref{eq:expect_pre_2} gives higher score to features that have
+higher probability to predict true, encouraging true positives.
+Meanwhile, if $y^d$ is false, \eqref{eq:expect_pre_2} gives lower
+score to features that have higher probability to predict true,
+penalizing false positives.
+
+If we wish to derive the log likelihood version (CVL), we simply insert
+$\log$ after the summation in~\eqref{eq:expect_pre_2}.
 
 \paragraph{Disjunctive Voting (DV)}
 In order to select the subset of features with disjunctive voting,
@@ -229,9 +239,10 @@ P\left(y^d|\{y^d_i\}_{1\leq i\leq k}\right) & =I\left[y^d=\bigvee_{i=1}^k y^d_i\
 	y^d=0 \text{ when } \{y_i^d=0\}_{1\leq i\leq k}
 \end{cases}\label{eq:expect_recall_1}
 \end{align}}
-Here, we combined equations \eqref{eq:expect} and
-\eqref{eq:expect_recall_1}, separated each term according to the
-actual label value $y^d$ and used the probability sum rule to rewrite
+We can combine this with the non-log version of \eqref{eq:expect} to
+obtain DVE, where we  
+separate each term according to the
+actual label value $y^d$ and use the probability sum rule to rewrite
 the second term as follows:
 \begin{align}
 f_k^*&=\argmax_{f_k}\sum_{d\in D}I\left[y^d=\bigvee_{i=1}^k y^d_i\right]\prod_{i=1}^kP\left(y_i^d|\vec{x}^{\,d},f_i\right)\nonumber\\[0.5em]
@@ -251,13 +262,12 @@ f_k^*&=\argmax_{f_k}\sum_{d\in D}I\left[y^d=\bigvee_{i=1}^k y^d_i\right]\prod_{i
 %	y^d=1: 1-\prod_{i=1}^kP\left(y^d=0|\vec{x}_i^{\,d},f_i\right)
 %\end{cases}\nonumber
 \end{align}
-From \eqref{eq:expect_recall_2} we can intuitively describe how this
-equation is related to the precision metric. In the confusion matrix,
-Recall is calculated dividing the numbers of actual true positives by
-the number of all true positives (true positives and false
-negatives). When $y^d$ is false, \eqref{eq:expect_recall_2} gives
-higher score to feature that have higher probability to predict false,
-encouraging true negatives. Meanwhile, if $y^d$ is true,
-\eqref{eq:expect_recall_2} gives lower score to features that have
-higher probability to predict false, penalizing false negatives.
+Under this scheme, we note that when $y^d$ is false,
+\eqref{eq:expect_recall_2} gives a higher score to features that have
+higher probability to predict false, encouraging true negatives.
+Meanwhile, if $y^d$ is true, \eqref{eq:expect_recall_2} gives lower
+score to features that have higher probability to predict false,
+penalizing false negatives.
 
+If we wish to derive the log likelihood version (DVL), we simply insert
+$\log$ after the summation in~\eqref{eq:expect_recall_2}.
