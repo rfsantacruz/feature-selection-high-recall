@@ -24,15 +24,25 @@ selection for the binary classification problem, as shown in
 Figure~\ref{fig:model}. Double-walled nodes represent observed
 variables, including the data point vector $\vec{x}^{d},$ selected
 features $f_i^*$ (where $1\leq i\leq k,$ $f_i\in F$) and the
-supervised class label $y^d.$ Single-walled circle nodes represent
+supervised class label $y^d$. Single-walled circle nodes represent
 latent variables, including a selected attribute of data
-point vector $f_i^x,$ and prediction from a feature $y^d_i.$
+point vector $f_i^x$ (i.e., the value resulting from applying
+a deterministic feature function $f_i$ to data input $\vec{x}$) and
+the prediction from a feature $y^d_i \in \{0,1\}$ (whose conditional
+probability is the maximum likelihood estimate w.r.t.\ the data $D$).
+The only part of this model that we have not yet specified is 
+$P(y^d|\{y^d_i\})$ which determines how an observed classification 
+prediction $y^d$ is made given the latent predictions $y^d_i$ of each 
+selected feature $f_i$.  We use a deterministic voting scheme
+to represent this conditional probability, which we will discuss
+in-depth shortly.  First we focus on selecting features which optimize
+this model.
 
 Since jointly optimizing this objective is NP-hard, we build
 $F^*$ in a greedy manner by choosing the next optimal feature $f^*_k$
 given the previous set of optimal features $F^*_{k-1}$ and recursively
 defining $F^*_k = F^*_{k-1}\cup f^*_k$ with $F^*_0 = \emptyset$. The
-fitness measure of a set of selected features $^*_k$ can be
+fitness measure of a selected feature set $F^*_k$ can be
 expressed in terms of log or expected likelihood, discussed next.
 
 \begin{figure}[tbp!]
@@ -74,14 +84,15 @@ Now we can optimise our initial objective aiming three goals of classification t
 
 Because Figure~\ref{fig:model} essentially provides a probabilistic classifier model as a function
 of the input data and selected features, we can choose features as to maximize the log likelihood
-of the data given the model (i.e., features selected), i.e., $l(D|F)$ as follows:
+of the data given the model (i.e., features selected), i.e., $l(D|F_k^*)$ as follows:
+
 {\small 
 \begin{align}
-f_k^*&=\argmax_{f_k} l(D|F^*_k) \nonumber\\
+f_k^*&=\argmax_{f_k} l(D|F^*_k) \nonumber
+\end{align}
+\begin{align}
 &=\argmax_{f_k}\,\log\prod_{d\in D}P\left(y^d|\vec{x}^{\,d},F_k\right)\nonumber\\
 &=\argmax_{f_k}\sum_{d\in D}\log\left(\frac{P\left(y^d,\vec{x}^{\,d},F_k\right)}{P\left(\vec{x}^{\,d},F_k\right)}\right)\nonumber \\
-%\end{align}
-%\begin{align}
 &=\argmax_{f_k}\sum_{d\in D}\log \!\!\! \sum_{\{y_i^d\}_{1\leq i\leq k}} \!\!\! \frac{P\left(y^d,\vec{x}^{\,d}, F_k,\{y_i^d\}_{1\leq i\leq k}\right)}{P\left(\vec{x}^{\,d},F_k\right)}\nonumber\\
 %&=\argmax_{f_k} \sum_{d \in D} \log\sum_{{\{y_i^d\}}_{1\leq i \leq k}} \frac{P\left(y^d| \{y^d_i\}_{1 \leq i \leq k}\right) \prod_{i=1}^kP\left(y_i^d|\vec{x}^{\,d},f_i\right)P\left(\vec{x}^{\,d}\right)\prod_{i=1}^kP\left(f_i\right)}{P\left(\vec{x}^{\,d}, F_k\right)}\nonumber\\
 &=\argmax_{f_k}\sum_{d\in D}\log \!\!\! \sum_{{\{y_i^d\}}_{1\leq i\leq k}} \!\!\! P\left(y^d|\{y^d_i\}_{1\leq i\leq k}\right) \prod_{i=1}^kP\left(y_i^d|\vec{x}^{\,d},f_i\right) \label{eq:expect} 
