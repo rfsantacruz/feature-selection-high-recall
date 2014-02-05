@@ -1,10 +1,25 @@
-\section{Background}
+\section{Classification and Feature Selection}
 
-in well-known contingency table
+In this section, we briefly define the task of binary classification
+along with standard definitions of performance metrics we may wish 
+to optimize.  We then follow this by a discussion of feature selection and
+existing criteria proposed in the literature.
 
+In the binary classification task, we assume we are given data $D = \{
+(\vec{x}^d, y^d) \}$ consisting of pairs of real-valued raw 
+feature vectors $\vec{x}^d \in \mathbb{R}^n$
+of length $n$ (e.g., counts of $n$ different words in a document) and
+\emph{actual} binary class label $y^d \in \{ 0 (\mathrm{false}), 1 (\mathrm{true}) \}$ (where
+we often write F for false and T for true).
+A binary classifier is a function $C: \vec{x}^d \to y^d$ such that given
+a new unlabeled raw feature vector, $C(\vec{x}^d)$ produces a \emph{predicted}
+classification.
+
+Given a trained classifier $C$ and a dataset $D$, we can build the 
+well-known contingency table
 \begin{center}
 \begin{tabular}{l|l|l|} 
-\multicolumn{1}{l}{} &  \multicolumn{1}{l}{Label T} & \multicolumn{1}{l}{Label F} \\ \cline{2-3}
+\multicolumn{1}{l}{} &  \multicolumn{1}{l}{Actual T} & \multicolumn{1}{l}{Actual F} \\ \cline{2-3}
 Predicted T & TP & FP \\ \cline{2-3}
 Predicted F & FN & TN \\ \cline{2-3}
 %Predicted T & TP & FP & \#$T_P$ \\ \cline{2-3}
@@ -12,9 +27,10 @@ Predicted F & FN & TN \\ \cline{2-3}
 %          &   & \#$T_A$ & \#$F_A$ & \\ \cline{2-3}
 \end{tabular}
 \end{center}
+where each of the four entries 
 
-accuracy = tp + tn / tp + fp + fn + tn
-
-precision = tp / tp + fp
-
-recall = tp / tp + fn
+\begin{align*}
+\textrm{Accuracy}  & = \frac{TP + TN}{TP + FP + FN + TN}
+\textrm{Precision} & = \frac{TP}{TP + FP}
+\textrm{Recall}    & = \frac{TP}{TP + FN}
+\end{align*}
