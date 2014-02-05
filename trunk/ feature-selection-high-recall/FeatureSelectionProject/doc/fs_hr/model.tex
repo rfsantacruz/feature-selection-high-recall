@@ -45,13 +45,17 @@ defining $F^*_k = F^*_{k-1}\cup f^*_k$ with $F^*_0 = \emptyset$. The
 fitness measure of a selected feature set $F^*_k$ can be
 expressed in terms of log or expected likelihood, discussed next.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[tbp!]
 	\centering
 	\includegraphics[scale=0.9]{Plots_1.pdf}
 	\caption{\footnotesize A probabilistic voting model of classification represented as a graphical model. 
-Double-walled circles denote observed nodes, single-walled circles denote latent (unobserved) nodes.}
+Double-walled circles denote observed nodes, single-walled circles denote latent (unobserved) nodes.
+In this model, feature class predictions $y_i^d$ are aggregated under a voting scheme to determine 
+label $y^d$.}
 	\label{fig:model}
 \end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %\subsection{Objective}
 
