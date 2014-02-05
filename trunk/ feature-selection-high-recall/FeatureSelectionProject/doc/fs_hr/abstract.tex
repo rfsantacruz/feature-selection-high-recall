@@ -1,20 +1,21 @@
-Feature selection is important in many practical classification
+Feature selection is important in many practical supervised learning
 settings to address computational constraints or to prevent
 overfitting when the data may be high-dimensional but contain
 relatively few samples.  While a wide variety of feature selection
 methods have been proposed in the literature, little research seems to
-focus on feature selection specifically targeted for precision or
-recall.  In this paper we propose a novel probabilistic model of
-feature selection and argue that MAP inference w.r.t. to two extreme
-objectives in this model respectively yield high precision and high
-recall feature selection.  From each objective, we then derive an
-efficient formula for feature selection in the filtering framework
-(i.e., greedy forward selection) and we empirically compare the
-resulting feature selection criteria to a wide variety of existing
-methods.  Results show that our high precision and high recall feature
-selection approaches improve their intended objectives and more
-reliably than existing methods whose precision and recall performance
-may vary widely across datasets and classifiers.
+focus on feature selection specifically targeted to improve recall in
+the case of binary classification.  In this paper we propose a novel
+probabilistic voting model of feature selection and argue that
+choosing features so as to maximize likelihood objectives w.r.t. this
+model provides an effective method for high recall feature selection.
+For each objective, we derive an efficient formula for feature
+selection in the filtering framework (i.e., greedy forward selection)
+and we empirically compare the resulting feature selection criteria to
+a wide variety of existing methods.  Results show that our high recall
+feature selection approach does indeed improve recall with
+improvements noticeable when there is a high feature to data ratio.
+Such results provide a novel and efficient feature selection algorithm
+to target high-recall classification tasks.
 
 %Furthermore, our modeling framework provides us with a way to
 %interpret existing feature selection methods and suggests that the
