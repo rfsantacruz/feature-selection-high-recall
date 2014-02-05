@@ -3,7 +3,7 @@
 Existing feature selection algorithms fall into categories of filter
 methods and wrapper methods \cite{guyon_jmlr03}. While
 wrapper methods, such as SVM-RFE \cite{guyon2002gene}, select features
-by evaluating theit usefulness to a given classifier, filter methods
+by evaluating their usefulness to a given classifier, filter methods
 evaluate feature subsets according to certain properties of
 themselves. Within filter methods, feature selection algorithms can be
 further classified into ranking methods and subset methods. The former
@@ -13,19 +13,18 @@ introduction to algorithms to which we compared our proposed model.
 
 Correlation based rank is a na\"{i}ve ranking algorithm that ranks
 features according to their linear correlation with the output,
-i.e.\ Pearson's $r.$ More sophisticated ranking methods to which we
-compared our model include:
+i.e.\ Pearson's $r.$ More sophisticated ranking methods include:
 \begin{enumerate}
-\item The conditional entropy of class $Y$ given feature $X$,
+\item The conditional entropy of class $Y$ given feature $X,$
   i.e.\ $H\left(Y|X\right),$ quantifies the amount of information in
-  $Y$ that is not provided by $X.$ Substracting $H\left(Y|X\right)$
+  $Y$ that is not provided by $X.$ Subtracting $H\left(Y|X\right)$
   from the entropy of class $Y,$ the information gain of class $Y$
   given feature $X$ is the mutual information between feature $X$ and
   class $Y,$ i.e.\ $I\left(X;Y\right).$
 \item The gain ratio of feature $X$ is defined as the information gain
   of feature $X$ normalized against the entropy of itself,
   i.e.\ $\frac{I\left(X;Y\right)}{H\left(X\right)}.$
-\item The summetric uncertainty between feature $X$ and class $Y$
+\item The symmetric uncertainty between feature $X$ and class $Y$
   measures the amount of redundancy between them. It is defined as
   $U\left(X,Y\right)=2\frac{I\left(X;Y\right)}{H\left(X\right)+H\left(Y\right)}.$
 \item The Relief method \cite{kira1992feature} evaluates the relevance
@@ -34,12 +33,16 @@ compared our model include:
   classes.
 \end{enumerate}
 
-The only subset algorithm to which we compared our work is MRMR
-\cite{peng2005}. MRMR is an information-theory-based method
-that not only maximises the relevance of selected features to the
-supervised output class, but also minimises the redundancy among
-selected features. Different search strategies can be applied using
-MRMR as heuristics.
+Correlation based subset \cite{Hall1998} is an extension
+of Pearson's $r$ to subset methods. It measures the linear correlation
+between each pair of selected features in addition to the correlation
+between selected features and the output class. The other subset
+algorithm to which we compared our work is MRMR \cite{peng2005}.
+MRMR is an information-theory-based method that not only maximises
+the relevance of selected features to the supervised output class,
+but also minimises the redundancy among selected features. Different
+search strategies can be applied using these two algorithms as
+heuristics.
 
 Although existing algorithms give various solutions, they are mostly
 ad-hoc, until \cite{brown2012conditional}. Brown et al.\ derived an
