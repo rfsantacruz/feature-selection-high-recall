@@ -5,17 +5,17 @@
 \centering
 \begin{tabular}{|l|r|r|r|r|l|} \hline
 Dataset & \# Features & \# Data & \# Features/\# Data & \% True Labels & Feature Type\\ \hline \hline 
-Breast Cancer	& 9	& 699	& 0.013	& 34 \%	& All Numeric\\ \hline
-Diabetes        & 8	& 768	& 0.010	& 35 \%	& All Numeric\\ \hline
-Heart Statlog	& 13	& 270	& 0.048	& 44 \%	& All Numeric\\ \hline
-Spect	        & 22	& 80	& 0.275 & 33 \%	& Categorical\\ \hline
-Vote	        & 16	& 435	& 0.037	& 39 \%	& Categorical\\ \hline
-Newsgroup	& 500	& 1963	& 0.255	& 49 \%	& All Binary\\ \hline
-Horse Colic	& 22	& 368	& 0.060	& 37 \%	& Categorical (16) and numeric (6)\\ \hline
-Credit-American	& 15	& 690	& 0.022	& 44 \%	& Categorical(9) and numeric (6)\\ \hline
-Credit-German	& 20	& 1000	& 0.020 & 30 \%	& Categorical (13) and Numeric (7)\\ \hline
-Hepatitis	& 19	& 155	& 0.123	& 21 \%	& Categorical (13) and Numeric (6)\\ \hline
-Ionosphere	& 34	& 351	& 0.097	& 36 \%	& All Numeric\\ \hline
+Breast Cancer(BC)	& 9	& 699	& 0.013	& 34 \%	& All Numeric\\ \hline
+Diabetes(D)        & 8	& 768	& 0.010	& 35 \%	& All Numeric\\ \hline
+Heart Statlog(HS)	& 13	& 270	& 0.048	& 44 \%	& All Numeric\\ \hline
+Spect(S)	        & 22	& 80	& 0.275 & 33 \%	& Categorical\\ \hline
+Vote(V)	        & 16	& 435	& 0.037	& 39 \%	& Categorical\\ \hline
+Newsgroup(NG)	& 500	& 1963	& 0.255	& 49 \%	& All Binary\\ \hline
+Horse Colic(HC)	& 22	& 368	& 0.060	& 37 \%	& Categorical (16) and numeric (6)\\ \hline
+Credit-American(CR)	& 15	& 690	& 0.022	& 44 \%	& Categorical(9) and numeric (6)\\ \hline
+Credit-German(GC)	& 20	& 1000	& 0.020 & 30 \%	& Categorical (13) and Numeric (7)\\ \hline
+Hepatitis(H)	& 19	& 155	& 0.123	& 21 \%	& Categorical (13) and Numeric (6)\\ \hline
+Ionosphere(I)	& 34	& 351	& 0.097	& 36 \%	& All Numeric\\ \hline
 %KR-vs-KP	& 36	& 3196	& 0.011	& 48 \%	& All Categorical\\ \hline
 %Labor	        & 16	& 57	& 0.281	& 35 \%	& Categorical (8) and Numeric (8)\\ \hline
 %Mushroom	& 22	& 8124	& 0.003	& 48 \%	& All Categorical\\ \hline
@@ -29,20 +29,8 @@ Ionosphere	& 34	& 351	& 0.097	& 36 \%	& All Numeric\\ \hline
 
 In this section, we conduct experiments to study the feature selection
 performances of several well known methods such as Symmetrical
-Uncertainty Rank (SUR), Gain Ratio Rank (GRR), Information Gain Rank
-(IGR), Correlation Based Rank (CBR), Conditional Entropy Rank (CER)~\cite{guyon_jmlr03}, 
-Correlation-based Feature Subset Selection (CFS)~\cite{Hall1998}, 
-Reliff (R)~\cite{Robnik-Sikonja2003} , mRMR~\cite{peng2005} and our proposed 
-methods: High Recall Expectation (HRE) and High Recall Log likelihood (HRL), 
-High Precision Expectation (HPE), High Precision Log likelihood (HPL). 
-The first five methods are variable rank methods and the last seven
-are subset rank methods. The first five methods are variable rank methods that select variables by ranking them with some metric and the last seven are subset rank methods that assess subsets of variables and consider previous selections to decide the next selection.
-
-{\bf TODO Rodrigo: please update acronyms in plots with those given above,
-use MRMR for MRMR... sorry, does not seem sensible to shorten this to 3 letters.}
-
-% TODO: Scott... any interesting things to point out?  
-%       Class imbalance / feature-data ratios?
+Uncertainty Rank (SUR), Gain Ratio Rank (GRR), Mutual Information Rank
+(MIR), Correlation Based Rank (CR), Conditional Entropy Rank (CER)~\cite{guyon_jmlr03}, Correlation-based Feature Subset Selection (CS)~\cite{Hall1998}, Reliff (RF)~\cite{Robnik-Sikonja2003} , Minimum Redundancy Maximum Relevancem(MRMR)~\cite{peng2005} and our proposed methods:  Disjunction Voting Expectation(DVE) and  Disjunction Voting likelihood (DVL), Conjunction Voting Expectation (CVE), Conjunction Voting likelihood (CVL). The first five methods are variable rank methods and the last seven are subset rank methods. The first five methods are variable rank methods that select variables by ranking them with some metric and the last seven are subset rank methods that assess subsets of variables and consider previous selections to decide the next selection.
 
 In this experimental study, we evaluated each feature selection
 method on a variety of binary classification problems 
@@ -51,8 +39,8 @@ These datasets along with their properties are outlined in
 Table~\ref{table:stats}.
 
 In addition, we used three different classifiers to solve each of the
-binary classifier problem. Logistic Regression (LR), SVM Linear (SVM) and Naive
-Bayes (NB) were used in the experiments and the first two are implemented
+binary classifier problem. Logistic Regression, SVM Linear and Naive
+Bayes were used in the experiments and the first two are implemented
 in the LibLinear library~\cite{REF08a} and the last one is implemented in
 the Weka software~\cite{weka}.
  
@@ -108,23 +96,19 @@ in terms of their performance distribution?
 To answer these questions, we first start with
 Figure~\ref{fig:perf_vs_dataset}, where we evaluate the performance of
 various feature selection algorithms per dataset, averaged across
-classifier type and each stage of feature selection.  We observe...
+classifier type and each stage of feature selection. We can observe that our approaches improve recall and accuracy in many of the binary classification problem.
 % TODO Scott
 
 In Figure~\ref{fig:perf_vs_classifier}, we examine how well our 
-novel feature selection algorithms HRE, HRL, HPE, HPL 
+novel feature selection algorithms DVE, DVL, CVE, CVL 
 perform vs. classifier, noting that overall performance is best
 for Naive Bayes followed by Logistic Regression and noticeably worse for
-the SVM --- it seems simply that the probabilistic nature of our feature selection
+the SVM Linear --- it seems simply that the probabilistic nature of our feature selection
 dovetail best with classification methods that are themselves probabilistic,
 and overall best with Naive Bayes which makes the same independence assumptions.
-{\bf TODO Rodrigo: can we get bargraphs like those in FeatureSelection classifier,
-except only showing HRE, HRL, HPE, HPL *and* averaging over all datasets?
-So major group={HRE, HRL, HPE, HPL}, minor group={SVM,LR,NB} and one graph
-for each of A/P/R/F.  Also the filename should not have spaces.}
 
 Next we examine Figure~\ref{fig:perf_vs_fs_alg}, where we evaluate the
 performance distribution of various feature selection algorithms with
 samples taken for each dataset, classifier type, and stage of feature
-selection.  Here we see Y.  We observe...
+selection. This graph shows that our high recall feature selection improve recall with improvements noticeable when there is a high feature to data ratio such as in the Newsgroup(NG) and Spect(S) data sets.
 
