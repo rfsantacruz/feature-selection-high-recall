@@ -7,8 +7,8 @@ existing criteria proposed in the literature.
 
 In the binary classification task, we assume we are given data $D = \{
 (\vec{x}^d, y^d) \}$ consisting of pairs of real-valued raw 
-feature vectors $\vec{x}^d \in \mathbb{R}^n$
-of length $n$ (e.g., counts of $n$ different words in a document) and
+input vectors $\vec{x}^d \in \mathbb{R}^n$
+of length $n$ (e.g., the results of $n$ different medical tests) and
 \emph{actual} binary class label $y^d \in \{ 0 (\mathrm{false}), 1 (\mathrm{true}) \}$ (where
 we often write F for false and T for true).
 A binary classifier is a function $C: \vec{x}^d \to y^d$ such that given
@@ -27,10 +27,39 @@ Predicted F & FN & TN \\ \cline{2-3}
 %          &   & \#$T_A$ & \#$F_A$ & \\ \cline{2-3}
 \end{tabular}
 \end{center}
-where each of the four entries 
-
+where the four entries represent the counts of true positives (TP), false positives (FP), false negatives (FN)
+and true negatives (TN) and sum to the 
+total amount of data (i.e., $\mathrm{TP} + \mathrm{FP} + \mathrm{FN} + \mathrm{TN} = |D|$).
+Each table entry represents the count of data for which the respective row matched the 
+predicted classification $C(\vec{x}^d)$ and the respective column matched the actual label $y^d$.
+Given these definitions, we can easily define 
 \begin{align*}
 \textrm{Accuracy}  & = \frac{TP + TN}{TP + FP + FN + TN}
-\textrm{Precision} & = \frac{TP}{TP + FP}
+%\textrm{Precision} & = \frac{TP}{TP + FP}
 \textrm{Recall}    & = \frac{TP}{TP + FN}
 \end{align*}
+where accuracy represents the overall fraction of correct classification, but recall
+represents the overall fraction of true labeled data that has been classified as
+true (i.e., recalled).  For somewhat rare events such as medical diagnosis of cancer,
+we certainly care about accuracy, but we may also want to place additional emphasis
+on recall performance so as to avoid the occurrence of false negatives (cases of cancer
+that were missed by the classifier).  Of course false positives are also a problem,
+but additional tests would rule these out and hence not as critical of a classification
+failure as missing a potential cancer diagnosis.
+
+Previously we did not specify exactly how $C(\vec{x}^d)$ learns from the raw data
+$\vec{x}^d$.  In general, practitioners often process the raw input vectors
+$\vec{x}^d$ into a subset of features that we'll denote $f_1,\ldots,f_k$.  Whereas
+the raw input may consist of the results of individual tests, a feature $f_i \in \mathbb{R}$
+may represent some nonlinear function of one or more tests deemed to be relevant to
+the classification task.  Hence we might more appropriately write a classifier
+as $C(\vec{x}^d,f_1,\ldots,f_k)$ to represent the raw input data and the features
+of the data that the classifier may use.
+In the case of high-dimensional data or few data samples,
+we may wish to limit the set of features generated to improve classifier performance
+and this is the task of feature selection --- select $\{f_1,\ldots,f_k\}$ to optimize
+performance.  There are already a variety of feature selection methods that we outline
+next.
+
+
+
