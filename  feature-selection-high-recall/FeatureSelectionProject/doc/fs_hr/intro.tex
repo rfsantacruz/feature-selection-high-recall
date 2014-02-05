@@ -1,6 +1,56 @@
 \section{Introduction}
 
-Feature selection~\cite{guyon_jmlr03} 
+Feature selection is important in many practical supervised learning
+settings to address computational constraints (e.g., in large-scale or
+online learning) or to prevent overfitting when the data may be
+high-dimensional but contain relatively few samples (e.g., as may
+occur in bioinformatics domains where features are abundant but data
+is costly to obtain)~\cite{guyon_jmlr03}.
+
+While a wide variety of feature selection methods have been proposed
+in the literature, little research seems to focus on feature selection
+specifically targeted to improve recall (minimization of false
+negatives) in binary classification.  One reason for this is simply
+that most feature selection methods are agnostic to the particular
+supervised learning task -- applying to tasks from classification to
+regression -- and hence are not focused on performance properties
+specific to binary classifiers.  Yet, recall is an important aspect of
+many binary classification problems (e.g., minimizing false negatives
+in the identification of cancerous tumors) and it is critical to have
+feature selection algorithms that are targeted to maintain high recall.
+
+Naturally though, it would not make sense for a classifier or feature
+selection method to focus on recall alone since the classifier which
+always predicts \emph{true} (independent of the data) obtains optimal
+recall performance.  To trade off precision with recall in order to
+maintain high accuracy, one often uses a geometric average of the
+two instead (known as F-score) but in practice most classifiers directly
+optimize accuracy or some surrogate, e.g., a convex surrogate of 0-1
+loss as in the SVM or maximum (conditional) likelihood as in Naive
+Bayes or logistic regression.  So how can one achieve a high recall
+SVM, Naive Bayes, or logistic regression classifier that already has
+a 
+
+
+prevent this solution
+
+
+In this paper we propose a novel probabilistic voting model of feature
+selection and argue that choosing features so as to maximize
+likelihood objectives w.r.t. this model provides an effective method
+for high recall feature selection.  For each objective, we derive an
+efficient formula for feature selection in the filtering framework
+(i.e., greedy forward selection) and we empirically compare the
+resulting feature selection criteria to a wide variety of existing
+methods.  Results show that our high recall feature selection approach
+does indeed improve recall with improvements noticeable when there is
+a high feature to data ratio.  Such results provide a novel and
+efficient feature selection algorithm to target high-recall
+classification tasks.
+
+
+
+Feature selection 
 
 While historically, feature selection 
 
@@ -22,24 +72,7 @@ Naturally do not want to optimize for precision and recall directly (all false t
 
 % Show anecdotal results for Newsgroup and Spect logistic... we're best across both
 
-in well-known contingency table
 
-\begin{center}
-\begin{tabular}{l|l|l|} 
-\multicolumn{1}{l}{} &  \multicolumn{1}{l}{Label T} & \multicolumn{1}{l}{Label F} \\ \cline{2-3}
-Predicted T & TP & FP \\ \cline{2-3}
-Predicted F & FN & TN \\ \cline{2-3}
-%Predicted T & TP & FP & \#$T_P$ \\ \cline{2-3}
-%Predicted F & FN & TN & \#$F_P$ \\ \cline{2-3}
-%          &   & \#$T_A$ & \#$F_A$ & \\ \cline{2-3}
-\end{tabular}
-\end{center}
-
-accuracy = tp + tn / tp + fp + fn + tn
-
-precision = tp / tp + fp
-
-recall = tp / tp + fn
 
 can switch in columns, but typically predicting more false hurts recall and more true hurts precision
 
