@@ -1,13 +1,18 @@
 \section{Existing Feature Selection Algorithms}
 
 Existing feature selection algorithms fall into categories of filter
-methods and wrapper methods \cite{guyon_jmlr03}. Wrapper methods, such as SVM-RFE \cite{guyon2002gene}, select features by evaluating their usefulness to a given classifier, they usually produce the best results but they are computationally expensive to large data sets or to high dimensional problems. Filter methods
-evaluate feature subsets according to certain properties of features 
-themselves. Within filter methods, feature selection algorithms can be
-further classified into ranking methods and subset methods. The former
-evaluate each feature independently, while the latter evaluate a
-subset at a time \cite{brown2012conditional}. Listed below is a brief
-introduction to popular feature selection algorithms that we later
+methods and wrapper methods \cite{guyon_jmlr03}. Wrapper methods, such
+as SVM-RFE \cite{guyon2002gene}, select features by evaluating their
+usefulness \emph{after} training a given classifier; they often
+produce good results but are computationally expensive when training
+on large data sets or to high-dimensional problems.  In contrast,
+filter methods evaluate feature subsets according to certain
+properties of features themselves.  Within filter methods, feature
+selection algorithms can be further classified into ranking methods
+and subset methods. The former evaluate each feature independently,
+while the latter evaluate a subset at a time
+\cite{brown2012conditional}. Listed below is a brief introduction to
+popular filter-based feature selection algorithms that we later
 compare to.
 
 Correlation based rank is a na\"{i}ve ranking algorithm that ranks

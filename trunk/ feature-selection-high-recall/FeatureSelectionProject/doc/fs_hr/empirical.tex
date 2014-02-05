@@ -70,7 +70,7 @@ Ionosphere(I)	& 34	& 351	& 0.097	& 36 \%	& All Numeric\\ \hline
 \end{figure*}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\section{Empirical}
+\section{Empirical Evaluation}
 
 In this section, we conduct experiments to study the feature selection
 performances of several well known methods such as Symmetrical
@@ -115,8 +115,8 @@ In Figure~\ref{fig:perf_vs_classifier}, we examine how well our
 novel feature selection algorithms DVE, DVL, CVE, CVL 
 perform vs. classifier, noting that overall performance is best
 for Naive Bayes followed by Logistic Regression and noticeably worse for
-the SVM Linear --- it seems simply that the probabilistic nature of our feature selection
-dovetail best with classification methods that are themselves probabilistic,
+the SVM Linear --- it seems that the probabilistic nature of our feature selection
+dovetail best with classifiers that are themselves probabilistic,
 and overall best with Naive Bayes which makes the same independence assumptions.
 
 Next we examine Figure~\ref{fig:perf_vs_fs_alg}, where we evaluate the
@@ -125,7 +125,8 @@ samples taken for each dataset, classifier type, and stage of feature
 selection. This graph shows that our CVL high recall feature selection approach 
 improves recall with the most improvement noticeable when there is a high
 feature to data ratio such as in the Newsgroup (NG) and Spect (S) data
-sets.  We conjecture the reason for this stems from the strong agreement of
-features provided by the conjunctive voting scheme that helps reduce noise
-in the feature selection process.
+sets.  
+%We conjecture the reason for this stems from the strong agreement of
+%features provided by the conjunctive voting scheme that helps reduce noise
+%during feature selection process.
 
