@@ -1,6 +1,8 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{table*}[tbp!]
+%\vspace{-1mm}
 \centering
+{\small 
 \begin{tabular}{|l|r|r|r|r|l|} \hline
 Dataset & \# Features & \# Data & \# Features/\# Data & \% True Labels & Feature Type\\ \hline \hline 
 Breast Cancer(BC)	& 9	& 699	& 0.013	& 34 \%	& All Numeric\\ \hline
@@ -19,9 +21,11 @@ Ionosphere(I)	& 34	& 351	& 0.097	& 36 \%	& All Numeric\\ \hline
 %Mushroom	& 22	& 8124	& 0.003	& 48 \%	& All Categorical\\ \hline
 %Sick	        & 29	& 3772	& 0.008	&  6 \%	& Categorical (23) and Numeric (6)\\ \hline
 %Sonar	        & 60	& 208	& 0.288 & 47 \%	& All Numeric\\ \hline
-\end{tabular}
-\caption{\footnotesize Statistics of the various datasets evaluated in this work.}
+\end{tabular}}
+\vspace{-1mm}
+\caption{\footnotesize Descriptive statistics of the various datasets evaluated in this work.}
 \label{table:stats}
+\vspace{-4mm}
 \end{table*}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -30,8 +34,10 @@ Ionosphere(I)	& 34	& 351	& 0.097	& 36 \%	& All Numeric\\ \hline
 \includegraphics[width=0.85\textwidth]{./figures/dataset_perf/Accuracy.pdf}\\
 \includegraphics[width=0.85\textwidth]{./figures/dataset_perf/Recall.pdf}
 \includegraphics[width=0.10\textwidth]{./figures/dataset_perf/legend.PNG}
-\caption{\footnotesize Performance of various feature selection algorithms per dataset, averaged across classifier type and each stage of feature selection.}
+\vspace{-2mm}
+\caption{\footnotesize Performance of various feature selection algorithms per dataset, averaged across classifier type and each stage of feature selection.  Overall the newly proposed CVL method performs well on Recall on most datasets, while the Recall performance of other feature selection algorithms vary; interestingly the best performance is achieved for datasets a high ratio of features to data indicating that the strong conjunctive voting scheme of CVL may help reduce noise in feature selection for these datasets. }
 \label{fig:perf_vs_dataset}
+\vspace{-4mm}
 \end{figure*}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -41,9 +47,11 @@ Ionosphere(I)	& 34	& 351	& 0.097	& 36 \%	& All Numeric\\ \hline
 \includegraphics[width=0.42\textwidth]{./figures/class_perf/Accuracy.pdf}
 \includegraphics[width=0.42\textwidth]{./figures/class_perf/Recall.pdf}
 \includegraphics[width=0.15\textwidth]{./figures/class_perf/legend.PNG}
-\caption{\footnotesize Performance of various feature selection algorithms per classifier, averaged across dataset and each stage of feature selection.}
+\vspace{-6mm}
+\caption{\footnotesize Performance of various feature selection algorithms per classifier, averaged across dataset and each stage of feature selection.  DVE, DVL, CVE, and CVL align with the independence assumptions of Naive Bayes and the maximum (conditional) likelihood framework of Naive Bayes and Logistic Regression, which may explain the better excellent performance of these algorithms with these classifiers.}
 \label{fig:perf_vs_classifier}
 \end{figure*}
+%\vspace{-6mm}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -53,7 +61,11 @@ Ionosphere(I)	& 34	& 351	& 0.097	& 36 \%	& All Numeric\\ \hline
 \includegraphics[width=0.375\textwidth]{./figures/linegraphs/SpectNaiveBayesRecall.pdf}\\
 \includegraphics[width=0.375\textwidth]{./figures/linegraphs/NewsgroupLogisticRegressionRecall.pdf}
 \includegraphics[width=0.375\textwidth]{./figures/linegraphs/NewsgroupNaiveBayesRecall.pdf}
-\caption{\footnotesize Performance distribution of various feature selection algorithms with samples taken for each dataset, classifier type, and stage of feature selection.}
+%\includegraphics[width=0.375\textwidth]{./figures/linegraphs/SpectLogisticRegressionRecall2.pdf}
+%\includegraphics[width=0.375\textwidth]{./figures/linegraphs/SpectNaiveBayesRecall2.pdf}\\
+%\includegraphics[width=0.375\textwidth]{./figures/linegraphs/NewsgroupLogisticRegressionRecall2.pdf}
+%\includegraphics[width=0.375\textwidth]{./figures/linegraphs/NewsgroupNaiveBayesRecall2.pdf}
+\caption{\footnotesize Performance distribution of various feature selection algorithms for two datasets and classifier types at each stage of feature selection.  The conjunctive voting methods do best overall in these datasets.}
 \label{fig:perf_vs_fs_alg}
 \end{figure*}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -110,5 +122,10 @@ and overall best with Naive Bayes which makes the same independence assumptions.
 Next we examine Figure~\ref{fig:perf_vs_fs_alg}, where we evaluate the
 performance distribution of various feature selection algorithms with
 samples taken for each dataset, classifier type, and stage of feature
-selection. This graph shows that our high recall feature selection improve recall with improvements noticeable when there is a high feature to data ratio such as in the Newsgroup(NG) and Spect(S) data sets.
+selection. This graph shows that our CVL high recall feature selection approach 
+improves recall with the most improvement noticeable when there is a high
+feature to data ratio such as in the Newsgroup (NG) and Spect (S) data
+sets.  We conjecture the reason for this stems from the strong agreement of
+features provided by the conjunctive voting scheme that helps reduce noise
+in the feature selection process.
 
