@@ -48,14 +48,19 @@ but also minimizes the redundancy among selected features. Different
 search strategies can be applied using these two algorithms as
 heuristics.
 
-Although existing algorithms give various solutions, they are mostly
-ad-hoc, until \cite{brown2012conditional}. Brown et al.\ derived a 
-probabilistic model with information-theoretic motivations from first principles, and retro-fitted
-existing information-theory-based feature selection methods to the
-model. In this paper, we also take a derivational approach to
-specifying a probabilistic model and optimizing a feature selection
+While most existing feature selection methods provide heuristic
+motivation,   \citeauthor{brown2012conditional} 
+\shortcite{brown2012conditional} derived a
+probabilistic model with information-theoretic motivations from first
+principles, and retro-fitted existing information-theory-based feature
+selection methods to their model.
+
+In this paper, we take a derivational approach similar to \citeauthor{brown2012conditional} 
+\shortcite{brown2012conditional}
+that specifies a probabilistic model and optimizes a feature selection
 objective w.r.t. that model, but in our case we focus on the specific
 task of optimizing for recall in binary classification, which it 
-seems no prior method has focused on in previous work.
+seems no prior method has focused on in previous work.  We present
+our model and derivation next.
 
 
