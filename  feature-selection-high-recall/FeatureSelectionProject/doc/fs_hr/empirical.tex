@@ -11,11 +11,11 @@ Heart Statlog	& 13	& 270	& 0.048	& 44 \%	& All Numeric\\ \hline
 Spect	        & 22	& 80	& 0.275 & 33 \%	& Categorical\\ \hline
 Vote	        & 16	& 435	& 0.037	& 39 \%	& Categorical\\ \hline
 Newsgroup	& 500	& 1963	& 0.255	& 49 \%	& All Binary\\ \hline
-%Horse Colic	& 22	& 368	& 0.060	& 37 \%	& Categorical (16) and numeric (6)\\ \hline
-%Credit-American	& 15	& 690	& 0.022	& 44 \%	& Categorical(9) and numeric (6)\\ \hline
-%Credit-German	& 20	& 1000	& 0.020 & 30 \%	& Categorical (13) and Numeric (7)\\ \hline
-%Hepatitis	& 19	& 155	& 0.123	& 21 \%	& Categorical (13) and Numeric (6)\\ \hline
-%Ionosphere	& 34	& 351	& 0.097	& 36 \%	& All Numeric\\ \hline
+Horse Colic	& 22	& 368	& 0.060	& 37 \%	& Categorical (16) and numeric (6)\\ \hline
+Credit-American	& 15	& 690	& 0.022	& 44 \%	& Categorical(9) and numeric (6)\\ \hline
+Credit-German	& 20	& 1000	& 0.020 & 30 \%	& Categorical (13) and Numeric (7)\\ \hline
+Hepatitis	& 19	& 155	& 0.123	& 21 \%	& Categorical (13) and Numeric (6)\\ \hline
+Ionosphere	& 34	& 351	& 0.097	& 36 \%	& All Numeric\\ \hline
 %KR-vs-KP	& 36	& 3196	& 0.011	& 48 \%	& All Categorical\\ \hline
 %Labor	        & 16	& 57	& 0.281	& 35 \%	& Categorical (8) and Numeric (8)\\ \hline
 %Mushroom	& 22	& 8124	& 0.003	& 48 \%	& All Categorical\\ \hline
@@ -75,9 +75,8 @@ in terms of their performance distribution?
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure*}[tbp!]
 \centering
-\includegraphics[width=0.35\textwidth]{../ResultsPlot/BarGraphs/dataSetXFeatureSelection_avgCl/Accuracy.pdf}\\
-\includegraphics[width=0.35\textwidth]{../ResultsPlot/BarGraphs/dataSetXFeatureSelection_avgCl/Precision.pdf}\\
-\includegraphics[width=0.35\textwidth]{../ResultsPlot/BarGraphs/dataSetXFeatureSelection_avgCl/Recall.pdf}
+\includegraphics[width=0.35\textwidth]{../ResultsPlot/OthersDataSets/BarGraphs/dataSetXFeatureSelection_avgCl/Accuracy.pdf}\\
+\includegraphics[width=0.35\textwidth]{../ResultsPlot/OthersDataSets/BarGraphs/dataSetXFeatureSelection_avgCl/Recall.pdf}
 \caption{\footnotesize Performance of various feature selection algorithms per dataset, averaged across classifier type and each stage of feature selection.}
 \label{fig:perf_vs_dataset}
 \end{figure*}
@@ -86,9 +85,8 @@ in terms of their performance distribution?
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure*}[tbp!]
 \centering
-\includegraphics[width=0.35\textwidth]{../ResultsPlot/BarGraphs/FeatureSelectionXClassifier/vote Accuracy.pdf}\\
-\includegraphics[width=0.35\textwidth]{../ResultsPlot/BarGraphs/FeatureSelectionXClassifier/vote Precision.pdf}\\
-\includegraphics[width=0.35\textwidth]{../ResultsPlot/BarGraphs/FeatureSelectionXClassifier/vote Recall.pdf}
+\includegraphics[width=0.35\textwidth]{../ResultsPlot/OthersDataSets/BarGraphs/bargraph4/Accuracy.pdf}\\
+\includegraphics[width=0.35\textwidth]{../ResultsPlot/OthersDataSets/BarGraphs/bargraph4/Recall.pdf}
 \caption{\footnotesize Performance of various feature selection algorithms per classifier, averaged across dataset and each stage of feature selection.}
 \label{fig:perf_vs_classifier}
 \end{figure*}
@@ -97,9 +95,10 @@ in terms of their performance distribution?
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure*}[tbp!]
 \centering
-\includegraphics[width=0.35\textwidth]{../ResultsPlot/BoxPlot/BoxPlot1/Accuracy.pdf}\\
-\includegraphics[width=0.35\textwidth]{../ResultsPlot/BoxPlot/BoxPlot1/Precision.pdf}\\
-\includegraphics[width=0.35\textwidth]{../ResultsPlot/BoxPlot/BoxPlot1/Recall.pdf}
+\includegraphics[width=0.35\textwidth]{../ResultsPlot/OthersDataSets/LineGraphs/FullResultsWithoutNoutOfK/Spect Logistic Regression Recall.pdf}
+\includegraphics[width=0.35\textwidth]{../ResultsPlot/OthersDataSets/LineGraphs/FullResultsWithoutNoutOfK/Spect Naive Bayes Recall.pdf}\\
+\includegraphics[width=0.35\textwidth]{../ResultsPlot/OthersDataSets/LineGraphs/FullResultsWithoutNoutOfK/Newsgroup Logistic Regression Recall.pdf}
+\includegraphics[width=0.35\textwidth]{../ResultsPlot/OthersDataSets/LineGraphs/FullResultsWithoutNoutOfK/Newsgroup Naive Bayes Recall.pdf}
 \caption{\footnotesize Performance distribution of various feature selection algorithms with samples taken for each dataset, classifier type, and stage of feature selection.}
 \label{fig:perf_vs_fs_alg}
 \end{figure*}

@@ -4,18 +4,36 @@ Feature selection~\cite{guyon_jmlr03}
 
 While historically, feature selection 
 
-Naturally do not want to optimize for precision and recall directly (all false trivially optimizes precision, while all true trivially optimizes accuracy).  But when selecting features for a classifier intended to maximize accuracy, we may have a secondary preference for features that improve precision (reduce false positive rate) or improve recall (reduce false negative rate).  To this end, we remark that no previous work seems to have examined feature selection in the context of the precision-recall trade-off
+Naturally do not want to optimize for precision and recall directly (all false trivially optimizes precision, while all true trivially optimizes accuracy).  But when selecting features for a classifier intended to maximize accuracy, we may have a secondary preference for features that improve precision (reduce false positive rate) or improve recall (reduce false negative rate).  To this end, we remark that no previous work seems to have examined feature selection in the context of the precision-recall trade-off/
+
+% Part of the reason is that previous feature selection has not been specific to classification whereas precision/recall are
+
+% Consider the feature set jointly, weighted voting model
+
+% We get a heavier weighting of effect of data... a feature that pushes more things to their
+% class improves recall... so summation is reason for recall.  Each data gets it's own feature vote.
+
+% We get best performance with prob. classifiers, due to alignment of assumptions
+
+% We get best results with conjunction on high ratio of features to data
+% - conjunction forces agreement and reduces noise
+% - summation encourages coverage of the data
+% ... this works best when lot's of features, let data vote, but get probabilistic agreement
+
+% Show anecdotal results for Newsgroup and Spect logistic... we're best across both
 
 in well-known contingency table
 
-{\centering
-\begin{tabular}{|l||l|l|l|l|} \hline
-          &   & \multicolumn{2}{|l|}{Actual} & \\ \hline \hline
-          &   &  T & F & \#$T_P$\\ \hline
-predicted & T & TP & FP & \#$F_P$ \\ \hline
-          & F & FN & TN & \\ \hline
-          &   & \#$T_A$ & \#$F_A$ & \\ \hline
-\end{tabular}}
+\begin{center}
+\begin{tabular}{l|l|l|} 
+\multicolumn{1}{l}{} &  \multicolumn{1}{l}{Label T} & \multicolumn{1}{l}{Label F} \\ \cline{2-3}
+Predicted T & TP & FP \\ \cline{2-3}
+Predicted F & FN & TN \\ \cline{2-3}
+%Predicted T & TP & FP & \#$T_P$ \\ \cline{2-3}
+%Predicted F & FN & TN & \#$F_P$ \\ \cline{2-3}
+%          &   & \#$T_A$ & \#$F_A$ & \\ \cline{2-3}
+\end{tabular}
+\end{center}
 
 accuracy = tp + tn / tp + fp + fn + tn
 
