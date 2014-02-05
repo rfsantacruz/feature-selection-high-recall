@@ -36,7 +36,7 @@ prediction $y^d$ is made given the latent predictions $y^d_i$ of each
 selected feature $f_i$.  We use a deterministic voting scheme
 to represent this conditional probability, which we will discuss
 in-depth shortly.  First we focus on selecting features which optimize
-this model.
+this model given some $P(y^d|\{y^d_i\})$.
 
 Since jointly optimizing this objective is NP-hard, we build
 $F^*$ in a greedy manner by choosing the next optimal feature $f^*_k$
@@ -83,7 +83,7 @@ Now we can optimise our initial objective aiming three goals of classification t
 \paragraph{Log Likelihood (L)}
 
 Because Figure~\ref{fig:model} essentially provides a probabilistic classifier model as a function
-of the input data and selected features, we can choose features as to maximize the log likelihood
+of the input data and selected features, we can choose features so as to maximize the log likelihood
 of the data given the model (i.e., features selected), i.e., $l(D|F_k^*)$ as follows:
 
 {\small 
