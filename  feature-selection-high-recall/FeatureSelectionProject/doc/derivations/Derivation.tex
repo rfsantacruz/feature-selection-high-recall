@@ -79,7 +79,7 @@ f_k^*&=\operatorname*{arg\,max}_{f_k}\sum_{d\in D}I\left[y^d=\bigwedge_{i=1}^k y
 \end{align}
 From \eqref{eq:expect_pre_2} we can intuitively describe how this equation is related to the precision metric. In the confusion matrix, Precision is calculated dividing the numbers of true positives by the number of all examples predicted as positive (true positives and false positives). When $y^d$ is true, \eqref{eq:expect_pre_2} gives higher score to feature that have higher probability to predict true, encouraging true positives. Meanwhile, if $y^d$ is false, \eqref{eq:expect_pre_2} gives lower score to features that have higher probability to predict true, penalising false positives.
 
-\subsection{Recall case}
+\subsection{Recall}
 In order to select the subset of features providing high recall binary classifier we need at least one $y^d_i$ to predict true. Therefore, we need a disjunction operation between the predictors $y^d_i$. That is, when $y^d$ is true, we need at least one predictor $y^d_i$ to equals to true, and if $y^d$ were false, all of the predictors $y^d_i$ would have to be false. Then the probability $P\left(y^d|\{y^d_i\}_{1\leq i\leq k}\right)$ can be expressed as follows:
 \begin{equation}
 P\left(y^d|\{y^d_i\}_{1\leq i\leq k}\right)=I\left[y^d=\bigvee_{i=1}^k y^d_i\right]=
@@ -133,7 +133,8 @@ In \eqref{eq:expect_general_2}, the result is recursively defined. This recursio
 
 \section{Likelihood}
 \begin{align}
-f_k^*&\equiv\operatorname*{arg\,max}_{f_k}\,log\prod_{d\in D}P\left(y^d|\vec{x}^{\,d},F_k\right)\nonumber\\
+f_k^*&\equiv\operatorname*{arg\,max}_{f_k}\prod_{d\in D}P\left(y^d|\vec{x}^{\,d},F_k\right)\nonumber\\
+&=\operatorname*{arg\,max}_{f_k}\,log\prod_{d\in D}P\left(y^d|\vec{x}^{\,d},F_k\right)\nonumber\\
 &=\operatorname*{arg\,max}_{f_k}\sum_{d\in D}log\left(\frac{P\left(y^d,\vec{x}^{\,d},F_k\right)}{P\left(\vec{x}^{\,d},F_k\right)}\right)\nonumber\\
 &=\operatorname*{arg\,max}_{f_k}\sum_{d\in D}log\sum_{\{y_i^d\}_{1\leq i\leq k}}\frac{P\left(y^d,\vec{x}^{\,d}, F_k,\{y_i^d\}_{1\leq i\leq k}\right)}{P\left(\vec{x}^{\,d},F_k\right)}\nonumber\\
 &=\operatorname*{arg\,max}_{f_k} \sum_{d \in D} log\sum_{{\{y_i^d\}}_{1\leq i \leq k}} \frac{P\left(y^d| \{y^d_i\}_{1 \leq i \leq k}\right) \prod_{i=1}^kP\left(y_i^d|\vec{x}^{\,d},f_i\right)P\left(\vec{x}^{\,d}\right)\prod_{i=1}^kP\left(f_i\right)}{P\left(\vec{x}^{\,d}, F_k\right)}\nonumber\\
@@ -141,5 +142,5 @@ f_k^*&\equiv\operatorname*{arg\,max}_{f_k}\,log\prod_{d\in D}P\left(y^d|\vec{x}^
 \end{align}
 Here, we rewrote the likelihood of a binary event as its probability, factorized the conditional probability in the joint probability divided by the marginal, marginalized over $\{y^d_i\}_{1\leq i\leq k}$, factorized joint probability in conditional and prior following the graphical model and exploited d-separation to remove irrelevant conditions and to cancel terms in the equation.
 
-Since $\sum_{d\in D}log\sum_{{\{y_i^d\}}_{1\leq i\leq k}}P\left(y^d|\{y^d_i\}_{1\leq i\leq k}\right)\prod_{i=1}^kP\left(y_i^d|\vec{x}^{\,d},f_i\right)$ is exactly the same as the result in the expectation case, and the logarithm is a monotonous function, the choice of likelihood instead of expectation has no further affect on the algorithm.
+Since $\sum_{d\in D}log\sum_{{\{y_i^d\}}_{1\leq i\leq k}}P\left(y^d|\{y^d_i\}_{1\leq i\leq k}\right)\prod_{i=1}^kP\left(y_i^d|\vec{x}^{\,d},f_i\right)$ is exactly the same as the result in the expectation case except the logarithm, which is a monotonous function, the choice of likelihood instead of expectation has no further affect on the algorithm.
 \end{document}
