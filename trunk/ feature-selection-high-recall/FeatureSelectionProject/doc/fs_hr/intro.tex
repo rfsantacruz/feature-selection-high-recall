@@ -4,8 +4,8 @@ Feature selection is important in many practical supervised learning
 settings to address computational constraints (e.g., in large-scale or
 online learning) or to prevent overfitting when the data may be
 high-dimensional but contain relatively few samples (e.g., as may
-occur in bioinformatics domains where features are abundant but data
-is costly to obtain)~\cite{guyon_jmlr03}.
+occur in medical or bioinformatics domains where features are abundant
+but data is costly to obtain)~\cite{guyon_jmlr03}.
 
 While a wide variety of feature selection methods have been proposed
 in the literature, little research seems to focus on feature selection
@@ -23,40 +23,36 @@ Naturally though, it would not make sense for a classifier or feature
 selection method to focus on recall alone since the classifier which
 always predicts \emph{true} (independent of the data) obtains optimal
 recall performance.  To trade off precision with recall in order to
-maintain high accuracy, one often uses a geometric average of the
-two instead (known as F-score) but in practice most classifiers directly
+maintain high accuracy, one often uses a geometric average of the two
+instead (known as F-score) but in practice most classifiers directly
 optimize accuracy or some surrogate, e.g., a convex surrogate of 0-1
 loss as in the SVM or maximum (conditional) likelihood as in Naive
 Bayes or logistic regression.  So how can one achieve a high recall
-SVM, Naive Bayes, or logistic regression classifier that already has
-a 
-
-
-prevent this solution
-
+SVM, Naive Bayes, or logistic regression classifier that already has a
+well-defined accuracy-focused optimization criterion?  The idea we
+pursue in this paper is that feature selection can help modulate the
+recall performance of existing classifiers by encouraging selection of
+features that cover more of the true cases in the data (hence
+discouraging false negatives).
 
 In this paper we propose a novel probabilistic voting model of feature
-selection and argue that choosing features so as to maximize
-likelihood objectives w.r.t. this model provides an effective method
-for high recall feature selection.  For each objective, we derive an
-efficient formula for feature selection in the filtering framework
-(i.e., greedy forward selection) and we empirically compare the
-resulting feature selection criteria to a wide variety of existing
-methods.  Results show that our high recall feature selection approach
-does indeed improve recall with improvements noticeable when there is
-a high feature to data ratio.  Such results provide a novel and
-efficient feature selection algorithm to target high-recall
+selection with the intent of encouraging false negative reduction
+while still focusing on accuracy.  We argue that choosing features so
+as to maximize likelihood objectives w.r.t. this model provides an
+effective method for high recall feature selection.  Specifically, for
+each objective, we derive an efficient formula for feature selection
+in the filtering framework (i.e., greedy forward selection) and we
+empirically compare the resulting feature selection criteria to a wide
+variety of existing methods.
+
+Our results demonstrate that our high recall feature selection
+approach does indeed improve recall with improvements noticeable when
+there is a high feature to data ratio.  Such results provide a novel
+and efficient feature selection algorithm to target high-recall
 classification tasks.
+% TODO: elaborate more
 
-
-
-Feature selection 
-
-While historically, feature selection 
-
-Naturally do not want to optimize for precision and recall directly (all false trivially optimizes precision, while all true trivially optimizes accuracy).  But when selecting features for a classifier intended to maximize accuracy, we may have a secondary preference for features that improve precision (reduce false positive rate) or improve recall (reduce false negative rate).  To this end, we remark that no previous work seems to have examined feature selection in the context of the precision-recall trade-off/
-
-% Part of the reason is that previous feature selection has not been specific to classification whereas precision/recall are
+\COMMENT
 
 % Consider the feature set jointly, weighted voting model
 
@@ -74,13 +70,12 @@ Naturally do not want to optimize for precision and recall directly (all false t
 
 
 
-can switch in columns, but typically predicting more false hurts recall and more true hurts precision
+%can switch in columns, but typically predicting more false hurts recall and more true hurts precision
 
-So precision and recall become secondary objectives after accuracy... provides flexibility in feature selection that has not been explicitly considered.
+%So precision and recall become secondary objectives after accuracy... provides flexibility in feature selection that has not been explicitly considered.
 
 % Yet on other hand certain methods must have done better/wose b/c of implicit assumptions that we should analyze later.
 
-\COMMENT
 key insight: literature suggests redundancy is bad idea, but in fact, it is critical for precision (implies agreement)
 
 how to strongly justify the model and objectives we use?  voting?
