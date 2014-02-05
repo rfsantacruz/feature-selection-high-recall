@@ -17,7 +17,8 @@ regression -- and hence are not focused on performance properties
 specific to binary classifiers.  Yet, recall is an important aspect of
 many binary classification problems (e.g., minimizing false negatives
 in the identification of cancerous tumors) and it is critical to have
-feature selection algorithms that are targeted to maintain high recall.
+feature selection algorithms that can target features which provide
+high recall coverage of the data.
 
 Naturally though, it would not make sense for a classifier or feature
 selection method to focus on recall alone since the classifier which
@@ -33,7 +34,7 @@ well-defined accuracy-focused optimization criterion?  The idea we
 pursue in this paper is that feature selection can help modulate the
 recall performance of existing classifiers by encouraging selection of
 features that cover more of the true cases in the data (hence
-discouraging false negatives).
+discouraging false negatives harmful to recall).
 
 In this paper we propose a novel probabilistic voting model of feature
 selection with the intent of encouraging false negative reduction
@@ -43,10 +44,10 @@ effective method for high recall feature selection.  Specifically, for
 each objective, we derive an efficient formula for feature selection
 in the filtering framework (i.e., greedy forward selection) and we
 empirically compare the resulting feature selection criteria to a wide
-variety of existing methods.
+variety of existing filtering methods.
 
 Our results demonstrate that our high recall feature selection
-approach does indeed improve recall with improvements noticeable when
+approach does indeed improve recall with improvements most significant when 
 there is a high feature to data ratio.  Such results provide a novel
 and efficient feature selection algorithm to target high-recall
 classification tasks.

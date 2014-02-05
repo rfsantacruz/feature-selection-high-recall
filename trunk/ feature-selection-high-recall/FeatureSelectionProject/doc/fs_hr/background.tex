@@ -2,14 +2,14 @@
 
 In this section, we briefly define the task of binary classification
 along with standard definitions of performance metrics we may wish 
-to optimize.  We then follow this by a discussion of feature selection and
-existing criteria proposed in the literature.
+to optimize.  We then follow this by a discussion of feature selection.
+% and existing criteria proposed in the literature.
 
 In the binary classification task, we assume we are given data $D = \{
 (\vec{x}^d, y^d) \}$ consisting of pairs of real-valued raw 
 input vectors $\vec{x}^d \in \mathbb{R}^n$
 of length $n$ (e.g., the results of $n$ different medical tests) and
-\emph{actual} binary class label $y^d \in \{ 0 (\mathrm{false}), 1 (\mathrm{true}) \}$ (where
+\emph{actual} binary class label $y^d \in \{ 0 (\mathrm{ false}), 1 (\mathrm{ true}) \}$ (where
 we often write F for false and T for true).
 A binary classifier is a function $C: \vec{x}^d \to y^d$ such that given
 a new unlabeled raw feature vector, $C(\vec{x}^d)$ produces a \emph{predicted}
@@ -49,15 +49,15 @@ failure as missing a potential cancer diagnosis.
 
 Previously we did not specify exactly how $C(\vec{x}^d)$ learns from the raw data
 $\vec{x}^d$.  In general, practitioners often process the raw input vectors
-$\vec{x}^d$ into a subset of features that we'll denote $f_1,\ldots,f_k$.  Whereas
+$\vec{x}^d$ into a subset of features that we'll denote $F_k = \{ f_1,\ldots,f_k \}$.  Whereas
 the raw input may consist of the results of individual tests, a feature $f_i \in \mathbb{R}$
 may represent some nonlinear function of one or more tests deemed to be relevant to
 the classification task.  Hence we might more appropriately write a classifier
-as $C(\vec{x}^d,f_1,\ldots,f_k)$ to represent the raw input data and the features
+as $C(\vec{x}^d,F_k)$ to represent the raw input data and the features
 of the data that the classifier may use.
 In the case of high-dimensional data or few data samples,
 we may wish to limit the set of features generated to improve classifier performance
-and this is the task of feature selection --- select $\{f_1,\ldots,f_k\}$ to optimize
+and this is the task of feature selection --- select $F_k$ to optimize
 performance.  There are already a variety of feature selection methods that we outline
 next.
 

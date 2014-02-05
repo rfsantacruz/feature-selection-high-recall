@@ -5,27 +5,27 @@
 {\small 
 \begin{tabular}{|l|r|r|r|r|l|} \hline
 Dataset & \# Features & \# Data & \# Features/\# Data & \% True Labels & Feature Type\\ \hline \hline 
-Breast Cancer(BC)	& 9	& 699	& 0.013	& 34 \%	& All Numeric\\ \hline
-Diabetes(D)        & 8	& 768	& 0.010	& 35 \%	& All Numeric\\ \hline
-Heart Statlog(HS)	& 13	& 270	& 0.048	& 44 \%	& All Numeric\\ \hline
-Spect(S)	        & 22	& 80	& 0.275 & 33 \%	& Categorical\\ \hline
-Vote(V)	        & 16	& 435	& 0.037	& 39 \%	& Categorical\\ \hline
-Newsgroup(NG)	& 500	& 1963	& 0.255	& 49 \%	& All Binary\\ \hline
-Horse Colic(HC)	& 22	& 368	& 0.060	& 37 \%	& Categorical (16) and numeric (6)\\ \hline
-Credit-American(CR)	& 15	& 690	& 0.022	& 44 \%	& Categorical(9) and numeric (6)\\ \hline
-Credit-German(GC)	& 20	& 1000	& 0.020 & 30 \%	& Categorical (13) and Numeric (7)\\ \hline
-Hepatitis(H)	& 19	& 155	& 0.123	& 21 \%	& Categorical (13) and Numeric (6)\\ \hline
-Ionosphere(I)	& 34	& 351	& 0.097	& 36 \%	& All Numeric\\ \hline
+Breast Cancer (BC)	& 9	& 699	& 0.013	& 34 \%	& All Numeric\\ \hline
+Diabetes (D)        & 8	& 768	& 0.010	& 35 \%	& All Numeric\\ \hline
+Heart Statlog (HS)	& 13	& 270	& 0.048	& 44 \%	& All Numeric\\ \hline
+Spect (S)	        & 22	& 80	& 0.275 & 33 \%	& Categorical\\ \hline
+Vote (V)	        & 16	& 435	& 0.037	& 39 \%	& Categorical\\ \hline
+Newsgroup (NG)	& 500	& 1963	& 0.255	& 49 \%	& All Binary\\ \hline
+Horse Colic (HC)	& 22	& 368	& 0.060	& 37 \%	& Categorical (16) and numeric (6)\\ \hline
+Credit-American (CR)	& 15	& 690	& 0.022	& 44 \%	& Categorical(9) and numeric (6)\\ \hline
+Credit-German (GC)	& 20	& 1000	& 0.020 & 30 \%	& Categorical (13) and Numeric (7)\\ \hline
+Hepatitis (H)	& 19	& 155	& 0.123	& 21 \%	& Categorical (13) and Numeric (6)\\ \hline
+Ionosphere (I)	& 34	& 351	& 0.097	& 36 \%	& All Numeric\\ \hline
 %KR-vs-KP	& 36	& 3196	& 0.011	& 48 \%	& All Categorical\\ \hline
 %Labor	        & 16	& 57	& 0.281	& 35 \%	& Categorical (8) and Numeric (8)\\ \hline
 %Mushroom	& 22	& 8124	& 0.003	& 48 \%	& All Categorical\\ \hline
 %Sick	        & 29	& 3772	& 0.008	&  6 \%	& Categorical (23) and Numeric (6)\\ \hline
 %Sonar	        & 60	& 208	& 0.288 & 47 \%	& All Numeric\\ \hline
 \end{tabular}}
-\vspace{-1mm}
+\vspace{-2mm}
 \caption{\footnotesize Descriptive statistics of the various datasets evaluated in this work.}
 \label{table:stats}
-\vspace{-4mm}
+\vspace{-3mm}
 \end{table*}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -65,8 +65,10 @@ Ionosphere(I)	& 34	& 351	& 0.097	& 36 \%	& All Numeric\\ \hline
 %\includegraphics[width=0.375\textwidth]{./figures/linegraphs/SpectNaiveBayesRecall2.pdf}\\
 %\includegraphics[width=0.375\textwidth]{./figures/linegraphs/NewsgroupLogisticRegressionRecall2.pdf}
 %\includegraphics[width=0.375\textwidth]{./figures/linegraphs/NewsgroupNaiveBayesRecall2.pdf}
-\caption{\footnotesize Performance distribution of various feature selection algorithms for two datasets and classifier types at each stage of feature selection.  The conjunctive voting methods do best overall in these datasets.}
+\caption{\footnotesize Performance distribution of various feature selection algorithms for two datasets and classifier types at each stage of feature selection.  The conjunctive voting methods (CVE and CVL)
+perform well (and reliably) across all four combinations of classifier and dataset.}
 \label{fig:perf_vs_fs_alg}
+\vspace{-3mm}
 \end{figure*}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -75,7 +77,7 @@ Ionosphere(I)	& 34	& 351	& 0.097	& 36 \%	& All Numeric\\ \hline
 In this section, we conduct experiments to study the feature selection
 performances of several well known methods such as Symmetrical
 Uncertainty Rank (SUR), Gain Ratio Rank (GRR), Mutual Information Rank
-(MIR), Correlation Based Rank (CR), Conditional Entropy Rank (CER)~\cite{guyon_jmlr03}, Correlation-based Feature Subset Selection (CS)~\cite{Hall1998}, Reliff (RF)~\cite{Robnik-Sikonja2003} , Minimum Redundancy Maximum Relevancem(MRMR)~\cite{peng2005} and our proposed methods:  Disjunction Voting Expectation(DVE) and  Disjunction Voting likelihood (DVL), Conjunction Voting Expectation (CVE), Conjunction Voting likelihood (CVL). The first five methods are variable rank methods and the last seven are subset rank methods. The first five methods are variable rank methods that select variables by ranking them with some metric and the last seven are subset rank methods that assess subsets of variables and consider previous selections to decide the next selection.
+(MIR), Correlation Based Rank (CR), Conditional Entropy Rank (CER)~\cite{guyon_jmlr03}, Correlation-based Feature Subset Selection (CS)~\cite{Hall1998}, Reliff (RF)~\cite{Robnik-Sikonja2003} , Minimum Redundancy Maximum Relevancem(MRMR)~\cite{peng2005} and our proposed methods:  Disjunction Voting Expectation (DVE) and  Disjunction Voting likelihood (DVL), Conjunction Voting Expectation (CVE), Conjunction Voting likelihood (CVL). The first five methods are variable rank methods and the last seven are subset rank methods. The first five methods are variable rank methods that select variables by ranking them with some metric and the last seven are subset rank methods that assess subsets of variables and consider previous selections to decide the next selection.
 
 In this experimental study, we evaluated each feature selection
 method on a variety of binary classification problems 
@@ -120,12 +122,13 @@ dovetail best with classifiers that are themselves probabilistic,
 and overall best with Naive Bayes which makes the same independence assumptions.
 
 Next we examine Figure~\ref{fig:perf_vs_fs_alg}, where we evaluate the
-performance distribution of various feature selection algorithms with
-samples taken for each dataset, classifier type, and stage of feature
-selection. This graph shows that our CVL high recall feature selection approach 
-improves recall with the most improvement noticeable when there is a high
-feature to data ratio such as in the Newsgroup (NG) and Spect (S) data
-sets.  
+performance distribution of various feature selection algorithms for
+two datasets -- NG and S -- and classifier types -- Logistic
+Regression and Naive Bayes -- at each stage of feature selection.
+This graph shows that our CVL and CVE high recall feature selection
+approaches provide strong recall performance at all stages of
+feature selection in comparison to other selection methods.
+%whose performance varies widely.
 %We conjecture the reason for this stems from the strong agreement of
 %features provided by the conjunctive voting scheme that helps reduce noise
 %during feature selection process.
