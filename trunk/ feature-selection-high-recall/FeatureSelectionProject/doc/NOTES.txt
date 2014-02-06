@@ -20,4 +20,7 @@ However, since Naive Bayes can be easily used as a subset filter method, in the 
 
 - In a future version of the paper, we should seek out more datasets with a high feature to data ratio (sparse datasets).  If we had more excellent results like Spect and Newsgroup (where we get recall of nearly 1), this paper would be a much easier sell and the boxplots would show the performance that we had hoped to show.  Also we could do a plot where we show recall performance on the x axis vs. different descriptive dataset statistics on the y axis (with each point being a different dataset) and show that for high feature to data ratio datasets, there is a marked advantage in our algorithm (such a result would be clear in such a plot).
 
+- k/2-out-of-k is a symmetric classifier so it cannot target recall over precision (or vice versa).
+
 So I think we have found the "signal" we've been looking for all along!  We just need to strengthen it now that we've better identified the relevant issues and have moved on from our initial assumptions.
+
