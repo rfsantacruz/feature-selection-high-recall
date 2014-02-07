@@ -26,5 +26,26 @@ However, since Naive Bayes can be easily used as a subset filter method, in the 
 
 - NB likelihood could not be tuned to precision/recall, but if did not care about probabilistic calibration, could look at 0-1 loss for different thresholds.  But this would not seem to change the ranking of features would it?  Monotonic scores per feature no matter what threshold?
 
+- We've defined noisy-or and noisy-and classifiers!  But we take a shortcut on training.  He argues good for high-dimensional cases and analyzes accuracy and F-score:
+
+- Noisy-or classifiers (disjunctive model), trained via EM
+  http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.62.7342&rep=rep1&type=pdf
+  Jirı Vomlel
+  Laboratory for Intelligent Systems, University of Economics
+  Prague, Czech Republic
+
+- The following also argue for causal models, but symmetric ones unlike Vomlel:
+
+  Symmetric Causal Independence Models for Classification
+  Rasa Jurgelenaite and Tom Heskes
+  PGM-06
+  http://www.utia.cas.cz/files/mtr/pgm06/54_paper.pdf‎
+
+- Could be interesting:
+
+  Noisy-OR Component Analysis and its Application to Link Analysis
+  Singliar and Hauskrecht
+  http://machinelearning.wustl.edu/mlpapers/paper_files/SingliarH06.pdf
+
 So I think we have found the "signal" we've been looking for all along!  We just need to strengthen it now that we've better identified the relevant issues and have moved on from our initial assumptions.
 
