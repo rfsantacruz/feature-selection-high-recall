@@ -22,5 +22,9 @@ However, since Naive Bayes can be easily used as a subset filter method, in the 
 
 - k/2-out-of-k is a symmetric classifier so it cannot target recall over precision (or vice versa).
 
+- Would log likelihood of Naive Bayes decompose over features?  Then decompose into conditional probability which is proportional to conditional entropy?  (At least for values > .5 or < .5?)  If so, why doesn't voting classifier do this?  Seems both have the prod P_i / 1 - prod P_i form.
+
+- NB likelihood could not be tuned to precision/recall, but if did not care about probabilistic calibration, could look at 0-1 loss for different thresholds.  But this would not seem to change the ranking of features would it?  Monotonic scores per feature no matter what threshold?
+
 So I think we have found the "signal" we've been looking for all along!  We just need to strengthen it now that we've better identified the relevant issues and have moved on from our initial assumptions.
 
