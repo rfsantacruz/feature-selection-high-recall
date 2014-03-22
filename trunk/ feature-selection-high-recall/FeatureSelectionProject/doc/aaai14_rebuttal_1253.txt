@@ -1,0 +1,71 @@
+We thank the reviewers for their comments and analysis.
+
+Reviewer 1
+
+1> Empirical evidence and presentation:
+
+Figure 2: In all experiments our method performs well in accuracy and recall, especially on data sets with high feature to data ratio such as S and NG (also shown in figure 4). In these data sets CVL performs significantly better than competing methods. Fig 3 shows our method works better with Naive Bayes.
+
+2> Assumption of independence:
+
+The independence assumptions are encoded in figure 1, and can be deduced with the Bayes Ball algorithm.
+
+3> Joint optimization is NP-hard:
+
+It’s a variant of Knapsack Problem.
+
+4> Why expected likelihood:
+
+We use both so that we can compare their performance empirically.
+
+5> Why disjunctive voting:
+
+Disjunctive voting encourages diversity. If a single feature predicts true, the whole datum predicts true. Theoretically, it should penalize false negative, hence encourage recall. However, we conjecture that conjunctive voting is better due to its advantage in noise reduction.
+
+6> SVM parameters:
+
+The LibLINEAR package is set to run L2-loss support vector machines (dual). All other parameters are tuned via nested cross-validation.
+
+Reviewer 2
+
+1> Why conjunctive voting:
+
+The OR nature of disjunctive voting makes it highly vulnerable to noise in a real-world scenario. Meanwhile, conjunctive voting is noise-resistant, yet it is still able to find novel features that agree *strongly* with the supervised result. It encourages true positives, and therefore, improves recall.
+
+2> Presentation of result:
+
+Refer to reviewer 1, comment 1.
+
+3> Solution looks like a heuristic:
+
+Our method is rigorously derived from the graphical model. Please refer to comment 1 and reviewer 1, comment 5.
+
+Reviewer 3
+
+1> How to get from f_k^x to y_k^d?
+
+f_k*x is a cell in datum vector x^d, as determined by f_k. y_k^d is the prediction using that cell alone.
+
+2> Size of conditional probability table:
+
+Since the algorithm applies to binary classification, and data is discretised, the conditional probability table has size (number of features)*(2)*(number of types of values on that feature).
+
+3> Why deterministic voting?
+
+The two deterministic voting schemes are the two extreme cases. They make the graphical model simple, generative, and allow y_i^d to be inferred from y^d. Also refer to reviewer 1, comment 5 and reviewer 2, comment 1.
+
+4> Lack of references:
+
+Our focus is on feature selection algorithms that encourage classification recall. This topic has not been well explored. In addition, the derivation is based entirely on the proposed graphical model, requiring few references.
+
+5> Why conjunctive voting:
+
+Refer to reviewer 2, comment 1.
+
+6> How the algorithm can be used with probabilistic models that don't apply voting schemes?
+
+Our feature selection algorithms fall within the subset subcategory of filter methods. They are classifier independent.
+
+7> PR-ROC paper:
+
+Our paper focuses on feature selection with the intent of encouraging recall by false negative reduction while still focusing on accuracy. Therefore, PR and ROC curves don't fit in our analysis.
