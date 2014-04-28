@@ -49,3 +49,180 @@ However, since Naive Bayes can be easily used as a subset filter method, in the 
 
 So I think we have found the "signal" we've been looking for all along!  We just need to strengthen it now that we've better identified the relevant issues and have moved on from our initial assumptions.
 
+===
+
+Arguments for a new paper:
+
+If we change this paper to one on efficient learning and evaluation of assymetric classifiers targeting precision and recall, should we just tune n, or should we also do feature selection?  The latter would probably work better, but it will be extensive to train and more batch-oriented.  Tunable PR curve -- something you cannot do with assymetric classifiers?
+
+Or do we return to the high precision/recall argument with wrapper methods and claim that Naive Bayes cannot inherently optimize for precision or recall since log likelihood decomposes over features.  That's OK, but we don't have a clear connection between n and precision/recall (rank all output data, choose threshold at intended precision or recall or show precision/recall curve)... could be due to evaluation... instead show recall at a fixed precision and vice versa.
+
+Either paper: we can plot precision/recall curves at all n to show how n shifts them.
+
+Argument for tunable PR FS: wrapper methods critical since filter methods don't inherently take into account impact on data; LR and SVM too slow (can tune hyperparameters and threshold for Precision/Recall) and NB does not tune feature selection for precision or recall... can LR or SVM tune feature selection?
+
+Any connection to implicit data/recommendation?  Useful for ranking, tuning learning for precision/recall tradeoff -- cannot directly attack otherwise.  Naive classifier that is more robust to feature redundancy?  Could look at learning weights at a fixed n... would be expensive, but directly support precision or recall.  Selecting features for the task may be better?
+
+What can assymmetric classifier do that symmetric ones cannot?  Assymmetric ones cannot easily tune for PR on ranking... the threshold is not useful here and hyperparameters don't have clear connection to PR.  Also... robustness to feature noise due to voting, non-independence (in naive probabilistic classifiers)?
+
+Connections to causal classifiers?  Interpret weights as weights of independent causes if weights learned.  Causality critical at evaluation time to avoid spurious correlations?  Causal feature selection?
+
+Support latent learning in any way?  Connections to AADD?
+
+===
+
+A few quick points on the review:
+
+- The reviews do point out things that are unclear to the reviewers and that we have to improve if we submit this again in the future.  Even when the reviewers misunderstood the points, we need to consider how the paper can be improved to avoid those misunderstandings.  We have to remember that we basically submitted a first draft.
+
+- Note that the meta-review by the Senior PC member had *improper reasons* for rejection -- he/she stated "A key problem is that the paper does not discuss or appropriately adjust for feature redundancy."  First off, redundancy is not necessarily a bad thing -- it can improve precision (so we have to explicitly preempt such a comment in the future), secondly, we do compare to methods that control for redundancy and outperform them in some cases, and thirdly, one cannot say that we don't control for redundancy -- how redundancy (i.e., feature interaction) is controlled will simply fall out of the objective we are optimizing.
+
+- The take-home point is that reviewers often do not fully understand a paper but realize for some reason they don't like it (they don't understand it and don't want to admit it, or it disagrees with some preconceived -- often incorrect -- notion that they have) and then they search for concrete reasons to reject, e.g., they complain about experimental results.  Reviewers *always* complain about experiments in order to reject, but please note that this is *not* always the true reason they are pushing for rejection -- they often simply did not like the paper: (1) it did not excite them and/or (2) it did not give them new and useful intuitions that they learned from -- if reviewers are confused, they will reject.  Honestly, I think (1) and (2) are the real problem with the current paper.
+
+Overall, if we do self-criticize the paper (since we all know the paper and its flaws better than anyone else), I would say that
+
+- The motivation for the algorithms is not clear (even to me and I wrote this section).  The original motivation of the algorithms *was* clear to us but the experimental results suggested the opposite of this intuition.  So I had to revise the motivation to be consistent with the results and in the end, it's not very convincing.
+
+- The presentation of experimental results needs to be improved to make the positive results more obvious... reviewers did not like the dense bar graph at all (sorry).  Maybe a table with bold entries as suggested by a reviewer would indeed be more clear.
+
+- My fear though is that while we do better at recall, it's always easy to trade-off precision for recall, so it's not really clear what we should take away from our graphs even when we're doing better for recall.  If we're going to show recall, we should really show *recall at a fixed precision*, i.e., if the precision is 0.75 then what is the recall?  This would be a more fair comparison in future revisions.  Warning though: it may turn out that the new algorithms don't perform as well in this more controlled comparison setting.
+
+- We need more experiments with datasets where we do well (Rodrigo's analysis shows we do best when there is a high feature-to-data ratio, so perhaps we need more datasets like this).
+
+- We should really try to explain why our algorithm does better in the high feature-to-data ratio case.  I think synthetic datasets with different amounts of random noise can help us analyze the robustness of our algorithms vs. the existing feature selection algorithms in the presence of noise.  I.e., show performance of each algorithm as a line with the y-axis being some performance metric and the x-axis being the noise level.  This should be shown for different feature-to-data ratios.  Then we can really verify that our algorithm is more robust to noise in the high feature-to-data ratio case (if this is really true).
+
+The above requires a fair amount of effort and it's not immediately clear whether the new analysis will be publishable.
+
+I have to be very honest that if I took this paper forward, I might want to change it's direction.  What I realized during some Googling after submission was that there has been a fair amount of work on "noisy-or" classifiers and we have given both "noisy-or" and "noisy-and" in our work -- interestingly with noisy-and showing the best performance.  These are assymmetric classifiers in that it's inherently harder with OR to classify as false and with AND to classify as true.  I believe assymetric classifiers are better able to target precision and recall, especially if used in combination with feature selection.  So it is possible that we could move away from feature selection instead to a study of assymmetric classifiers while leveraging most of the existing code with new experiments.  I think this may be more interesting for readers since feature selection is such a heavily studied topic (and not such a "hot" area to publish in these days) *and* it will hopefully be easier for us to generate novel results for an analysis of asymmetric classifiers (since we no longer have to compare with all feature selection methods).
+
+----------------------- REVIEW 1 ---------------------
+PAPER: 1253
+TITLE: A Probabilistic Model for High Recall Feature Selection
+AUTHORS: Rodrigo F. S. C. Oliveira, Scott Sanner and Libo Yin
+
+1. Technical Quality: 3 (adequate, not a basis for accepting or rejecting the paper)
+2. Experimental analysis: 2 (problematic, a factor in rejecting the paper)
+3. Formal analysis: 3 (adequate, not a basis for accepting or rejecting the paper)
+4. Clarity/presentation: 2 (problematic, a factor in rejecting the paper)
+5. Novelty/innovation of question addressed: 4 (positive, a factor in accepting the paper)
+6. Novelty/innovation of application: 4 (positive, a factor in accepting the paper)
+7. Novelty/innovation with respect to aspects of human-level   intelligence, complex cognition, or similar topics (Cognitive  Systems): 3 (adequate, not a basis for accepting or rejecting the paper (or not applicable))
+8. Novelty/innovation of solution proposed: 3 (adequate, not a basis for accepting or rejecting the paper (or not applicable))
+9. Breadth of interest to the AI community: 4 (positive, a factor in accepting the paper)
+10. Potential for impact to practical applications: 4 (positive, a factor in accepting the paper)
+SUMMARY RATING: -1 (Weak rejection. No 1, 5 or 6 in any category, overall 3 or below.)
+
+----------- QUALITY JUSTIFICATION -----------
+While the paper addresses a novel and important question, I feel that the empirical evidence was inconclusive. Although the authors have presented a comprehensive comparison with a large number of existing methods, the way they summarize their results makes it not very easy to assess the findings. In particular, Fig 2 is very hard to read, and so is fig. 4. To make the analysis of the results more easy to absorb and more rigorous, the authors should have used tables with relevant format (e.g. bold face for the top performing method), together with a statistical test (e.g. t-test) to see if the proposed method statistically significantly outperforms others.
+
+Similarly, Fig. 3 could be zoomed in to clearly show the difference.
+
+----------- NOVELTY/INNOVATION JUSTIFICATION -----------
+High recall feature selection is a relatively novel problem with important applications in certain domain, as well-justified in the paper.
+
+----------- IMPACT JUSTIFICATION -----------
+The results in this paper could be of interest to practitioners with applications required high recall.
+
+----------- SUMMARY OF REVIEW -----------
+The first part of this paper, i.e. the motivation for high recall feature selection, is well written.
+
+The proposed probabilistic graphical model in Fig. 1 seems to imply a strong assumption of independence between features, reminding the Naive Bayes model. Here each feature predicts a class label independently, then the class labels are combined. The authors should clarify such assumptions, if any.
+
+The authors claimed that optimizing the objective is NP-hard. I would like to request a formal proof or reference to support this claim.
+
+I feel that the argument for using the expected likelihood is not adequate, without any supporting references, especially since the latter is not a common approach.
+
+Disjunctive voting doesn't seem a reasonable voting scheme and adds little insight to the paper while making the results section, especially figures, harder to follow.
+
+An additional question is that the framework doesn't seem to handle feature redundancy. In the general feature selection literature, it's well known that reducing feature redundancy lead to improved accuracy. I wonder how feature redundancy would affect recall.
+
+
+Minors:
+-Information on the authors set the parameters for linear SVM should be reported.
+
+
+----------------------- REVIEW 2 ---------------------
+PAPER: 1253
+TITLE: A Probabilistic Model for High Recall Feature Selection
+AUTHORS: Rodrigo F. S. C. Oliveira, Scott Sanner and Libo Yin
+
+1. Technical Quality: 2 (problematic, a factor in rejecting the paper)
+2. Experimental analysis: 3 (Adequate, not a basis for accepting or rejecting the paper (or not applicable))
+3. Formal analysis: 2 (problematic, a factor in rejecting the paper)
+4. Clarity/presentation: 2 (problematic, a factor in rejecting the paper)
+5. Novelty/innovation of question addressed: 3 (adequate, not a basis for accepting or rejecting the paper (or not applicable))
+6. Novelty/innovation of application: 3 (adequate, not a basis for accepting or rejecting the paper (or not applicable))
+7. Novelty/innovation with respect to aspects of human-level   intelligence, complex cognition, or similar topics (Cognitive  Systems): 3 (adequate, not a basis for accepting or rejecting the paper (or not applicable))
+8. Novelty/innovation of solution proposed: 2 (problematic, a factor in rejecting the paper)
+9. Breadth of interest to the AI community: 3 (adequate, not a basis for accepting or rejecting the paper (or not applicable))
+10. Potential for impact to practical applications: 2 (problematic, a factor in rejecting the paper)
+SUMMARY RATING: -1 (Weak rejection. No 1, 5 or 6 in any category, overall 3 or below.)
+
+----------- QUALITY JUSTIFICATION -----------
+Their model definition is not well motivated and as a result it is not clear why are previously included features 'voting' for the next feature. I can see that using a disjunctive (OR) combination function will lead to features being introduced to cover examples that have been missed. But I can't see why conjunctive voting is needed to increase recall ? It does reduce the noise but there are other feature selection methods designed for handling noise. An objective function that trades off between increased recall and reduced noise based on the combination of the two voting schemes might be an interesting future direction.
+
+The paper discusses topics that are well known in literature and do not need to be explained in this much detail. For example presenting accuracy and recall in terms of a confusion matrix is not needed. Similarly, conjunctive and disjunctive voting have well defined probability distributions that need not be derived.
+
+The empirical evaluations are very difficult to interpret. Figure 2 doesn't make it clear whether their approach outperforms other methods in most of the cases or not. Presenting percentage of domains where their approach outperforms other methods or average recall across domains might help with this. Figure 4 suffers from the same problem of being non-interpretable. The authors should consider presenting the top 5 approaches here.
+
+----------- NOVELTY/INNOVATION JUSTIFICATION -----------
+Their approach for feature selection is based on a latent variable based model definition. Although the paper claims that their approach selects features to increase recall, the model design does not focus on the recall except in one of the combination functions considered by the authors. The problem considered by the authors is interesting but the solution reads like a heuristic and does not focus on the problem which shows in the empirical results.
+
+----------- IMPACT JUSTIFICATION -----------
+Using voting schemes for feature selection to increase recall is an interesting idea but the solution feels underwhelming.
+
+----------- SUMMARY OF REVIEW -----------
+The authors present a greedy feature selection approach to increase the recall of a classifier. They define a latent variable based model which introduces features that improve the likelihood of their model definition. They use expected and log likelihood as the objective function and two voting schemes (AND and OR). But the solution is not theoretically motivated or empirically strong. They do not present any strong reasoning why their model will increase the recall of the classifier considering that they don't consider the classifier being learned from the selected features. It is not clear from the experiments that the features increase the recall of the classifier in most of the cases as compared to standard feature selection methods.
+
+>> After reading the authors response, I take back my comment about the solution appearing to be heuristic. But my concerns about presentation still stands.
+
+
+----------------------- REVIEW 3 ---------------------
+PAPER: 1253
+TITLE: A Probabilistic Model for High Recall Feature Selection
+AUTHORS: Rodrigo F. S. C. Oliveira, Scott Sanner and Libo Yin
+
+1. Technical Quality: 4 (positive, a factor in accepting the paper)
+2. Experimental analysis: 4 (positive, a factor in accepting the paper)
+3. Formal analysis: 4 (positive, a factor in accepting the paper)
+4. Clarity/presentation: 4 (positive, a factor in accepting the paper)
+5. Novelty/innovation of question addressed: 4 (positive, a factor in accepting the paper)
+6. Novelty/innovation of application: 3 (adequate, not a basis for accepting or rejecting the paper (or not applicable))
+7. Novelty/innovation with respect to aspects of human-level   intelligence, complex cognition, or similar topics (Cognitive  Systems): 3 (adequate, not a basis for accepting or rejecting the paper (or not applicable))
+8. Novelty/innovation of solution proposed: 3 (adequate, not a basis for accepting or rejecting the paper (or not applicable))
+9. Breadth of interest to the AI community: 4 (positive, a factor in accepting the paper)
+10. Potential for impact to practical applications: 4 (positive, a factor in accepting the paper)
+SUMMARY RATING: 0 (Flawed but interesting. (Will get extra attention from program chairs.) A 1 in some category, a 5 or 6 in some category.)
+
+----------- QUALITY JUSTIFICATION -----------
+The technical analysis of the paper is not incredibly innovative but sound.  There are a few typos in the section "A Probabilistic Model of Feature Selection" that make it a little difficult to understand the derivations -- for instance, in Figure 1 it seems like it should be "y_1^d, y_2^d ..." instead of just all y_1^d.
+The paper is overall well-written --- only complain it about page 5, as the graphs/tables there are a little difficult to parse. For more on quality, see the Summary.
+
+----------- NOVELTY/INNOVATION JUSTIFICATION -----------
+The question of how to effectively trade-off for recall is a very useful one.  The solution provided is less innovative as it doesn't seem to be a very comprehensive solution for a variety of models, and only seems to be useful for the type of model that the authors present.  The usage of voting schemes to estimate the conditional probabilities is something that is interesting. For more on innovation/novelty, see the Summary.
+
+----------- IMPACT JUSTIFICATION -----------
+The authors' contribution definitely is useful, but is  difficult to gauge *how* useful the contribution is as the model that the authors derive in the section  "A Probabilistic Model of Feature Selection" seems fairly contrived.  However, it is clear from the experimental results that the algorithms that the authors develop for this model are clearly effective and have use to the field. Especially appreciated is the section "Existing Feature Selection Algorithms" that provides a clear and concise overview of some commonly used feature-selection algorithms. For more on impact, see the summary.
+
+----------- SUMMARY OF REVIEW -----------
+Summary & Remarks
+The authors discuss a formula for feature selection in the filtering framework where they attempt to decide which features should be selected in order to improve the recall performance of a trained classifier. The authors do their job of comparing their work against some previously established algorithms, and experimental results demonstrate the efficacy of their algorithms.  Although the usage of voting schemes to estimate conditional probabilities is interesting, it would be good to see the usage of additional mechanisms to estimate the conditional probabilities.  The paper is overall well-written and clear, and the authors do a good job of presenting their views on the experimental results.
+
+
+Questions & Suggestions
+In the section "A Probabilistic Model of Feature Selection" how do you get from f_k^x to y_k^d? There is apt description of the rest of the model but that part seemed to be missing. Also, the issue with this model is that it seems very arbitrary in how it is defined.  The model is claimed to be probabilistic but the issue with that is if the model were a Bayesian network it would be very difficult to train as the conditional probability tables for the class variable would have exponential number of states in k.
+How come deterministc voting schemes are used? Can you provide more intuition on their use?
+One thing that is slightly worrisome is the lack of references.  The problem discussed by the author definitely is a useful one and there is a large field of literature on this.
+The derivations and technical analysis overall are good, but the technical analysis in the section "A Probabilistic Model of Feature Selection" should be cleaned of typos -- it is the first section that really discusses technical contributions so it should be very clear.
+The authors write that they "conjecture...choice of a suitable aggregation...can help reduce noise".  Some reasoning or intuition behind this conjecture would be good.
+Something a little unclear is how the feature selection algorithm can be used with probabilistic models such as Naive Bayes that don't apply voting schemes.
+Perhaps more discussion of PR and ROC curves would be very useful in this paper -- see "The Relationship Between Precision-Recall and ROC Curves" (ICML 06).
+
+
+-------------------------  METAREVIEW  ------------------------
+PAPER: 1253
+TITLE: A Probabilistic Model for High Recall Feature Selection
+
+RECOMMENDATION: reject
+
+The paper provides a method for feature selection to improve the recall performance of a trained classifier.  A key problem is that the paper does not discuss or appropriately adjust for feature redundancy. It is well known that correcting for feature redundancy improves performance of classifiers. The presentation could be improved.  The empirical evaluations are difficult to interpret. After discussion and considering the author responses, the reviewers are agreed that the paper in its present form is not ready for publication in AAAI.  The authors are encouraged to take this feedback into account to improve the paper.
